@@ -7,7 +7,12 @@ import '../../../../../core/constants/app_strings.dart';
 import '../../../../../core/widgets/custom_button.dart';
 
 class OtpScreen extends StatefulWidget {
-  const OtpScreen({super.key});
+  final Map<String, dynamic>? extra;
+
+  const OtpScreen({
+    super.key,
+    this.extra,
+  });
 
   @override
   State<OtpScreen> createState() => _OtpScreenState();
@@ -26,6 +31,9 @@ class _OtpScreenState extends State<OtpScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isResetPassword = widget.extra?['isResetPassword'] == true;
+    final phoneNumber = widget.extra?['phone'] ?? '';
+    
     final defaultPinTheme = PinTheme(
       width: 60,
       height: 60,
@@ -57,7 +65,9 @@ class _OtpScreenState extends State<OtpScreen> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Ionicons.arrow_back_outline),
-          onPressed: () => context.go('/register'),
+          onPressed: () => isResetPassword 
+              ? context.go('/forgot-password')
+              : context.go('/register'),
         ),
       ),
       body: SafeArea(
@@ -89,7 +99,23 @@ class _OtpScreenState extends State<OtpScreen> {
                   submittedPinTheme: submittedPinTheme,
                   showCursor: true,
                   onCompleted: (pin) {
-                    // Handle OTP verification
+                    // Simulate OTP verification
+                    if (pin == '123456') {
+                      if (isResetPassword) {
+                        // Navigate to reset password screen
+                        context.go('/reset-password', extra: {'phoneNumber': phoneNumber});
+                      } else {
+                        // Navigate to main screen for registration
+                        context.go('/main');
+                      }
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Invalid OTP. Please try again.'),
+                          backgroundColor: AppColors.error,
+                        ),
+                      );
+                    }
                   },
                 ),
               ),

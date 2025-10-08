@@ -40,7 +40,9 @@ class _CustomTextFieldState extends State<CustomTextField> {
         suffixIcon: widget.isPassword
             ? IconButton(
                 icon: Icon(
-                  _obscureText ? Ionicons.eye_off_outline : Ionicons.eye_outline,
+                  _obscureText
+                      ? Ionicons.eye_off_outline
+                      : Ionicons.eye_outline,
                   color: AppColors.textTertiary,
                 ),
                 onPressed: () {
@@ -50,6 +52,18 @@ class _CustomTextFieldState extends State<CustomTextField> {
                 },
               )
             : null,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(color: AppColors.textTertiary, width: 2),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(color: AppColors.textTertiary, width: 2),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(color: AppColors.primary, width: 2),
+        ),
       ),
     );
   }

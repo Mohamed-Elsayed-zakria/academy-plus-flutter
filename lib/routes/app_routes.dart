@@ -4,6 +4,8 @@ import '../features/splash/presentation/views/screens/welcome_screen.dart';
 import '../features/auth/presentation/views/screens/login_screen.dart';
 import '../features/auth/presentation/views/screens/register_screen.dart';
 import '../features/auth/presentation/views/screens/otp_screen.dart';
+import '../features/auth/presentation/views/screens/forgot_password_screen.dart';
+import '../features/auth/presentation/views/screens/reset_password_screen.dart';
 import '../features/home/presentation/views/screens/main_screen.dart';
 import '../features/home/presentation/views/screens/sub_departments_screen.dart';
 import '../features/home/presentation/views/screens/courses_screen.dart';
@@ -41,7 +43,23 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: '/otp',
-      builder: (context, state) => const OtpScreen(),
+      builder: (context, state) => OtpScreen(extra: state.extra as Map<String, dynamic>?),
+    ),
+    GoRoute(
+      path: '/forgot-password',
+      builder: (context, state) => const ForgotPasswordScreen(),
+    ),
+    GoRoute(
+      path: '/reset-password-otp',
+      builder: (context, state) => OtpScreen(extra: state.extra as Map<String, dynamic>?),
+    ),
+    GoRoute(
+      path: '/reset-password',
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>?;
+        final phoneNumber = extra?['phoneNumber'] as String? ?? '';
+        return ResetPasswordScreen(phoneNumber: phoneNumber);
+      },
     ),
 
     // Main Screen (with bottom navigation)

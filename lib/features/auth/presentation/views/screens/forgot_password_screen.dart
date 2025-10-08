@@ -4,21 +4,20 @@ import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_strings.dart';
 import '../../../../../core/widgets/custom_button.dart';
-import '../../../../../core/widgets/custom_text_field.dart';
 import '../../../../../core/widgets/custom_phone_input.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class ForgotPasswordScreen extends StatefulWidget {
+  const ForgotPasswordScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen>
+class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
     with TickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   final _phoneController = TextEditingController();
-  final _passwordController = TextEditingController();
+  bool _isLoading = false;
 
   late AnimationController _logoAnimationController;
   late AnimationController _formAnimationController;
@@ -87,10 +86,39 @@ class _LoginScreenState extends State<LoginScreen>
   @override
   void dispose() {
     _phoneController.dispose();
-    _passwordController.dispose();
     _logoAnimationController.dispose();
     _formAnimationController.dispose();
     super.dispose();
+  }
+
+  Future<void> _sendOTP() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isLoading = true;
+      });
+
+      // Simulate API call
+      await Future.delayed(const Duration(seconds: 2));
+
+      setState(() {
+        _isLoading = false;
+      });
+
+      // Navigate to OTP verification screen
+      context.go('/reset-password-otp', extra: {
+        'phone': _phoneController.text,
+        'isResetPassword': true,
+      });
+
+      // Show success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('OTP sent to your phone number'),
+          backgroundColor: AppColors.success,
+          duration: const Duration(seconds: 3),
+        ),
+      );
+    }
   }
 
   @override
@@ -111,7 +139,7 @@ class _LoginScreenState extends State<LoginScreen>
         ),
         child: SafeArea(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 18.0),
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
             child: Column(
               children: [
                 const SizedBox(height: 40),
@@ -137,14 +165,14 @@ class _LoginScreenState extends State<LoginScreen>
                             ],
                           ),
                           child: Icon(
-                            Ionicons.school_outline,
+                            Ionicons.lock_closed_outline,
                             size: 60,
                             color: AppColors.primary,
                           ),
                         ),
                         const SizedBox(height: 24),
                         Text(
-                          AppStrings.appName,
+                          'Reset Password',
                           style: Theme.of(context).textTheme.displayMedium?.copyWith(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
@@ -153,7 +181,7 @@ class _LoginScreenState extends State<LoginScreen>
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'Your Gateway to Academic Excellence',
+                          'Enter your phone number to receive OTP',
                           style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                 color: Colors.white.withValues(alpha: 0.9),
                                 fontWeight: FontWeight.w500,
@@ -165,15 +193,15 @@ class _LoginScreenState extends State<LoginScreen>
                   ),
                 ),
 
-                const SizedBox(height: 60),
+                const SizedBox(height: 40),
 
-                // Login Form Section with Animation
+                // Reset Password Form Section with Animation
                 SlideTransition(
                   position: _formSlideAnimation,
                   child: FadeTransition(
                     opacity: _formFadeAnimation,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 32),
+                      padding: const EdgeInsets.all(32),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(24),
@@ -190,12 +218,12 @@ class _LoginScreenState extends State<LoginScreen>
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Login Header
+                            // Header
                             Center(
                               child: Column(
                                 children: [
                                   Text(
-                                    AppStrings.login,
+                                    'Forgot Password?',
                                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                                           fontWeight: FontWeight.bold,
                                           color: AppColors.textPrimary,
@@ -203,7 +231,7 @@ class _LoginScreenState extends State<LoginScreen>
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
-                                    'Welcome back! Please sign in to continue',
+                                    'No worries! We\'ll send you reset instructions',
                                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                                           color: AppColors.textSecondary,
                                         ),
@@ -224,58 +252,31 @@ class _LoginScreenState extends State<LoginScreen>
                                 if (value == null || value.isEmpty) {
                                   return 'Please enter your phone number';
                                 }
-                                return null;
-                              },
-                            ),
-
-                            const SizedBox(height: 20),
-
-                            // Password Field
-                            CustomTextField(
-                              hintText: AppStrings.password,
-                              controller: _passwordController,
-                              isPassword: true,
-                              prefixIcon: const Icon(Ionicons.lock_closed_outline),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter your password';
+                                if (value.length < 10) {
+                                  return 'Please enter a valid phone number';
                                 }
                                 return null;
                               },
-                            ),
-
-                            const SizedBox(height: 16),
-
-                            // Forgot Password Link
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: GestureDetector(
-                                onTap: () {
-                                  context.go('/forgot-password');
-                                },
-                                child: Text(
-                                  'Forgot Password?',
-                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                        color: AppColors.primary,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                ),
-                              ),
                             ),
 
                             const SizedBox(height: 32),
 
-                            // Login Button
+                            // Send OTP Button
                             CustomButton(
-                              text: AppStrings.login,
-                              onPressed: () {
-                                if (_formKey.currentState!.validate()) {
-                                  // Navigate to main screen
-                                  context.go('/main');
-                                }
-                              },
+                              text: _isLoading ? 'Sending...' : 'Send OTP',
+                              onPressed: _isLoading ? null : () => _sendOTP(),
                               isGradient: true,
                               width: double.infinity,
+                              icon: _isLoading 
+                                  ? const SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                      ),
+                                    )
+                                  : const Icon(Ionicons.send_outline, color: Colors.white),
                             ),
 
                             const SizedBox(height: 32),
@@ -308,21 +309,21 @@ class _LoginScreenState extends State<LoginScreen>
 
                             const SizedBox(height: 32),
 
-                            // Register Link
+                            // Back to Login Link
                             Center(
                               child: RichText(
                                 text: TextSpan(
                                   style: Theme.of(context).textTheme.bodyLarge,
                                   children: [
                                     const TextSpan(
-                                      text: "Don't have an account? ",
+                                      text: "Remember your password? ",
                                       style: TextStyle(color: AppColors.textSecondary),
                                     ),
                                     WidgetSpan(
                                       child: GestureDetector(
-                                        onTap: () => context.go('/register'),
+                                        onTap: () => context.go('/login'),
                                         child: Text(
-                                          AppStrings.register,
+                                          'Back to Login',
                                           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                                                 color: AppColors.primary,
                                                 fontWeight: FontWeight.w600,
@@ -350,7 +351,7 @@ class _LoginScreenState extends State<LoginScreen>
                     opacity: _formFadeAnimation,
                     child: Center(
                       child: GestureDetector(
-                        onTap: () => context.go('/welcome'),
+                        onTap: () => context.go('/login'),
                         child: Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 24,
@@ -373,7 +374,7 @@ class _LoginScreenState extends State<LoginScreen>
                               ),
                               const SizedBox(width: 8),
                               Text(
-                                'Back to Welcome',
+                                'Back to Login',
                                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                       color: Colors.white,
                                       fontWeight: FontWeight.w600,

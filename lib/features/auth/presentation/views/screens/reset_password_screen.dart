@@ -2,23 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/constants/app_strings.dart';
 import '../../../../../core/widgets/custom_button.dart';
 import '../../../../../core/widgets/custom_text_field.dart';
-import '../../../../../core/widgets/custom_phone_input.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class ResetPasswordScreen extends StatefulWidget {
+  final String phoneNumber;
+
+  const ResetPasswordScreen({
+    super.key,
+    required this.phoneNumber,
+  });
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen>
+class _ResetPasswordScreenState extends State<ResetPasswordScreen>
     with TickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
-  final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+  bool _isLoading = false;
 
   late AnimationController _logoAnimationController;
   late AnimationController _formAnimationController;
@@ -86,11 +90,38 @@ class _LoginScreenState extends State<LoginScreen>
 
   @override
   void dispose() {
-    _phoneController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     _logoAnimationController.dispose();
     _formAnimationController.dispose();
     super.dispose();
+  }
+
+  Future<void> _resetPassword() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isLoading = true;
+      });
+
+      // Simulate API call
+      await Future.delayed(const Duration(seconds: 2));
+
+      setState(() {
+        _isLoading = false;
+      });
+
+      // Show success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Password reset successfully!'),
+          backgroundColor: AppColors.success,
+          duration: const Duration(seconds: 3),
+        ),
+      );
+
+      // Navigate to login screen
+      context.go('/login');
+    }
   }
 
   @override
@@ -102,8 +133,8 @@ class _LoginScreenState extends State<LoginScreen>
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              AppColors.primary,
-              AppColors.primaryLight,
+              AppColors.success,
+              AppColors.success.withValues(alpha: 0.8),
               Colors.white,
             ],
             stops: const [0.0, 0.3, 1.0],
@@ -137,14 +168,14 @@ class _LoginScreenState extends State<LoginScreen>
                             ],
                           ),
                           child: Icon(
-                            Ionicons.school_outline,
+                            Ionicons.key_outline,
                             size: 60,
-                            color: AppColors.primary,
+                            color: AppColors.success,
                           ),
                         ),
                         const SizedBox(height: 24),
                         Text(
-                          AppStrings.appName,
+                          'Create New Password',
                           style: Theme.of(context).textTheme.displayMedium?.copyWith(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
@@ -153,7 +184,7 @@ class _LoginScreenState extends State<LoginScreen>
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'Your Gateway to Academic Excellence',
+                          'Enter your new password below',
                           style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                 color: Colors.white.withValues(alpha: 0.9),
                                 fontWeight: FontWeight.w500,
@@ -165,9 +196,9 @@ class _LoginScreenState extends State<LoginScreen>
                   ),
                 ),
 
-                const SizedBox(height: 60),
+                const SizedBox(height: 40),
 
-                // Login Form Section with Animation
+                // Reset Password Form Section with Animation
                 SlideTransition(
                   position: _formSlideAnimation,
                   child: FadeTransition(
@@ -190,12 +221,12 @@ class _LoginScreenState extends State<LoginScreen>
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Login Header
+                            // Header
                             Center(
                               child: Column(
                                 children: [
                                   Text(
-                                    AppStrings.login,
+                                    'Reset Password',
                                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                                           fontWeight: FontWeight.bold,
                                           color: AppColors.textPrimary,
@@ -203,7 +234,7 @@ class _LoginScreenState extends State<LoginScreen>
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
-                                    'Welcome back! Please sign in to continue',
+                                    'Create a strong password for your account',
                                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                                           color: AppColors.textSecondary,
                                         ),
@@ -215,14 +246,51 @@ class _LoginScreenState extends State<LoginScreen>
 
                             const SizedBox(height: 40),
 
-                            // Phone Number Field
-                            CustomPhoneInput(
-                              hintText: AppStrings.phoneNumber,
-                              controller: _phoneController,
-                              initialCountryCode: 'EG',
+                            // Phone Number Display
+                            Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: AppColors.success.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: AppColors.success.withValues(alpha: 0.3),
+                                ),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Ionicons.checkmark_circle_outline,
+                                    color: AppColors.success,
+                                    size: 20,
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Text(
+                                      'OTP verified for ${widget.phoneNumber}',
+                                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                            color: AppColors.success,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            const SizedBox(height: 32),
+
+                            // New Password Field
+                            CustomTextField(
+                              hintText: 'New Password',
+                              controller: _passwordController,
+                              isPassword: true,
+                              prefixIcon: const Icon(Ionicons.lock_closed_outline),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'Please enter your phone number';
+                                  return 'Please enter your new password';
+                                }
+                                if (value.length < 6) {
+                                  return 'Password must be at least 6 characters';
                                 }
                                 return null;
                               },
@@ -230,52 +298,41 @@ class _LoginScreenState extends State<LoginScreen>
 
                             const SizedBox(height: 20),
 
-                            // Password Field
+                            // Confirm Password Field
                             CustomTextField(
-                              hintText: AppStrings.password,
-                              controller: _passwordController,
+                              hintText: 'Confirm New Password',
+                              controller: _confirmPasswordController,
                               isPassword: true,
                               prefixIcon: const Icon(Ionicons.lock_closed_outline),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'Please enter your password';
+                                  return 'Please confirm your new password';
+                                }
+                                if (value != _passwordController.text) {
+                                  return 'Passwords do not match';
                                 }
                                 return null;
                               },
                             ),
 
-                            const SizedBox(height: 16),
-
-                            // Forgot Password Link
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: GestureDetector(
-                                onTap: () {
-                                  context.go('/forgot-password');
-                                },
-                                child: Text(
-                                  'Forgot Password?',
-                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                        color: AppColors.primary,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                ),
-                              ),
-                            ),
-
                             const SizedBox(height: 32),
 
-                            // Login Button
+                            // Reset Password Button
                             CustomButton(
-                              text: AppStrings.login,
-                              onPressed: () {
-                                if (_formKey.currentState!.validate()) {
-                                  // Navigate to main screen
-                                  context.go('/main');
-                                }
-                              },
+                              text: _isLoading ? 'Resetting...' : 'Reset Password',
+                              onPressed: _isLoading ? null : () => _resetPassword(),
                               isGradient: true,
                               width: double.infinity,
+                              icon: _isLoading 
+                                  ? const SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                      ),
+                                    )
+                                  : const Icon(Ionicons.checkmark_outline, color: Colors.white),
                             ),
 
                             const SizedBox(height: 32),
@@ -308,23 +365,23 @@ class _LoginScreenState extends State<LoginScreen>
 
                             const SizedBox(height: 32),
 
-                            // Register Link
+                            // Back to Login Link
                             Center(
                               child: RichText(
                                 text: TextSpan(
                                   style: Theme.of(context).textTheme.bodyLarge,
                                   children: [
                                     const TextSpan(
-                                      text: "Don't have an account? ",
+                                      text: "Remember your password? ",
                                       style: TextStyle(color: AppColors.textSecondary),
                                     ),
                                     WidgetSpan(
                                       child: GestureDetector(
-                                        onTap: () => context.go('/register'),
+                                        onTap: () => context.go('/login'),
                                         child: Text(
-                                          AppStrings.register,
+                                          'Back to Login',
                                           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                                color: AppColors.primary,
+                                                color: AppColors.success,
                                                 fontWeight: FontWeight.w600,
                                               ),
                                         ),
@@ -350,7 +407,7 @@ class _LoginScreenState extends State<LoginScreen>
                     opacity: _formFadeAnimation,
                     child: Center(
                       child: GestureDetector(
-                        onTap: () => context.go('/welcome'),
+                        onTap: () => context.go('/login'),
                         child: Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 24,
@@ -373,7 +430,7 @@ class _LoginScreenState extends State<LoginScreen>
                               ),
                               const SizedBox(width: 8),
                               Text(
-                                'Back to Welcome',
+                                'Back to Login',
                                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                       color: Colors.white,
                                       fontWeight: FontWeight.w600,

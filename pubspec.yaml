@@ -52,6 +52,8 @@ dependencies:
   flutter_bloc: ^9.1.1
   dio: ^5.9.0
   ionicons: ^0.2.2
+  dartz: ^0.10.1
+  intl_phone_number_input: ^0.7.5
 
 dev_dependencies:
   flutter_test:

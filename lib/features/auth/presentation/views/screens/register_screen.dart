@@ -7,6 +7,7 @@ import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_strings.dart';
 import '../../../../../core/widgets/custom_button.dart';
 import '../../../../../core/widgets/custom_text_field.dart';
+import '../../../../../core/widgets/custom_phone_input.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -43,7 +44,7 @@ class _RegisterScreenState extends State<RegisterScreen>
   @override
   void initState() {
     super.initState();
-    
+
     // Logo animation controller
     _logoAnimationController = AnimationController(
       duration: const Duration(milliseconds: 1200),
@@ -57,38 +58,35 @@ class _RegisterScreenState extends State<RegisterScreen>
     );
 
     // Logo animations
-    _logoFadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _logoAnimationController,
-      curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
-    ));
+    _logoFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _logoAnimationController,
+        curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
+      ),
+    );
 
-    _logoScaleAnimation = Tween<double>(
-      begin: 0.5,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _logoAnimationController,
-      curve: const Interval(0.0, 0.8, curve: Curves.elasticOut),
-    ));
+    _logoScaleAnimation = Tween<double>(begin: 0.5, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _logoAnimationController,
+        curve: const Interval(0.0, 0.8, curve: Curves.elasticOut),
+      ),
+    );
 
     // Form animations
-    _formSlideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _formAnimationController,
-      curve: Curves.easeOutCubic,
-    ));
+    _formSlideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _formAnimationController,
+            curve: Curves.easeOutCubic,
+          ),
+        );
 
-    _formFadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _formAnimationController,
-      curve: const Interval(0.2, 1.0, curve: Curves.easeOut),
-    ));
+    _formFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _formAnimationController,
+        curve: const Interval(0.2, 1.0, curve: Curves.easeOut),
+      ),
+    );
 
     // Start animations
     _logoAnimationController.forward();
@@ -127,21 +125,17 @@ class _RegisterScreenState extends State<RegisterScreen>
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              AppColors.primary,
-              AppColors.primaryLight,
-              Colors.white,
-            ],
+            colors: [AppColors.primary, AppColors.primaryLight, Colors.white],
             stops: const [0.0, 0.3, 1.0],
           ),
         ),
         child: SafeArea(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            padding: const EdgeInsets.symmetric(horizontal: 18.0),
             child: Column(
               children: [
                 const SizedBox(height: 40),
-                
+
                 // App Logo Section with Animation
                 FadeTransition(
                   opacity: _logoFadeAnimation,
@@ -171,7 +165,8 @@ class _RegisterScreenState extends State<RegisterScreen>
                         const SizedBox(height: 24),
                         Text(
                           AppStrings.appName,
-                          style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                          style: Theme.of(context).textTheme.displayMedium
+                              ?.copyWith(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 1.2,
@@ -180,7 +175,8 @@ class _RegisterScreenState extends State<RegisterScreen>
                         const SizedBox(height: 8),
                         Text(
                           'Join Our Academic Community',
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(
                                 color: Colors.white.withValues(alpha: 0.9),
                                 fontWeight: FontWeight.w500,
                               ),
@@ -199,7 +195,10 @@ class _RegisterScreenState extends State<RegisterScreen>
                   child: FadeTransition(
                     opacity: _formFadeAnimation,
                     child: Container(
-                      padding: const EdgeInsets.all(32),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 32,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(24),
@@ -222,7 +221,10 @@ class _RegisterScreenState extends State<RegisterScreen>
                                 children: [
                                   Text(
                                     AppStrings.register,
-                                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headlineMedium
+                                        ?.copyWith(
                                           fontWeight: FontWeight.bold,
                                           color: AppColors.textPrimary,
                                         ),
@@ -230,7 +232,8 @@ class _RegisterScreenState extends State<RegisterScreen>
                                   const SizedBox(height: 8),
                                   Text(
                                     'Create your account to get started',
-                                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                    style: Theme.of(context).textTheme.bodyLarge
+                                        ?.copyWith(
                                           color: AppColors.textSecondary,
                                         ),
                                     textAlign: TextAlign.center,
@@ -259,13 +262,17 @@ class _RegisterScreenState extends State<RegisterScreen>
                                         ),
                                         image: _profileImage != null
                                             ? DecorationImage(
-                                                image: FileImage(_profileImage!),
+                                                image: FileImage(
+                                                  _profileImage!,
+                                                ),
                                                 fit: BoxFit.cover,
                                               )
                                             : null,
                                         boxShadow: [
                                           BoxShadow(
-                                            color: Colors.black.withValues(alpha: 0.1),
+                                            color: Colors.black.withValues(
+                                              alpha: 0.1,
+                                            ),
                                             blurRadius: 10,
                                             offset: const Offset(0, 5),
                                           ),
@@ -283,7 +290,8 @@ class _RegisterScreenState extends State<RegisterScreen>
                                   const SizedBox(height: 12),
                                   Text(
                                     'Tap to upload profile picture',
-                                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    style: Theme.of(context).textTheme.bodySmall
+                                        ?.copyWith(
                                           color: AppColors.textSecondary,
                                         ),
                                   ),
@@ -308,28 +316,14 @@ class _RegisterScreenState extends State<RegisterScreen>
 
                             const SizedBox(height: 20),
 
-                            // Phone Number Field
-                            CustomTextField(
-                              hintText: AppStrings.phoneNumber,
-                              controller: _phoneController,
-                              keyboardType: TextInputType.phone,
-                              prefixIcon: const Icon(Ionicons.call_outline),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter your phone number';
-                                }
-                                return null;
-                              },
-                            ),
-
-                            const SizedBox(height: 20),
-
                             // Password Field
                             CustomTextField(
                               hintText: AppStrings.password,
                               controller: _passwordController,
                               isPassword: true,
-                              prefixIcon: const Icon(Ionicons.lock_closed_outline),
+                              prefixIcon: const Icon(
+                                Ionicons.lock_closed_outline,
+                              ),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return 'Please enter your password';
@@ -348,13 +342,30 @@ class _RegisterScreenState extends State<RegisterScreen>
                               hintText: AppStrings.confirmPassword,
                               controller: _confirmPasswordController,
                               isPassword: true,
-                              prefixIcon: const Icon(Ionicons.lock_closed_outline),
+                              prefixIcon: const Icon(
+                                Ionicons.lock_closed_outline,
+                              ),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return 'Please confirm your password';
                                 }
                                 if (value != _passwordController.text) {
                                   return 'Passwords do not match';
+                                }
+                                return null;
+                              },
+                            ),
+
+                            const SizedBox(height: 20),
+
+                            // Phone Number Field
+                            CustomPhoneInput(
+                              hintText: AppStrings.phoneNumber,
+                              controller: _phoneController,
+                              initialCountryCode: 'EG',
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter your phone number';
                                 }
                                 return null;
                               },
@@ -370,29 +381,43 @@ class _RegisterScreenState extends State<RegisterScreen>
                                 prefixIcon: const Icon(Ionicons.school_outline),
                                 filled: true,
                                 fillColor: AppColors.surface,
-                                contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 20,
+                                  vertical: 16,
+                                ),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(16),
-                                  borderSide: BorderSide(color: AppColors.surfaceGrey),
+                                  borderSide: BorderSide(
+                                    color: AppColors.surfaceGrey,
+                                  ),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(16),
-                                  borderSide: BorderSide(color: AppColors.surfaceGrey),
+                                  borderSide: BorderSide(
+                                    color: AppColors.surfaceGrey,
+                                  ),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(16),
-                                  borderSide: BorderSide(color: AppColors.primary, width: 2),
+                                  borderSide: BorderSide(
+                                    color: AppColors.primary,
+                                    width: 2,
+                                  ),
                                 ),
                                 errorBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(16),
-                                  borderSide: BorderSide(color: AppColors.error),
+                                  borderSide: BorderSide(
+                                    color: AppColors.error,
+                                  ),
                                 ),
                               ),
                               items: _universities
-                                  .map((university) => DropdownMenuItem(
-                                        value: university,
-                                        child: Text(university),
-                                      ))
+                                  .map(
+                                    (university) => DropdownMenuItem(
+                                      value: university,
+                                      child: Text(university),
+                                    ),
+                                  )
                                   .toList(),
                               onChanged: (value) {
                                 setState(() {
@@ -415,7 +440,13 @@ class _RegisterScreenState extends State<RegisterScreen>
                               onPressed: () {
                                 if (_formKey.currentState!.validate()) {
                                   // Navigate to OTP screen
-                                  context.go('/otp');
+                                  context.go(
+                                    '/otp',
+                                    extra: {
+                                      'phone': _phoneController.text,
+                                      'isResetPassword': false,
+                                    },
+                                  );
                                 }
                               },
                               isGradient: true,
@@ -429,14 +460,19 @@ class _RegisterScreenState extends State<RegisterScreen>
                               children: [
                                 Expanded(
                                   child: Divider(
-                                    color: AppColors.textTertiary.withValues(alpha: 0.3),
+                                    color: AppColors.textTertiary.withValues(
+                                      alpha: 0.3,
+                                    ),
                                   ),
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                  ),
                                   child: Text(
                                     'OR',
-                                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    style: Theme.of(context).textTheme.bodySmall
+                                        ?.copyWith(
                                           color: AppColors.textTertiary,
                                           fontWeight: FontWeight.w500,
                                         ),
@@ -444,7 +480,9 @@ class _RegisterScreenState extends State<RegisterScreen>
                                 ),
                                 Expanded(
                                   child: Divider(
-                                    color: AppColors.textTertiary.withValues(alpha: 0.3),
+                                    color: AppColors.textTertiary.withValues(
+                                      alpha: 0.3,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -460,14 +498,19 @@ class _RegisterScreenState extends State<RegisterScreen>
                                   children: [
                                     const TextSpan(
                                       text: "Already have an account? ",
-                                      style: TextStyle(color: AppColors.textSecondary),
+                                      style: TextStyle(
+                                        color: AppColors.textSecondary,
+                                      ),
                                     ),
                                     WidgetSpan(
                                       child: GestureDetector(
                                         onTap: () => context.go('/login'),
                                         child: Text(
                                           AppStrings.login,
-                                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge
+                                              ?.copyWith(
                                                 color: AppColors.primary,
                                                 fontWeight: FontWeight.w600,
                                               ),
@@ -518,7 +561,8 @@ class _RegisterScreenState extends State<RegisterScreen>
                               const SizedBox(width: 8),
                               Text(
                                 'Back to Welcome',
-                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                style: Theme.of(context).textTheme.bodyMedium
+                                    ?.copyWith(
                                       color: Colors.white,
                                       fontWeight: FontWeight.w600,
                                     ),
