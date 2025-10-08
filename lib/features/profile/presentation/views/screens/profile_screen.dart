@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_strings.dart';
 
@@ -96,7 +97,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   color: Colors.white,
                                 ),
                                 child: Icon(
-                                  Icons.person,
+                                  Ionicons.person_outline,
                                   size: 50,
                                   color: AppColors.primary,
                                 ),
@@ -121,7 +122,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       ],
                                     ),
                                     child: Icon(
-                                      Icons.camera_alt,
+                                      Ionicons.camera_outline,
                                       size: 16,
                                       color: AppColors.primary,
                                     ),
@@ -175,7 +176,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(height: 16),
 
                   _buildInfoCard(
-                    icon: Icons.email_outlined,
+                    icon: Ionicons.mail_outline,
                     label: 'Email',
                     value: user['email'] as String,
                     color: AppColors.primary,
@@ -183,7 +184,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(height: 12),
 
                   _buildInfoCard(
-                    icon: Icons.phone_outlined,
+                    icon: Ionicons.call_outline,
                     label: 'Phone',
                     value: user['phone'] as String,
                     color: AppColors.accent,
@@ -191,7 +192,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(height: 12),
 
                   _buildInfoCard(
-                    icon: Icons.school_outlined,
+                    icon: Ionicons.school_outline,
                     label: 'University',
                     value: user['university'] as String,
                     color: AppColors.accentPurple,
@@ -210,7 +211,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                   // Language Selector
                   _buildSettingsTile(
-                    icon: Icons.language,
+                    icon: Ionicons.language_outline,
                     title: 'Language',
                     subtitle: _selectedLanguage,
                     color: AppColors.info,
@@ -242,7 +243,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                   // Dark Mode Toggle
                   _buildSettingsTile(
-                    icon: _isDarkMode ? Icons.dark_mode : Icons.light_mode,
+                    icon: _isDarkMode ? Ionicons.moon_outline : Ionicons.sunny_outline,
                     title: 'Dark Mode',
                     subtitle: _isDarkMode ? 'Enabled' : 'Disabled',
                     color: _isDarkMode
@@ -267,7 +268,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(height: 16),
 
                   _buildActionButton(
-                    icon: Icons.edit,
+                    icon: Ionicons.create_outline,
                     title: AppStrings.editProfile,
                     color: AppColors.primary,
                     onTap: () {
@@ -277,7 +278,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(height: 12),
 
                   _buildActionButton(
-                    icon: Icons.lock_outline,
+                    icon: Ionicons.lock_closed_outline,
                     title: AppStrings.changePassword,
                     color: AppColors.accentOrange,
                     onTap: () {
@@ -287,7 +288,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(height: 12),
 
                   _buildActionButton(
-                    icon: Icons.help_outline,
+                    icon: Ionicons.help_circle_outline,
                     title: 'Help & Support',
                     color: AppColors.info,
                     onTap: () {
@@ -297,7 +298,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(height: 12),
 
                   _buildActionButton(
-                    icon: Icons.info_outline,
+                    icon: Ionicons.information_circle_outline,
                     title: 'About',
                     color: AppColors.accentPurple,
                     onTap: () {
@@ -308,7 +309,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                   // Logout Button
                   _buildActionButton(
-                    icon: Icons.logout,
+                    icon: Ionicons.log_out_outline,
                     title: AppStrings.logout,
                     color: AppColors.error,
                     isDestructive: true,
@@ -485,7 +486,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
             ),
-            Icon(Icons.arrow_forward_ios, size: 16, color: color),
+            Icon(Ionicons.chevron_forward_outline, size: 16, color: color),
           ],
         ),
       ),
@@ -502,7 +503,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           title: Row(
             children: [
-              Icon(Icons.logout, color: AppColors.error),
+              Icon(Ionicons.log_out_outline, color: AppColors.error),
               const SizedBox(width: 12),
               const Text('Logout'),
             ],

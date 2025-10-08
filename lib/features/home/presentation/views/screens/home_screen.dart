@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_strings.dart';
 
@@ -25,42 +26,42 @@ class _HomeScreenState extends State<HomeScreen> {
     {
       'id': 1,
       'name': 'Business',
-      'icon': Icons.business_center,
+      'icon': Ionicons.briefcase_outline,
       'color': Color(0xFF6366F1),
       'subDepartments': ['Accounting', 'Marketing', 'Finance', 'HR']
     },
     {
       'id': 2,
       'name': 'Engineering',
-      'icon': Icons.engineering,
+      'icon': Ionicons.construct_outline,
       'color': Color(0xFF8B5CF6),
       'subDepartments': ['Computer Science', 'Electrical', 'Mechanical', 'Civil']
     },
     {
       'id': 3,
       'name': 'Medicine',
-      'icon': Icons.medical_services,
+      'icon': Ionicons.medical_outline,
       'color': Color(0xFFEC4899),
       'subDepartments': ['General Medicine', 'Surgery', 'Pediatrics', 'Cardiology']
     },
     {
       'id': 4,
       'name': 'Arts',
-      'icon': Icons.palette,
+      'icon': Ionicons.color_palette_outline,
       'color': Color(0xFFF59E0B),
       'subDepartments': ['Fine Arts', 'Music', 'Theater', 'Literature']
     },
     {
       'id': 5,
       'name': 'Science',
-      'icon': Icons.science,
+      'icon': Ionicons.flask_outline,
       'color': Color(0xFF10B981),
       'subDepartments': ['Physics', 'Chemistry', 'Biology', 'Mathematics']
     },
     {
       'id': 6,
       'name': 'Law',
-      'icon': Icons.gavel,
+      'icon': Ionicons.scale_outline,
       'color': Color(0xFFEF4444),
       'subDepartments': ['Criminal Law', 'Civil Law', 'International Law', 'Corporate Law']
     },
@@ -82,7 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: TextField(
                 decoration: InputDecoration(
                   hintText: AppStrings.search,
-                  prefixIcon: const Icon(Icons.search),
+                  prefixIcon: const Icon(Ionicons.search_outline),
                   filled: true,
                   fillColor: AppColors.surface,
                   border: OutlineInputBorder(
@@ -159,7 +160,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Expanded(
                     child: _buildQuickAccessCard(
                       title: AppStrings.assignments,
-                      icon: Icons.assignment,
+                      icon: Ionicons.document_text_outline,
                       color: AppColors.primary,
                       onTap: () {
                         context.push('/assignments');
@@ -170,7 +171,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Expanded(
                     child: _buildQuickAccessCard(
                       title: AppStrings.quizzes,
-                      icon: Icons.quiz,
+                      icon: Ionicons.help_circle_outline,
                       color: AppColors.accent,
                       onTap: () {
                         context.push('/quizzes');

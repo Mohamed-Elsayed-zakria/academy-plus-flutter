@@ -5,10 +5,10 @@ class AppConfig {
   static const String whatsappBusinessNumber = '201234567890';
 
   // You can add more configuration here
-  static const String supportEmail = 'support@university.com';
-  static const String websiteUrl = 'https://university.com';
+  static const String supportEmail = 'support@academyplus.com';
+  static const String websiteUrl = 'https://academyplus.com';
 
   // API Configuration (for future backend integration)
-  static const String apiBaseUrl = 'https://api.university.com';
+  static const String apiBaseUrl = 'https://api.academyplus.com';
   static const String apiVersion = 'v1';
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
 
 class QuizzesScreen extends StatelessWidget {
@@ -71,7 +72,7 @@ class QuizzesScreen extends StatelessWidget {
         title: const Text('Quizzes'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.filter_list),
+            icon: const Icon(Ionicons.filter_outline),
             onPressed: () {
               // Filter functionality
             },
@@ -120,13 +121,13 @@ class _QuizCard extends StatelessWidget {
   IconData _getStatusIcon(String status) {
     switch (status) {
       case 'Available':
-        return Icons.play_circle_outline;
+        return Ionicons.play_circle_outline;
       case 'Completed':
-        return Icons.check_circle;
+        return Ionicons.checkmark_circle_outline;
       case 'Unavailable':
-        return Icons.lock_outline;
+        return Ionicons.lock_closed_outline;
       default:
-        return Icons.quiz;
+        return Ionicons.help_circle_outline;
     }
   }
 
@@ -219,7 +220,7 @@ class _QuizCard extends StatelessWidget {
                 Row(
                   children: [
                     Icon(
-                      Icons.book_outlined,
+                      Ionicons.book_outline,
                       size: 16,
                       color: AppColors.textSecondary,
                     ),
@@ -239,20 +240,20 @@ class _QuizCard extends StatelessWidget {
                 Row(
                   children: [
                     _InfoChip(
-                      icon: Icons.quiz,
+                      icon: Ionicons.help_circle_outline,
                       label: '$questions questions',
                       color: AppColors.primary,
                     ),
                     const SizedBox(width: 12),
                     _InfoChip(
-                      icon: Icons.timer_outlined,
+                      icon: Ionicons.time_outline,
                       label: '$duration min',
                       color: AppColors.accentOrange,
                     ),
                     if (attempts > 0) ...[
                       const SizedBox(width: 12),
                       _InfoChip(
-                        icon: Icons.repeat,
+                        icon: Ionicons.refresh_outline,
                         label: '$attempts ${attempts == 1 ? 'attempt' : 'attempts'}',
                         color: AppColors.accentPurple,
                       ),
@@ -266,7 +267,7 @@ class _QuizCard extends StatelessWidget {
                 Row(
                   children: [
                     Icon(
-                      Icons.event,
+                      Ionicons.calendar_outline,
                       size: 16,
                       color: AppColors.textSecondary,
                     ),
@@ -280,7 +281,7 @@ class _QuizCard extends StatelessWidget {
                     const Spacer(),
                     if (status != 'Unavailable')
                       Icon(
-                        Icons.arrow_forward_ios,
+                        Ionicons.chevron_forward_outline,
                         size: 16,
                         color: AppColors.textTertiary,
                       ),

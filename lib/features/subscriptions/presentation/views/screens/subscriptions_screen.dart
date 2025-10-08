@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_strings.dart';
 import '../../../../../core/widgets/empty_state.dart';
@@ -42,7 +43,7 @@ class SubscriptionsScreen extends StatelessWidget {
       ),
       body: subscriptions.isEmpty
           ? EmptyState(
-              icon: Icons.subscriptions_outlined,
+              icon: Ionicons.card_outline,
               message: AppStrings.noSubscriptions,
               subtitle: 'Subscribe to courses to see them here',
             )
@@ -104,7 +105,7 @@ class SubscriptionsScreen extends StatelessWidget {
             Row(
               children: [
                 Icon(
-                  Icons.person_outline,
+                  Ionicons.person_outline,
                   size: 16,
                   color: AppColors.textSecondary,
                 ),
@@ -119,7 +120,7 @@ class SubscriptionsScreen extends StatelessWidget {
             Row(
               children: [
                 Icon(
-                  Icons.calendar_today,
+                  Ionicons.calendar_outline,
                   size: 16,
                   color: AppColors.textSecondary,
                 ),

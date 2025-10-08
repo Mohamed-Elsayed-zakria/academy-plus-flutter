@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/widgets/custom_button.dart';
 
@@ -48,7 +49,7 @@ class QuizDetailsScreen extends StatelessWidget {
                       ],
                     ),
                     child: Icon(
-                      Icons.quiz,
+                      Ionicons.help_circle_outline,
                       size: 64,
                       color: AppColors.primary,
                     ),
@@ -84,7 +85,7 @@ class QuizDetailsScreen extends StatelessWidget {
                     children: [
                       Expanded(
                         child: _InfoCard(
-                          icon: Icons.quiz,
+                          icon: Ionicons.help_circle_outline,
                           label: 'Questions',
                           value: '$questions',
                           color: AppColors.primary,
@@ -93,7 +94,7 @@ class QuizDetailsScreen extends StatelessWidget {
                       const SizedBox(width: 16),
                       Expanded(
                         child: _InfoCard(
-                          icon: Icons.timer,
+                          icon: Ionicons.time_outline,
                           label: 'Duration',
                           value: '$duration min',
                           color: AppColors.accentOrange,
@@ -106,7 +107,7 @@ class QuizDetailsScreen extends StatelessWidget {
                     children: [
                       Expanded(
                         child: _InfoCard(
-                          icon: Icons.repeat,
+                          icon: Ionicons.refresh_outline,
                           label: 'Attempts',
                           value: '$attempts',
                           color: AppColors.accentPurple,
@@ -115,7 +116,7 @@ class QuizDetailsScreen extends StatelessWidget {
                       const SizedBox(width: 16),
                       Expanded(
                         child: _InfoCard(
-                          icon: Icons.grade,
+                          icon: Ionicons.star_outline,
                           label: 'Best Score',
                           value: bestScore != null ? '$bestScore%' : 'N/A',
                           color: AppColors.accent,
@@ -136,22 +137,22 @@ class QuizDetailsScreen extends StatelessWidget {
                   const SizedBox(height: 16),
 
                   _InstructionItem(
-                    icon: Icons.timer_outlined,
+                    icon: Ionicons.time_outline,
                     text: 'You have $duration minutes to complete the quiz.',
                   ),
                   const SizedBox(height: 12),
                   _InstructionItem(
-                    icon: Icons.quiz_outlined,
+                    icon: Ionicons.help_circle_outline,
                     text: 'The quiz contains $questions questions.',
                   ),
                   const SizedBox(height: 12),
                   _InstructionItem(
-                    icon: Icons.lock_clock,
+                    icon: Ionicons.lock_closed_outline,
                     text: 'Once started, the timer cannot be paused.',
                   ),
                   const SizedBox(height: 12),
                   _InstructionItem(
-                    icon: Icons.check_circle_outline,
+                    icon: Ionicons.checkmark_circle_outline,
                     text: 'Review your answers before submitting.',
                   ),
 
@@ -170,7 +171,7 @@ class QuizDetailsScreen extends StatelessWidget {
                     child: Row(
                       children: [
                         Icon(
-                          Icons.event,
+                          Ionicons.calendar_outline,
                           color: AppColors.warning,
                         ),
                         const SizedBox(width: 12),
@@ -210,7 +211,7 @@ class QuizDetailsScreen extends StatelessWidget {
                       isGradient: true,
                       width: double.infinity,
                       icon: Icon(
-                        attempts > 0 ? Icons.refresh : Icons.play_arrow,
+                        attempts > 0 ? Ionicons.refresh_outline : Ionicons.play_outline,
                         color: Colors.white,
                       ),
                     ),
@@ -223,7 +224,7 @@ class QuizDetailsScreen extends StatelessWidget {
                         },
                         isOutlined: true,
                         width: double.infinity,
-                        icon: Icon(Icons.visibility, color: AppColors.primary),
+                        icon: Icon(Ionicons.eye_outline, color: AppColors.primary),
                       ),
                     ],
                   ] else if (status == 'Completed') ...[
@@ -234,7 +235,7 @@ class QuizDetailsScreen extends StatelessWidget {
                       },
                       isGradient: true,
                       width: double.infinity,
-                      icon: const Icon(Icons.assessment, color: Colors.white),
+                      icon: const Icon(Ionicons.bar_chart_outline, color: Colors.white),
                     ),
                   ] else if (status == 'Unavailable') ...[
                     Container(
@@ -246,7 +247,7 @@ class QuizDetailsScreen extends StatelessWidget {
                       child: Row(
                         children: [
                           Icon(
-                            Icons.lock,
+                            Ionicons.lock_closed_outline,
                             color: AppColors.textTertiary,
                           ),
                           const SizedBox(width: 12),
@@ -281,7 +282,7 @@ class QuizDetailsScreen extends StatelessWidget {
           ),
           title: Row(
             children: [
-              Icon(Icons.info_outline, color: AppColors.primary),
+              Icon(Ionicons.information_circle_outline, color: AppColors.primary),
               const SizedBox(width: 12),
               const Text('Start Quiz'),
             ],

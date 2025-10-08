@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ionicons/ionicons.dart';
 import '../constants/app_colors.dart';
 
 class CustomTextField extends StatefulWidget {
@@ -39,7 +40,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
         suffixIcon: widget.isPassword
             ? IconButton(
                 icon: Icon(
-                  _obscureText ? Icons.visibility_off : Icons.visibility,
+                  _obscureText ? Ionicons.eye_off_outline : Ionicons.eye_outline,
                   color: AppColors.textTertiary,
                 ),
                 onPressed: () {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_strings.dart';
 
@@ -76,7 +77,7 @@ class _SplashScreenState extends State<SplashScreen>
                       ],
                     ),
                     child: Icon(
-                      Icons.school,
+                      Ionicons.school_outline,
                       size: 80,
                       color: AppColors.primary,
                     ),

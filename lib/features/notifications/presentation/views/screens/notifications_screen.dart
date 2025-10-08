@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_strings.dart';
 import '../../../../../core/widgets/empty_state.dart';
@@ -54,7 +55,7 @@ class NotificationsScreen extends StatelessWidget {
       ),
       body: notifications.isEmpty
           ? EmptyState(
-              icon: Icons.notifications_none,
+              icon: Ionicons.notifications_outline,
               message: AppStrings.noNotifications,
               subtitle: 'We\'ll notify you when something new arrives',
             )
@@ -76,23 +77,23 @@ class NotificationsScreen extends StatelessWidget {
 
     switch (notification['type']) {
       case 'course':
-        icon = Icons.school;
+        icon = Ionicons.school_outline;
         iconColor = AppColors.primary;
         break;
       case 'assignment':
-        icon = Icons.assignment;
+        icon = Ionicons.document_text_outline;
         iconColor = AppColors.accentOrange;
         break;
       case 'lecture':
-        icon = Icons.play_circle_outline;
+        icon = Ionicons.play_circle_outline;
         iconColor = AppColors.accent;
         break;
       case 'quiz':
-        icon = Icons.quiz;
+        icon = Ionicons.help_circle_outline;
         iconColor = AppColors.accentPurple;
         break;
       default:
-        icon = Icons.notifications;
+        icon = Ionicons.notifications_outline;
         iconColor = AppColors.primary;
     }
 

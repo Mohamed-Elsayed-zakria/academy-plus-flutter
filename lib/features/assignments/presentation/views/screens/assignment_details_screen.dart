@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/widgets/custom_button.dart';
 
@@ -107,7 +108,7 @@ class AssignmentDetailsScreen extends StatelessWidget {
                     children: [
                       Expanded(
                         child: _InfoCard(
-                          icon: Icons.calendar_today,
+                          icon: Ionicons.calendar_outline,
                           label: 'Due Date',
                           value: assignment['dueDate'] as String,
                           color: AppColors.error,
@@ -117,7 +118,7 @@ class AssignmentDetailsScreen extends StatelessWidget {
                       if (grade != null)
                         Expanded(
                           child: _InfoCard(
-                            icon: Icons.grade,
+                            icon: Ionicons.star_outline,
                             label: 'Grade',
                             value: '$grade%',
                             color: AppColors.accent,
@@ -131,7 +132,7 @@ class AssignmentDetailsScreen extends StatelessWidget {
                   if (assignment['submittedDate'] != null) ...[
                     const SizedBox(height: 16),
                     _InfoCard(
-                      icon: Icons.check_circle,
+                      icon: Ionicons.checkmark_circle_outline,
                       label: 'Submitted On',
                       value: assignment['submittedDate'] as String,
                       color: AppColors.info,
@@ -171,7 +172,7 @@ class AssignmentDetailsScreen extends StatelessWidget {
                     child: Row(
                       children: [
                         Icon(
-                          Icons.info_outline,
+                          Ionicons.information_circle_outline,
                           color: AppColors.info,
                         ),
                         const SizedBox(width: 12),
@@ -198,7 +199,7 @@ class AssignmentDetailsScreen extends StatelessWidget {
                       },
                       isGradient: true,
                       width: double.infinity,
-                      icon: const Icon(Icons.upload_file, color: Colors.white),
+                      icon: const Icon(Ionicons.cloud_upload_outline, color: Colors.white),
                     ),
                     const SizedBox(height: 12),
                     CustomButton(
@@ -208,7 +209,7 @@ class AssignmentDetailsScreen extends StatelessWidget {
                       },
                       isOutlined: true,
                       width: double.infinity,
-                      icon: Icon(Icons.download, color: AppColors.primary),
+                      icon: Icon(Ionicons.download_outline, color: AppColors.primary),
                     ),
                   ] else if (status == 'Submitted') ...[
                     CustomButton(
@@ -218,7 +219,7 @@ class AssignmentDetailsScreen extends StatelessWidget {
                       },
                       isGradient: true,
                       width: double.infinity,
-                      icon: const Icon(Icons.visibility, color: Colors.white),
+                      icon: const Icon(Ionicons.eye_outline, color: Colors.white),
                     ),
                   ] else if (status == 'Graded') ...[
                     CustomButton(
@@ -228,7 +229,7 @@ class AssignmentDetailsScreen extends StatelessWidget {
                       },
                       isGradient: true,
                       width: double.infinity,
-                      icon: const Icon(Icons.rate_review, color: Colors.white),
+                      icon: const Icon(Ionicons.chatbubble_outline, color: Colors.white),
                     ),
                     const SizedBox(height: 12),
                     CustomButton(
@@ -238,7 +239,7 @@ class AssignmentDetailsScreen extends StatelessWidget {
                       },
                       isOutlined: true,
                       width: double.infinity,
-                      icon: Icon(Icons.workspace_premium, color: AppColors.primary),
+                      icon: Icon(Ionicons.trophy_outline, color: AppColors.primary),
                     ),
                   ],
                 ],

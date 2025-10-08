@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_strings.dart';
 import 'home_screen.dart';
@@ -45,22 +46,22 @@ class _MainScreenState extends State<MainScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _buildNavItem(
-                  icon: Icons.home_rounded,
+                  icon: Ionicons.home_outline,
                   label: AppStrings.home,
                   index: 0,
                 ),
                 _buildNavItem(
-                  icon: Icons.notifications_rounded,
+                  icon: Ionicons.notifications_outline,
                   label: AppStrings.notifications,
                   index: 1,
                 ),
                 _buildNavItem(
-                  icon: Icons.subscriptions_rounded,
+                  icon: Ionicons.card_outline,
                   label: AppStrings.subscriptions,
                   index: 2,
                 ),
                 _buildNavItem(
-                  icon: Icons.person_rounded,
+                  icon: Ionicons.person_outline,
                   label: AppStrings.profile,
                   index: 3,
                 ),

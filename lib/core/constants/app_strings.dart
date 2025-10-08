@@ -1,7 +1,7 @@
 class AppStrings {
   // Welcome & Auth
-  static const String appName = 'University';
-  static const String welcome = 'Welcome to University';
+  static const String appName = 'Academy Plus';
+  static const String welcome = 'Welcome to Academy Plus';
   static const String login = 'Login';
   static const String register = 'Register';
   static const String phoneNumber = 'Phone Number';

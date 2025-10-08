@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
 
 class AssignmentsScreen extends StatelessWidget {
@@ -64,7 +65,7 @@ class AssignmentsScreen extends StatelessWidget {
         title: const Text('Assignments'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.filter_list),
+            icon: const Icon(Ionicons.filter_outline),
             onPressed: () {
               // Filter functionality
             },
@@ -113,13 +114,13 @@ class _AssignmentCard extends StatelessWidget {
   IconData _getStatusIcon(String status) {
     switch (status) {
       case 'Pending':
-        return Icons.pending_actions;
+        return Ionicons.time_outline;
       case 'Submitted':
-        return Icons.check_circle_outline;
+        return Ionicons.checkmark_circle_outline;
       case 'Graded':
-        return Icons.grade;
+        return Ionicons.star_outline;
       default:
-        return Icons.assignment;
+        return Ionicons.document_text_outline;
     }
   }
 
@@ -187,7 +188,7 @@ class _AssignmentCard extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(
-                            Icons.star,
+                            Ionicons.star_outline,
                             size: 14,
                             color: AppColors.accent,
                           ),
@@ -222,7 +223,7 @@ class _AssignmentCard extends StatelessWidget {
               Row(
                 children: [
                   Icon(
-                    Icons.book_outlined,
+                    Ionicons.book_outline,
                     size: 16,
                     color: AppColors.textSecondary,
                   ),
@@ -242,7 +243,7 @@ class _AssignmentCard extends StatelessWidget {
               Row(
                 children: [
                   Icon(
-                    Icons.calendar_today,
+                    Ionicons.calendar_outline,
                     size: 16,
                     color: status == 'Pending'
                         ? AppColors.error
@@ -262,7 +263,7 @@ class _AssignmentCard extends StatelessWidget {
                   ),
                   const Spacer(),
                   Icon(
-                    Icons.arrow_forward_ios,
+                    Ionicons.chevron_forward_outline,
                     size: 16,
                     color: AppColors.textTertiary,
                   ),

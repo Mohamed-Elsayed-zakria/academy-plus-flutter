@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:ionicons/ionicons.dart';
 import 'dart:io';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_strings.dart';
@@ -86,7 +87,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         ),
                         child: _profileImage == null
                             ? Icon(
-                                Icons.person,
+                                Ionicons.person_outline,
                                 size: 60,
                                 color: AppColors.textTertiary,
                               )
@@ -106,7 +107,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             ),
                           ),
                           child: Icon(
-                            Icons.camera_alt,
+                            Ionicons.camera_outline,
                             size: 20,
                             color: Colors.white,
                           ),
@@ -127,7 +128,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               CustomTextField(
                 hintText: AppStrings.fullName,
                 controller: _nameController,
-                prefixIcon: const Icon(Icons.person_outline),
+                prefixIcon: const Icon(Ionicons.person_outline),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter your full name';
@@ -140,7 +141,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 hintText: AppStrings.phoneNumber,
                 controller: _phoneController,
                 keyboardType: TextInputType.phone,
-                prefixIcon: const Icon(Icons.phone_outlined),
+                prefixIcon: const Icon(Ionicons.call_outline),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter your phone number';
@@ -153,7 +154,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 hintText: 'Email',
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
-                prefixIcon: const Icon(Icons.email_outlined),
+                prefixIcon: const Icon(Ionicons.mail_outline),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter your email';
@@ -166,7 +167,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 initialValue: _selectedUniversity,
                 decoration: InputDecoration(
                   hintText: AppStrings.selectUniversity,
-                  prefixIcon: const Icon(Icons.school_outlined),
+                  prefixIcon: const Icon(Ionicons.school_outline),
                 ),
                 items: _universities
                     .map((university) => DropdownMenuItem(

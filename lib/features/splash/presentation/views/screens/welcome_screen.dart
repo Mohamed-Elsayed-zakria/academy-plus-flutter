@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_strings.dart';
 import '../../../../../core/widgets/custom_button.dart';
@@ -87,7 +88,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                             ],
                           ),
                           child: Icon(
-                            Icons.school,
+                            Ionicons.school_outline,
                             size: 100,
                             color: AppColors.primary,
                           ),
