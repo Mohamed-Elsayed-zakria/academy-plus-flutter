@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/localization/app_localizations.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -142,7 +143,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 children: [
                   // User Information Section
                   Text(
-                    'Personal Information',
+                    AppLocalizations.personalInformation,
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: AppColors.textPrimary,
@@ -152,7 +153,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                   _buildInfoCard(
                     icon: Ionicons.mail_outline,
-                    label: 'Email',
+                    label: AppLocalizations.email,
                     value: user['email'] as String,
                     color: AppColors.primary,
                   ),
@@ -160,7 +161,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                   _buildInfoCard(
                     icon: Ionicons.call_outline,
-                    label: 'Phone',
+                    label: AppLocalizations.phone,
                     value: user['phone'] as String,
                     color: AppColors.primary,
                   ),
@@ -168,7 +169,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                   _buildInfoCard(
                     icon: Ionicons.school_outline,
-                    label: 'University',
+                    label: AppLocalizations.university,
                     value: user['university'] as String,
                     color: AppColors.primary,
                   ),
@@ -177,7 +178,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                   // Settings & Actions Section
                   Text(
-                    "Settings",
+                    AppLocalizations.settings,
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: AppColors.textPrimary,
@@ -188,7 +189,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   // Language Selector
                   _buildActionButton(
                     icon: Ionicons.language_outline,
-                    title: 'Language',
+                    title: AppLocalizations.language,
                     subtitle: _selectedLanguage == 'English'
                         ? 'الإنجليزية'
                         : 'العربية',
@@ -204,8 +205,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     icon: _isDarkMode
                         ? Ionicons.moon_outline
                         : Ionicons.sunny_outline,
-                    title: 'Dark Mode',
-                    subtitle: _isDarkMode ? 'Enabled' : 'Disabled',
+                    title: AppLocalizations.darkMode,
+                    subtitle: _isDarkMode ? AppLocalizations.enabled : AppLocalizations.disabled,
                     color: AppColors.primary,
                     onTap: () {
                       _showThemeDialog(context);
@@ -235,7 +236,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                   _buildActionButton(
                     icon: Ionicons.help_circle_outline,
-                    title: 'Help & Support',
+                    title: AppLocalizations.helpSupport,
                     color: AppColors.primary,
                     onTap: () {
                       // Navigate to help
@@ -245,7 +246,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                   _buildActionButton(
                     icon: Ionicons.information_circle_outline,
-                    title: 'About',
+                    title: AppLocalizations.about,
                     color: AppColors.primary,
                     onTap: () {
                       // Show about dialog
@@ -718,7 +719,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: const Text('Logout'),
+              child: Text(AppLocalizations.logout),
             ),
           ],
         );

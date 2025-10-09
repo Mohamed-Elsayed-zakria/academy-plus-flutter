@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/localization/app_localizations.dart';
 
 class CourseContentScreen extends StatefulWidget {
   final String courseId;
@@ -49,7 +50,7 @@ class _CourseContentScreenState extends State<CourseContentScreen>
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Course Content'),
+          title: Text(AppLocalizations.courseContent),
           backgroundColor: AppColors.surface,
           elevation: 0,
         ),
@@ -594,7 +595,7 @@ class _CourseContentScreenState extends State<CourseContentScreen>
                 exam['title'] as String,
                 style: const TextStyle(fontWeight: FontWeight.w600),
               ),
-              subtitle: Text('Year: ${exam['year']}'),
+              subtitle: Text('${AppLocalizations.year} ${exam['year']}'),
               trailing: Icon(
                 Ionicons.download_outline,
                 color: AppColors.primary,

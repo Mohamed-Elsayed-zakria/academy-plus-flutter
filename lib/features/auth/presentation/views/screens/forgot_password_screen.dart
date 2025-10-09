@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/localization/app_localizations.dart';
 import '../../../../../core/widgets/custom_button.dart';
 import '../../../../../core/widgets/custom_phone_input.dart';
 import '../../../../../core/utils/navigation_helper.dart';
@@ -88,7 +89,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       const SizedBox(height: 24),
                       // Welcome Text
                       Text(
-                        'Reset Password',
+                        AppLocalizations.resetPassword,
                         style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                               fontWeight: FontWeight.w600,
                               color: AppColors.textPrimary,
@@ -97,7 +98,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Enter your phone number to receive OTP',
+                        AppLocalizations.enterPhoneReset,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                               color: AppColors.textSecondary,
                             ),
@@ -135,7 +136,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           child: Column(
                             children: [
                               Text(
-                                'Forgot Password?',
+                                AppLocalizations.forgotPassword,
                                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                                       fontWeight: FontWeight.bold,
                                       color: AppColors.textPrimary,
@@ -143,7 +144,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                               ),
                               const SizedBox(height: 8),
                               Text(
-                                'No worries! We\'ll send you reset instructions',
+                                AppLocalizations.noWorries,
                                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                       color: AppColors.textSecondary,
                                     ),
@@ -157,15 +158,15 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
                         // Phone Number Field
                         CustomPhoneInput(
-                          hintText: 'Phone Number',
+                          hintText: AppLocalizations.phoneNumber,
                           controller: _phoneController,
                           initialCountryCode: 'EG',
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Please enter your phone number';
+                              return AppLocalizations.pleaseEnterPhone;
                             }
                             if (value.length < 10) {
-                              return 'Please enter a valid phone number';
+                              return AppLocalizations.pleaseEnterValidPhone;
                             }
                             return null;
                           },
@@ -175,7 +176,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
                         // Send OTP Button
                         CustomButton(
-                          text: _isLoading ? 'Sending...' : 'Send OTP',
+                          text: _isLoading ? AppLocalizations.sending : AppLocalizations.sendOtp,
                           onPressed: _isLoading ? null : () => _sendOTP(),
                           isGradient: true,
                           width: double.infinity,
@@ -212,7 +213,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Text(
-                        'OR',
+                        AppLocalizations.or,
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: AppColors.textTertiary,
                           fontWeight: FontWeight.w500,
@@ -235,8 +236,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     text: TextSpan(
                       style: Theme.of(context).textTheme.bodyLarge,
                       children: [
-                        const TextSpan(
-                          text: "Remember your password? ",
+                        TextSpan(
+                          text: AppLocalizations.rememberPassword,
                           style: TextStyle(color: AppColors.textSecondary),
                         ),
                         WidgetSpan(
@@ -248,7 +249,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                               );
                             },
                             child: Text(
-                              'Back to Login',
+                              AppLocalizations.backToLogin,
                               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                                     color: AppColors.primary,
                                     fontWeight: FontWeight.w600,

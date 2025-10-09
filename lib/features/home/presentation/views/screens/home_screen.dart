@@ -6,6 +6,7 @@ import 'package:university/features/home/presentation/views/widgets/home_screen_
 import 'package:university/features/home/presentation/views/widgets/home_screen_search_bar.dart';
 import 'package:university/features/home/presentation/views/widgets/home_screen_sub_departments_grid.dart';
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/localization/app_localizations.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -88,7 +89,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Academy Plus'),
+        title: Text(AppLocalizations.appName),
         actions: [
           IconButton(
             onPressed: () {},
@@ -119,7 +120,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
-                'Departments',
+                AppLocalizations.departments,
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: AppColors.textPrimary,

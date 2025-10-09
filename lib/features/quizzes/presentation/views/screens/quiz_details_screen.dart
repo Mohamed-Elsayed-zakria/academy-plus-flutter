@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/localization/app_localizations.dart';
 import '../../../../../core/widgets/custom_button.dart';
 
 class QuizDetailsScreen extends StatelessWidget {
@@ -21,7 +22,7 @@ class QuizDetailsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Quiz Details'),
+        title: Text(AppLocalizations.quizDetails),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -86,7 +87,7 @@ class QuizDetailsScreen extends StatelessWidget {
                       Expanded(
                         child: _InfoCard(
                           icon: Ionicons.help_circle_outline,
-                          label: 'Questions',
+                          label: AppLocalizations.questions,
                           value: '$questions',
                           color: AppColors.primary,
                         ),
@@ -95,7 +96,7 @@ class QuizDetailsScreen extends StatelessWidget {
                       Expanded(
                         child: _InfoCard(
                           icon: Ionicons.time_outline,
-                          label: 'Duration',
+                          label: AppLocalizations.duration,
                           value: '$duration min',
                           color: AppColors.accentOrange,
                         ),
@@ -108,7 +109,7 @@ class QuizDetailsScreen extends StatelessWidget {
                       Expanded(
                         child: _InfoCard(
                           icon: Ionicons.refresh_outline,
-                          label: 'Attempts',
+                          label: AppLocalizations.attempts,
                           value: '$attempts',
                           color: AppColors.accentPurple,
                         ),
@@ -117,7 +118,7 @@ class QuizDetailsScreen extends StatelessWidget {
                       Expanded(
                         child: _InfoCard(
                           icon: Ionicons.star_outline,
-                          label: 'Best Score',
+                          label: AppLocalizations.bestScore,
                           value: bestScore != null ? '$bestScore%' : 'N/A',
                           color: AppColors.accent,
                         ),
@@ -129,7 +130,7 @@ class QuizDetailsScreen extends StatelessWidget {
 
                   // Instructions
                   Text(
-                    'Instructions',
+                    AppLocalizations.instructions,
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -138,22 +139,22 @@ class QuizDetailsScreen extends StatelessWidget {
 
                   _InstructionItem(
                     icon: Ionicons.time_outline,
-                    text: 'You have $duration minutes to complete the quiz.',
+                    text: AppLocalizations.youHaveMinutesQuiz.replaceAll('{duration}', '$duration'),
                   ),
                   const SizedBox(height: 12),
                   _InstructionItem(
                     icon: Ionicons.help_circle_outline,
-                    text: 'The quiz contains $questions questions.',
+                    text: AppLocalizations.quizContainsQuestionsCount.replaceAll('{questions}', '$questions'),
                   ),
                   const SizedBox(height: 12),
                   _InstructionItem(
                     icon: Ionicons.lock_closed_outline,
-                    text: 'Once started, the timer cannot be paused.',
+                    text: AppLocalizations.timerCannotBePaused,
                   ),
                   const SizedBox(height: 12),
                   _InstructionItem(
                     icon: Ionicons.checkmark_circle_outline,
-                    text: 'Review your answers before submitting.',
+                    text: AppLocalizations.reviewAnswersBeforeSubmitting,
                   ),
 
                   const SizedBox(height: 32),
@@ -180,7 +181,7 @@ class QuizDetailsScreen extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Deadline',
+                                AppLocalizations.deadline,
                                 style: TextStyle(
                                   color: AppColors.warning,
                                   fontWeight: FontWeight.bold,
@@ -204,7 +205,7 @@ class QuizDetailsScreen extends StatelessWidget {
                   // Action Buttons
                   if (status == 'Available') ...[
                     CustomButton(
-                      text: attempts > 0 ? 'Retake Quiz' : 'Start Quiz',
+                      text: attempts > 0 ? AppLocalizations.retakeQuiz : AppLocalizations.startQuiz,
                       onPressed: () {
                         _showStartConfirmation(context);
                       },
@@ -218,7 +219,7 @@ class QuizDetailsScreen extends StatelessWidget {
                     if (bestScore != null) ...[
                       const SizedBox(height: 12),
                       CustomButton(
-                        text: 'View Previous Attempt',
+                        text: AppLocalizations.viewPreviousAttempt,
                         onPressed: () {
                           // View previous attempt
                         },
@@ -229,7 +230,7 @@ class QuizDetailsScreen extends StatelessWidget {
                     ],
                   ] else if (status == 'Completed') ...[
                     CustomButton(
-                      text: 'View Results',
+                      text: AppLocalizations.viewResults,
                       onPressed: () {
                         // View results
                       },
@@ -253,7 +254,7 @@ class QuizDetailsScreen extends StatelessWidget {
                           const SizedBox(width: 12),
                           Expanded(
                             child: Text(
-                              'This quiz is not yet available',
+                              AppLocalizations.quizNotAvailable,
                               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                                     color: AppColors.textSecondary,
                                   ),
@@ -284,16 +285,16 @@ class QuizDetailsScreen extends StatelessWidget {
             children: [
               Icon(Ionicons.information_circle_outline, color: AppColors.primary),
               const SizedBox(width: 12),
-              const Text('Start Quiz'),
+              Text(AppLocalizations.startQuiz),
             ],
           ),
-          content: const Text(
-            'Are you ready to start the quiz? The timer will begin immediately.',
+          content: Text(
+            AppLocalizations.areYouReadyStart,
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
+              child: Text(AppLocalizations.cancel),
             ),
             ElevatedButton(
               onPressed: () {
@@ -306,7 +307,7 @@ class QuizDetailsScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: const Text('Start'),
+              child: Text(AppLocalizations.start),
             ),
           ],
         );

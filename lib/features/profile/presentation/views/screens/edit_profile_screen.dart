@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:ionicons/ionicons.dart';
 import 'dart:io';
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/localization/app_localizations.dart';
 import '../../../../../core/widgets/custom_button.dart';
 import '../../../../../core/widgets/custom_text_field.dart';
 
@@ -53,7 +54,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit Profile'),
+        title: Text(AppLocalizations.editProfile),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
@@ -118,45 +119,45 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
               const SizedBox(height: 8),
               Text(
-                'Tap to change profile picture',
+                AppLocalizations.tapToChangePicture,
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               const SizedBox(height: 32),
 
               // Form Fields
               CustomTextField(
-                hintText: 'Full Name',
+                hintText: AppLocalizations.fullName,
                 controller: _nameController,
                 prefixIcon: const Icon(Ionicons.person_outline),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter your full name';
+                    return AppLocalizations.pleaseEnterFullName;
                   }
                   return null;
                 },
               ),
               const SizedBox(height: 16),
               CustomTextField(
-                hintText: 'Phone Number',
+                hintText: AppLocalizations.phoneNumber,
                 controller: _phoneController,
                 keyboardType: TextInputType.phone,
                 prefixIcon: const Icon(Ionicons.call_outline),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter your phone number';
+                    return AppLocalizations.pleaseEnterPhone;
                   }
                   return null;
                 },
               ),
               const SizedBox(height: 16),
               CustomTextField(
-                hintText: 'Email',
+                hintText: AppLocalizations.email,
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
                 prefixIcon: const Icon(Ionicons.mail_outline),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter your email';
+                    return AppLocalizations.pleaseEnterEmail;
                   }
                   return null;
                 },
@@ -165,7 +166,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               DropdownButtonFormField<String>(
                 initialValue: _selectedUniversity,
                 decoration: InputDecoration(
-                  hintText: 'Select University',
+                  hintText: AppLocalizations.selectUniversity,
                   prefixIcon: const Icon(Ionicons.school_outline),
                 ),
                 items: _universities
@@ -181,7 +182,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 },
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please select your university';
+                    return AppLocalizations.pleaseSelectUniversity;
                   }
                   return null;
                 },
@@ -190,7 +191,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
               // Save Button
               CustomButton(
-                text: 'Save Changes',
+                text: AppLocalizations.saveChanges,
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     // Save profile changes

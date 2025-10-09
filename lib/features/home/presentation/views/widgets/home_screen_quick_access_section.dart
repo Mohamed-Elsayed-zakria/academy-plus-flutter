@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/localization/app_localizations.dart';
 
 class HomeScreenQuickAccessSection extends StatelessWidget {
   const HomeScreenQuickAccessSection({super.key});
@@ -15,7 +16,7 @@ class HomeScreenQuickAccessSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Quick Access',
+            AppLocalizations.quickAccess,
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.w600,
               color: AppColors.textPrimary,
@@ -27,8 +28,8 @@ class HomeScreenQuickAccessSection extends StatelessWidget {
               Expanded(
                 child: _buildEnhancedQuickAccessCard(
                   context: context,
-                  title: 'Assignments',
-                  subtitle: 'View & Submit',
+                  title: AppLocalizations.assignments,
+                  subtitle: AppLocalizations.viewSubmit,
                   icon: Ionicons.clipboard_outline,
                   color: AppColors.primary,
                   gradient: AppColors.primaryGradient,
@@ -41,8 +42,8 @@ class HomeScreenQuickAccessSection extends StatelessWidget {
               Expanded(
                 child: _buildEnhancedQuickAccessCard(
                   context: context,
-                  title: 'Quizzes',
-                  subtitle: 'Take Quiz',
+                  title: AppLocalizations.quizzes,
+                  subtitle: AppLocalizations.takeQuiz,
                   icon: Ionicons.school_outline,
                   color: AppColors.accent,
                   gradient: LinearGradient(

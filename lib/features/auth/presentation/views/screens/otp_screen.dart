@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/localization/app_localizations.dart';
 import '../../../../../core/widgets/custom_button.dart';
 import '../../../../../core/utils/navigation_helper.dart';
 
@@ -58,7 +59,7 @@ class _OtpScreenState extends State<OtpScreen> {
     );
 
     return Scaffold(
-      appBar: AppBar(title: Text('Verify OTP')),
+      appBar: AppBar(title: Text(AppLocalizations.verifyOtp)),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
@@ -67,12 +68,12 @@ class _OtpScreenState extends State<OtpScreen> {
             children: [
               const SizedBox(height: 20),
               Text(
-                'Verify OTP',
+                AppLocalizations.verifyOtp,
                 style: Theme.of(context).textTheme.displayMedium,
               ),
               const SizedBox(height: 8),
               Text(
-                'Enter the code sent to your phone',
+                AppLocalizations.enterOtp,
                 style: Theme.of(
                   context,
                 ).textTheme.bodyLarge?.copyWith(color: AppColors.textSecondary),
@@ -115,7 +116,7 @@ class _OtpScreenState extends State<OtpScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Didn't receive code? ",
+                    AppLocalizations.didntReceiveCode,
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   GestureDetector(
@@ -134,7 +135,7 @@ class _OtpScreenState extends State<OtpScreen> {
               ),
               const SizedBox(height: 48),
               CustomButton(
-                text: 'Verify',
+                text: AppLocalizations.verify,
                 onPressed: () {
                   // Simulate OTP verification
                   if (isResetPassword) {

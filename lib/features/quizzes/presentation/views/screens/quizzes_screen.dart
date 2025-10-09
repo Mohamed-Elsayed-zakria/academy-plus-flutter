@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/localization/app_localizations.dart';
 
 class QuizzesScreen extends StatelessWidget {
   const QuizzesScreen({super.key});
@@ -69,7 +70,7 @@ class QuizzesScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Quizzes'),
+        title: Text(AppLocalizations.quizzes),
         actions: [
           IconButton(
             icon: const Icon(Ionicons.filter_outline),

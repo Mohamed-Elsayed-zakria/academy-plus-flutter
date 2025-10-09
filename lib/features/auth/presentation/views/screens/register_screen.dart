@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/localization/app_localizations.dart';
 import '../../../../../core/widgets/custom_button.dart';
 import '../../../../../core/widgets/custom_text_field.dart';
 import '../../../../../core/widgets/custom_phone_input.dart';
@@ -105,7 +106,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       
                       // Welcome Text
                       Text(
-                        'Academy Plus',
+                        AppLocalizations.appName,
                         style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.w600,
                           color: AppColors.textPrimary,
@@ -142,12 +143,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                             // Full Name Field
                             CustomTextField(
-                              hintText: 'Full Name',
+                              hintText: AppLocalizations.fullName,
                               controller: _nameController,
                               prefixIcon: const Icon(Ionicons.person_outline),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'Please enter your full name';
+                                  return AppLocalizations.pleaseEnterFullName;
                                 }
                                 return null;
                               },
@@ -157,7 +158,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                             // Password Field
                             CustomTextField(
-                              hintText: 'Password',
+                              hintText: AppLocalizations.password,
                               controller: _passwordController,
                               isPassword: true,
                               prefixIcon: const Icon(
@@ -168,7 +169,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   return 'Please enter your password';
                                 }
                                 if (value.length < 6) {
-                                  return 'Password must be at least 6 characters';
+                                  return AppLocalizations.passwordMustBeAtLeast6;
                                 }
                                 return null;
                               },
@@ -178,7 +179,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                             // Confirm Password Field
                             CustomTextField(
-                              hintText: 'Confirm Password',
+                              hintText: AppLocalizations.confirmPassword,
                               controller: _confirmPasswordController,
                               isPassword: true,
                               prefixIcon: const Icon(
@@ -186,10 +187,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               ),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'Please confirm your password';
+                                  return AppLocalizations.pleaseConfirmPassword;
                                 }
                                 if (value != _passwordController.text) {
-                                  return 'Passwords do not match';
+                                  return AppLocalizations.passwordsDoNotMatch;
                                 }
                                 return null;
                               },
@@ -199,12 +200,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                             // Phone Number Field
                             CustomPhoneInput(
-                              hintText: 'Phone Number',
+                              hintText: AppLocalizations.phoneNumber,
                               controller: _phoneController,
                               initialCountryCode: 'EG',
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'Please enter your phone number';
+                                  return AppLocalizations.pleaseEnterPhone;
                                 }
                                 return null;
                               },
@@ -217,7 +218,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Select University',
+                                  AppLocalizations.selectUniversity,
                                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                     fontWeight: FontWeight.w600,
                                     color: AppColors.textPrimary,
@@ -295,7 +296,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                             // Register Button
                             CustomButton(
-                              text: 'Register',
+                              text: AppLocalizations.register,
                               onPressed: () {
                                 setState(() {
                                   _hasAttemptedSubmit = true;
@@ -339,7 +340,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     horizontal: 16,
                                   ),
                                   child: Text(
-                                    'OR',
+                                    AppLocalizations.or,
                                     style: Theme.of(context).textTheme.bodySmall
                                         ?.copyWith(
                                           color: AppColors.textTertiary,
@@ -365,8 +366,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 text: TextSpan(
                                   style: Theme.of(context).textTheme.bodyLarge,
                                   children: [
-                                    const TextSpan(
-                                      text: "Already have an account? ",
+                                    TextSpan(
+                                      text: AppLocalizations.alreadyHaveAccount,
                                       style: TextStyle(
                                         color: AppColors.textSecondary,
                                       ),
@@ -378,7 +379,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                           context: context,
                                         ),
                                         child: Text(
-                                          'Login',
+                                          AppLocalizations.login,
                                           style: Theme.of(context)
                                               .textTheme
                                               .bodyLarge
@@ -539,7 +540,7 @@ class _UniversityPickerBottomSheetState extends State<_UniversityPickerBottomShe
               controller: _searchController,
               onChanged: _filterUniversities,
               decoration: InputDecoration(
-                hintText: 'ابحث عن الجامعة...',
+                hintText: AppLocalizations.searchUniversityPlaceholder,
                 hintStyle: TextStyle(
                   color: AppColors.textTertiary,
                   fontSize: 14,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/localization/app_localizations.dart';
 import '../../../../../features/onboarding/data/services/onboarding_service.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -91,7 +92,7 @@ class _SplashScreenState extends State<SplashScreen>
                   ),
                   const SizedBox(height: 24),
                   Text(
-                    'Academy Plus',
+                    AppLocalizations.appName,
                     style: Theme.of(context).textTheme.displayLarge?.copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,

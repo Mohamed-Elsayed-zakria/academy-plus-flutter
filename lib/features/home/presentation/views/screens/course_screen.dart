@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/localization/app_localizations.dart';
 import '../../../../../core/widgets/custom_button.dart';
 import '../../../../../core/utils/whatsapp_launcher.dart';
 
@@ -32,7 +33,7 @@ class CourseScreen extends StatelessWidget {
         ((course['price'] as double) * (course['discount'] as int) / 100);
 
     return Scaffold(
-      appBar: AppBar(title: Text('Course Details')),
+      appBar: AppBar(title: Text(AppLocalizations.courseDetails)),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -82,7 +83,7 @@ class CourseScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
-                      'Free Preview',
+                      AppLocalizations.freePreview,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: AppColors.primary,
                         fontWeight: FontWeight.w600,
@@ -130,7 +131,7 @@ class CourseScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Instructor',
+                            AppLocalizations.instructor,
                             style: Theme.of(context).textTheme.bodySmall,
                           ),
                           Text(
@@ -157,7 +158,7 @@ class CourseScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Price',
+                              AppLocalizations.price,
                               style: Theme.of(context).textTheme.bodySmall,
                             ),
                             const SizedBox(height: 4),
@@ -218,7 +219,7 @@ class CourseScreen extends StatelessWidget {
                   // Description
                   if (course['description'] != null) ...[
                     Text(
-                      'About this course',
+                      AppLocalizations.aboutCourse,
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                     const SizedBox(height: 8),
@@ -236,7 +237,7 @@ class CourseScreen extends StatelessWidget {
                   // Subscription Buttons (based on available options)
                   if (course['hasPaymentGateway'] == true)
                     CustomButton(
-                      text: 'Subscribe',
+                      text: AppLocalizations.subscribe,
                       onPressed: () {
                         // Navigate to course content after subscription
                         context.push('/course/$courseId/content');
@@ -249,7 +250,7 @@ class CourseScreen extends StatelessWidget {
                     const SizedBox(height: 12),
                   if (course['hasWhatsApp'] == true)
                     CustomButton(
-                      text: 'Contact via WhatsApp',
+                      text: AppLocalizations.contactWhatsapp,
                       onPressed: () async {
                         // Get course name (bilingual or fallback to title)
                         final courseName =

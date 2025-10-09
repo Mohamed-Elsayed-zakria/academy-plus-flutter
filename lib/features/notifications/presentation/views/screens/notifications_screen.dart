@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/localization/app_localizations.dart';
 import '../../../../../core/widgets/empty_state.dart';
 
 class NotificationsScreen extends StatelessWidget {
@@ -42,20 +43,20 @@ class NotificationsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Notifications'),
+        title: Text(AppLocalizations.notifications),
         actions: [
           TextButton(
             onPressed: () {
               // Mark all as read
             },
-            child: Text('Mark all read'),
+            child: Text(AppLocalizations.markAllRead),
           ),
         ],
       ),
       body: notifications.isEmpty
           ? EmptyState(
               icon: Ionicons.notifications_outline,
-              message: 'No notifications yet',
+              message: AppLocalizations.noNotifications,
               subtitle: 'We\'ll notify you when something new arrives',
             )
           : ListView.builder(

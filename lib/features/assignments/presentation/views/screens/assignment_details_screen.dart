@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/localization/app_localizations.dart';
 import '../../../../../core/widgets/custom_button.dart';
 
 class AssignmentDetailsScreen extends StatelessWidget {
@@ -32,7 +33,7 @@ class AssignmentDetailsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Assignment Details'),
+        title: Text(AppLocalizations.assignmentDetails),
       ),
       body: SingleChildScrollView(
         child: Column(

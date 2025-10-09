@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/localization/app_localizations.dart';
 import '../../../../../core/widgets/empty_state.dart';
 
 class SubscriptionsScreen extends StatelessWidget {
@@ -38,12 +39,12 @@ class SubscriptionsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Subscriptions'),
+        title: Text(AppLocalizations.subscriptions),
       ),
       body: subscriptions.isEmpty
           ? EmptyState(
               icon: Ionicons.card_outline,
-              message: 'No active subscriptions',
+              message: AppLocalizations.noSubscriptions,
               subtitle: 'Subscribe to courses to see them here',
             )
           : ListView.builder(
@@ -111,7 +112,7 @@ class SubscriptionsScreen extends StatelessWidget {
                     ),
                   ),
                   child: Text(
-                    isActive ? 'Active' : 'Completed',
+                    isActive ? AppLocalizations.active : AppLocalizations.completed,
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
@@ -159,7 +160,7 @@ class SubscriptionsScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Progress',
+                      AppLocalizations.progress,
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     Text(

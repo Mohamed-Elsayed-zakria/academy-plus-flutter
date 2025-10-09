@@ -2,6 +2,7 @@ import '../../../../notifications/presentation/views/screens/notifications_scree
 import '../../../../subscriptions/presentation/views/screens/subscriptions_screen.dart';
 import '../../../../profile/presentation/views/screens/profile_screen.dart';
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'home_screen.dart';
@@ -48,22 +49,22 @@ class _MainScreenState extends State<MainScreen> {
               children: [
                 _buildNavItem(
                   icon: Ionicons.home_outline,
-                  label: 'Home',
+                  label: AppLocalizations.home,
                   index: 0,
                 ),
                 _buildNavItem(
                   icon: Ionicons.notifications_outline,
-                  label: 'Notifications',
+                  label: AppLocalizations.notifications,
                   index: 1,
                 ),
                 _buildNavItem(
                   icon: Ionicons.card_outline,
-                  label: 'Subscriptions',
+                  label: AppLocalizations.subscriptions,
                   index: 2,
                 ),
                 _buildNavItem(
                   icon: Ionicons.person_outline,
-                  label: 'Profile',
+                  label: AppLocalizations.profile,
                   index: 3,
                 ),
               ],

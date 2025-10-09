@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import '../constants/app_colors.dart';
+import '../localization/app_localizations.dart';
 
 class Country {
   final String name;
@@ -92,7 +93,7 @@ class _CustomPhoneInputState extends State<CustomPhoneInput> {
 
   String? _validatePhoneNumber(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Please enter your phone number';
+      return AppLocalizations.pleaseEnterPhoneNumber;
     }
 
     // Remove any non-digit characters for validation
@@ -100,11 +101,11 @@ class _CustomPhoneInputState extends State<CustomPhoneInput> {
 
     // Basic validation - at least 7 digits, maximum 15 digits
     if (digitsOnly.length < 7) {
-      return 'Please enter a valid phone number';
+      return AppLocalizations.pleaseEnterValidPhoneNumber;
     }
 
     if (digitsOnly.length > 15) {
-      return 'Phone number is too long';
+      return AppLocalizations.phoneNumberTooLong;
     }
 
     // Call custom validator if provided
@@ -303,7 +304,7 @@ class _CountryPickerBottomSheetState extends State<_CountryPickerBottomSheet> {
               controller: _searchController,
               onChanged: _filterCountries,
               decoration: InputDecoration(
-                hintText: 'ابحث عن الدولة...',
+                hintText: AppLocalizations.searchCountry,
                 hintStyle: TextStyle(
                   color: AppColors.textTertiary,
                   fontSize: 14,

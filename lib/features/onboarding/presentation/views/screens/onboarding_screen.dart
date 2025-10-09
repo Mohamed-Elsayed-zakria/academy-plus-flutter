@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../data/data_sources/onboarding_data.dart';
 import '../../../data/services/onboarding_service.dart';
 import '../../../data/models/onboarding_page.dart';
+import '../../../../../core/localization/app_localizations.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -81,7 +82,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                 child: TextButton(
                   onPressed: _skipOnboarding,
                   child: Text(
-                    'Skip',
+                    AppLocalizations.skip,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: Colors.grey[600],
                           fontWeight: FontWeight.w500,
@@ -151,7 +152,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                         );
                       },
                       child: Text(
-                        'Previous',
+                        AppLocalizations.previous,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                               color: Colors.grey[600],
                               fontWeight: FontWeight.w500,
@@ -177,8 +178,8 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                     ),
                     child: Text(
                       _currentPage == OnboardingData.pages.length - 1
-                          ? 'Get Started'
-                          : 'Next',
+                          ? AppLocalizations.getStarted
+                          : AppLocalizations.next,
                       style: const TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 16.0,

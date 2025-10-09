@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/localization/app_localizations.dart';
 import '../../../../../core/widgets/custom_button.dart';
 import '../../../../../core/widgets/custom_text_field.dart';
 import '../../../../../core/utils/navigation_helper.dart';
@@ -195,16 +196,16 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
                         // New Password Field
                         CustomTextField(
-                          hintText: 'New Password',
+                          hintText: AppLocalizations.newPassword,
                           controller: _passwordController,
                           isPassword: true,
                           prefixIcon: const Icon(Ionicons.lock_closed_outline),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Please enter your new password';
+                              return AppLocalizations.pleaseEnterNewPassword;
                             }
                             if (value.length < 6) {
-                              return 'Password must be at least 6 characters';
+                              return AppLocalizations.passwordMustBeAtLeast6;
                             }
                             return null;
                           },
@@ -214,16 +215,16 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
                         // Confirm Password Field
                         CustomTextField(
-                          hintText: 'Confirm New Password',
+                          hintText: AppLocalizations.confirmNewPassword,
                           controller: _confirmPasswordController,
                           isPassword: true,
                           prefixIcon: const Icon(Ionicons.lock_closed_outline),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Please confirm your new password';
+                              return AppLocalizations.pleaseConfirmNewPassword;
                             }
                             if (value != _passwordController.text) {
-                              return 'Passwords do not match';
+                              return AppLocalizations.passwordsDoNotMatch;
                             }
                             return null;
                           },
@@ -293,8 +294,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     text: TextSpan(
                       style: Theme.of(context).textTheme.bodyLarge,
                       children: [
-                        const TextSpan(
-                          text: "Remember your password? ",
+                        TextSpan(
+                          text: AppLocalizations.rememberPassword,
                           style: TextStyle(color: AppColors.textSecondary),
                         ),
                         WidgetSpan(

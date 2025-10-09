@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/localization/app_localizations.dart';
 
 class AssignmentsScreen extends StatelessWidget {
   const AssignmentsScreen({super.key});
@@ -65,7 +66,7 @@ class AssignmentsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Assignments'),
+        title: Text(AppLocalizations.assignments),
         actions: [
           IconButton(
             icon: const Icon(Ionicons.filter_outline),

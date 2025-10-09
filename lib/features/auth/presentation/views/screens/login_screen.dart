@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/localization/app_localizations.dart';
 import '../../../../../core/widgets/custom_button.dart';
 import '../../../../../core/widgets/custom_text_field.dart';
 import '../../../../../core/widgets/custom_phone_input.dart';
@@ -66,7 +67,7 @@ class _LoginScreenState extends State<LoginScreen>
                       const SizedBox(height: 24),
                       // Welcome Text
                       Text(
-                        'Academy Plus',
+                        AppLocalizations.appName,
                         style: Theme.of(context).textTheme.headlineSmall
                             ?.copyWith(
                               fontWeight: FontWeight.w600,
@@ -102,12 +103,12 @@ class _LoginScreenState extends State<LoginScreen>
                       children: [
                         // Phone Number Field
                         CustomPhoneInput(
-                          hintText: 'Phone Number',
+                          hintText: AppLocalizations.phoneNumber,
                           controller: _phoneController,
                           initialCountryCode: 'EG',
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Please enter your phone number';
+                              return AppLocalizations.pleaseEnterPhone;
                             }
                             return null;
                           },
@@ -117,13 +118,13 @@ class _LoginScreenState extends State<LoginScreen>
 
                         // Password Field
                         CustomTextField(
-                          hintText: 'Password',
+                          hintText: AppLocalizations.password,
                           controller: _passwordController,
                           isPassword: true,
                           prefixIcon: const Icon(Ionicons.lock_closed_outline),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Please enter your password';
+                              return AppLocalizations.pleaseEnterPassword;
                             }
                             return null;
                           },
@@ -140,7 +141,7 @@ class _LoginScreenState extends State<LoginScreen>
                               );
                             },
                             child: Text(
-                              'Forgot Password?',
+                              AppLocalizations.forgotPassword,
                               style: Theme.of(context).textTheme.bodyMedium
                                   ?.copyWith(
                                     color: AppColors.primary,
@@ -154,7 +155,7 @@ class _LoginScreenState extends State<LoginScreen>
 
                         // Login Button
                         CustomButton(
-                          text: 'Login',
+                          text: AppLocalizations.login,
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
                               // Navigate to main screen
@@ -190,7 +191,7 @@ class _LoginScreenState extends State<LoginScreen>
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Text(
-                        'OR',
+                        AppLocalizations.or,
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: AppColors.textTertiary,
                           fontWeight: FontWeight.w500,
@@ -213,8 +214,8 @@ class _LoginScreenState extends State<LoginScreen>
                     text: TextSpan(
                       style: Theme.of(context).textTheme.bodyLarge,
                       children: [
-                        const TextSpan(
-                          text: "Don't have an account? ",
+                        TextSpan(
+                          text: AppLocalizations.dontHaveAccount,
                           style: TextStyle(color: AppColors.textSecondary),
                         ),
                         WidgetSpan(
@@ -224,7 +225,7 @@ class _LoginScreenState extends State<LoginScreen>
                                   context: context,
                                 ),
                             child: Text(
-                              'Register',
+                              AppLocalizations.register,
                               style: Theme.of(context).textTheme.bodyLarge
                                   ?.copyWith(
                                     color: AppColors.primary,

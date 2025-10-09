@@ -1,4 +1,5 @@
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/localization/app_localizations.dart';
 import '../../../../../core/utils/navigation_helper.dart';
 import '../../../../../core/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
@@ -89,7 +90,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                         ),
                         const SizedBox(height: 32),
                         Text(
-                          'Welcome to Academy Plus',
+                          AppLocalizations.welcome,
                           style: Theme.of(context).textTheme.displayMedium
                               ?.copyWith(
                                 color: Colors.white,
@@ -99,7 +100,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          'Your gateway to academic excellence',
+                          AppLocalizations.welcomeSubtitle,
                           style: Theme.of(context).textTheme.titleMedium
                               ?.copyWith(
                                 color: Colors.white.withValues(alpha: 0.9),
@@ -120,7 +121,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           CustomButton(
-                            text: 'Login',
+                            text: AppLocalizations.login,
                             onPressed: () => NavigationHelper.to(
                               path: '/login',
                               context: context,
@@ -130,7 +131,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                           ),
                           const SizedBox(height: 16),
                           CustomButton(
-                            text: 'Register',
+                            text: AppLocalizations.register,
                             onPressed: () => NavigationHelper.to(
                               path: '/register',
                               context: context,
