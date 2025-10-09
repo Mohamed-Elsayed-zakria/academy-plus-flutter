@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/constants/app_strings.dart';
 import '../../../../../core/widgets/custom_button.dart';
 import '../../../../../core/widgets/custom_phone_input.dart';
 import '../../../../../core/utils/navigation_helper.dart';
@@ -158,7 +157,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
                         // Phone Number Field
                         CustomPhoneInput(
-                          hintText: AppStrings.phoneNumber,
+                          hintText: 'Phone Number',
                           controller: _phoneController,
                           initialCountryCode: 'EG',
                           validator: (value) {

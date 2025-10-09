@@ -17,9 +17,10 @@ import '../features/assignments/presentation/views/screens/assignment_details_sc
 import '../features/quizzes/presentation/views/screens/quizzes_screen.dart';
 import '../features/quizzes/presentation/views/screens/quiz_details_screen.dart';
 import '../features/profile/presentation/views/screens/edit_profile_screen.dart';
+import '../features/onboarding/presentation/views/screens/onboarding_screen.dart';
 
-final GoRouter appRouter = GoRouter(
-  initialLocation: '/main',
+GoRouter createAppRouter({required bool isOnboardingCompleted}) => GoRouter(
+  initialLocation: isOnboardingCompleted ? '/welcome' : '/onboarding',
   routes: [
     // Splash Screen
     GoRoute(
@@ -31,6 +32,12 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/welcome',
       builder: (context, state) => const WelcomeScreen(),
+    ),
+
+    // Onboarding Screen
+    GoRoute(
+      path: '/onboarding',
+      builder: (context, state) => const OnboardingScreen(),
     ),
 
     // Authentication Routes
@@ -142,7 +149,4 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => const EditProfileScreen(),
     ),
   ],
-
-
-  
 );

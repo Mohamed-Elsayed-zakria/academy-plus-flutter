@@ -4,7 +4,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:ionicons/ionicons.dart';
 import 'dart:io';
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/constants/app_strings.dart';
 import '../../../../../core/widgets/custom_button.dart';
 import '../../../../../core/widgets/custom_text_field.dart';
 
@@ -54,7 +53,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppStrings.editProfile),
+        title: Text('Edit Profile'),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
@@ -126,7 +125,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
               // Form Fields
               CustomTextField(
-                hintText: AppStrings.fullName,
+                hintText: 'Full Name',
                 controller: _nameController,
                 prefixIcon: const Icon(Ionicons.person_outline),
                 validator: (value) {
@@ -138,7 +137,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
               const SizedBox(height: 16),
               CustomTextField(
-                hintText: AppStrings.phoneNumber,
+                hintText: 'Phone Number',
                 controller: _phoneController,
                 keyboardType: TextInputType.phone,
                 prefixIcon: const Icon(Ionicons.call_outline),
@@ -166,7 +165,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               DropdownButtonFormField<String>(
                 initialValue: _selectedUniversity,
                 decoration: InputDecoration(
-                  hintText: AppStrings.selectUniversity,
+                  hintText: 'Select University',
                   prefixIcon: const Icon(Ionicons.school_outline),
                 ),
                 items: _universities

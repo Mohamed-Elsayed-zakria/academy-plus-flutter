@@ -19,12 +19,12 @@ class HomeScreenDepartmentsTapbar extends StatelessWidget {
       height: 50,
       decoration: BoxDecoration(
         color: AppColors.surfaceGrey.withValues(alpha: 0.3),
-        borderRadius: BorderRadius.circular(25),
+        borderRadius: BorderRadius.circular(14),
       ),
       child: TabBar(
         controller: tabController,
         indicator: BoxDecoration(
-          borderRadius: BorderRadius.circular(25),
+          borderRadius: BorderRadius.circular(14),
           gradient: AppColors.primaryGradient,
         ),
         indicatorSize: TabBarIndicatorSize.tab,

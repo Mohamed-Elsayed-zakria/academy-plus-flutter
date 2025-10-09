@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/constants/app_strings.dart';
+import '../../../../../features/onboarding/data/services/onboarding_service.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -35,9 +35,16 @@ class _SplashScreenState extends State<SplashScreen>
 
     _controller.forward();
 
-    Future.delayed(const Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 3), () async {
       if (mounted) {
-        context.go('/welcome');
+        final isOnboardingCompleted = await OnboardingService.isOnboardingCompleted();
+        if (!mounted) return;
+        
+        if (isOnboardingCompleted) {
+          context.go('/welcome');
+        } else {
+          context.go('/onboarding');
+        }
       }
     });
   }
@@ -84,7 +91,7 @@ class _SplashScreenState extends State<SplashScreen>
                   ),
                   const SizedBox(height: 24),
                   Text(
-                    AppStrings.appName,
+                    'Academy Plus',
                     style: Theme.of(context).textTheme.displayLarge?.copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,

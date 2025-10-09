@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/constants/app_strings.dart';
 
 class HomeScreenSearchBar extends StatelessWidget {
   const HomeScreenSearchBar({super.key});
@@ -12,13 +11,17 @@ class HomeScreenSearchBar extends StatelessWidget {
       padding: const EdgeInsets.all(16.0),
       child: TextField(
         decoration: InputDecoration(
-          hintText: AppStrings.search,
+          hintText: 'Search courses...',
           prefixIcon: const Icon(Ionicons.search_outline),
           filled: true,
           fillColor: AppColors.surface,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide.none,
+            borderSide: BorderSide(color: AppColors.primary),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: BorderSide(color: AppColors.primary, width: 1.3),
           ),
         ),
       ),

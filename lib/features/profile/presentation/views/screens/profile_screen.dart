@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/constants/app_strings.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -216,7 +215,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                   _buildActionButton(
                     icon: Ionicons.create_outline,
-                    title: AppStrings.editProfile,
+                    title: 'Edit Profile',
                     color: AppColors.primary,
                     onTap: () {
                       context.push('/profile/edit');
@@ -226,7 +225,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                   _buildActionButton(
                     icon: Ionicons.lock_closed_outline,
-                    title: AppStrings.changePassword,
+                    title: 'Change Password',
                     color: AppColors.primary,
                     onTap: () {
                       // Navigate to change password
@@ -257,7 +256,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   // Logout Button
                   _buildActionButton(
                     icon: Ionicons.log_out_outline,
-                    title: AppStrings.logout,
+                    title: 'Logout',
                     color: AppColors.error,
                     isDestructive: true,
                     onTap: () {

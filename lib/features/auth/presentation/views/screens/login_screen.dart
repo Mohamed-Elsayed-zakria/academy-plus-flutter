@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/constants/app_strings.dart';
 import '../../../../../core/widgets/custom_button.dart';
 import '../../../../../core/widgets/custom_text_field.dart';
 import '../../../../../core/widgets/custom_phone_input.dart';
@@ -67,7 +66,7 @@ class _LoginScreenState extends State<LoginScreen>
                       const SizedBox(height: 24),
                       // Welcome Text
                       Text(
-                        AppStrings.appName,
+                        'Academy Plus',
                         style: Theme.of(context).textTheme.headlineSmall
                             ?.copyWith(
                               fontWeight: FontWeight.w600,
@@ -103,7 +102,7 @@ class _LoginScreenState extends State<LoginScreen>
                       children: [
                         // Phone Number Field
                         CustomPhoneInput(
-                          hintText: AppStrings.phoneNumber,
+                          hintText: 'Phone Number',
                           controller: _phoneController,
                           initialCountryCode: 'EG',
                           validator: (value) {
@@ -118,7 +117,7 @@ class _LoginScreenState extends State<LoginScreen>
 
                         // Password Field
                         CustomTextField(
-                          hintText: AppStrings.password,
+                          hintText: 'Password',
                           controller: _passwordController,
                           isPassword: true,
                           prefixIcon: const Icon(Ionicons.lock_closed_outline),
@@ -135,7 +134,7 @@ class _LoginScreenState extends State<LoginScreen>
                           alignment: Alignment.centerRight,
                           child: GestureDetector(
                             onTap: () {
-                              NavigationHelper.off(
+                              NavigationHelper.to(
                                 path: '/forgot-password',
                                 context: context,
                               );
@@ -155,7 +154,7 @@ class _LoginScreenState extends State<LoginScreen>
 
                         // Login Button
                         CustomButton(
-                          text: AppStrings.login,
+                          text: 'Login',
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
                               // Navigate to main screen
@@ -225,7 +224,7 @@ class _LoginScreenState extends State<LoginScreen>
                                   context: context,
                                 ),
                             child: Text(
-                              AppStrings.register,
+                              'Register',
                               style: Theme.of(context).textTheme.bodyLarge
                                   ?.copyWith(
                                     color: AppColors.primary,

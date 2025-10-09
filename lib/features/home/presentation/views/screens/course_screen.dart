@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/constants/app_strings.dart';
 import '../../../../../core/widgets/custom_button.dart';
 import '../../../../../core/utils/whatsapp_launcher.dart';
 
@@ -33,7 +32,7 @@ class CourseScreen extends StatelessWidget {
         ((course['price'] as double) * (course['discount'] as int) / 100);
 
     return Scaffold(
-      appBar: AppBar(title: Text(AppStrings.courseDetails)),
+      appBar: AppBar(title: Text('Course Details')),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -131,7 +130,7 @@ class CourseScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            AppStrings.instructor,
+                            'Instructor',
                             style: Theme.of(context).textTheme.bodySmall,
                           ),
                           Text(
@@ -158,7 +157,7 @@ class CourseScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              AppStrings.price,
+                              'Price',
                               style: Theme.of(context).textTheme.bodySmall,
                             ),
                             const SizedBox(height: 4),
@@ -237,7 +236,7 @@ class CourseScreen extends StatelessWidget {
                   // Subscription Buttons (based on available options)
                   if (course['hasPaymentGateway'] == true)
                     CustomButton(
-                      text: AppStrings.subscribe,
+                      text: 'Subscribe',
                       onPressed: () {
                         // Navigate to course content after subscription
                         context.push('/course/$courseId/content');
@@ -250,7 +249,7 @@ class CourseScreen extends StatelessWidget {
                     const SizedBox(height: 12),
                   if (course['hasWhatsApp'] == true)
                     CustomButton(
-                      text: AppStrings.contactWhatsApp,
+                      text: 'Contact via WhatsApp',
                       onPressed: () async {
                         // Get course name (bilingual or fallback to title)
                         final courseName =

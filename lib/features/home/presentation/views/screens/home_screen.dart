@@ -6,7 +6,6 @@ import 'package:university/features/home/presentation/views/widgets/home_screen_
 import 'package:university/features/home/presentation/views/widgets/home_screen_search_bar.dart';
 import 'package:university/features/home/presentation/views/widgets/home_screen_sub_departments_grid.dart';
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/constants/app_strings.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -88,8 +87,19 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(AppStrings.appName)),
+      appBar: AppBar(
+        title: Text('Academy Plus'),
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Ionicons.heart_outline),
+            tooltip: 'Favorites',
+          ),
+          const SizedBox(width: 8),
+        ],
+      ),
       body: CustomScrollView(
+        physics: const BouncingScrollPhysics(),
         slivers: [
           // Search Bar
           SliverToBoxAdapter(child: HomeScreenSearchBar()),
@@ -109,7 +119,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
-                AppStrings.departments,
+                'Departments',
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: AppColors.textPrimary,

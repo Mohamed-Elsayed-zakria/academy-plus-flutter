@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/constants/app_strings.dart';
 import '../../../../../core/widgets/empty_state.dart';
 
 class SubscriptionsScreen extends StatelessWidget {
@@ -39,12 +38,12 @@ class SubscriptionsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppStrings.subscriptions),
+        title: Text('Subscriptions'),
       ),
       body: subscriptions.isEmpty
           ? EmptyState(
               icon: Ionicons.card_outline,
-              message: AppStrings.noSubscriptions,
+              message: 'No active subscriptions',
               subtitle: 'Subscribe to courses to see them here',
             )
           : ListView.builder(
@@ -63,8 +62,23 @@ class SubscriptionsScreen extends StatelessWidget {
     final isActive = subscription['status'] == 'active';
     final progress = subscription['progress'] as int;
 
-    return Card(
+    return Container(
       margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: AppColors.primary.withValues(alpha: 0.3),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -89,6 +103,12 @@ class SubscriptionsScreen extends StatelessWidget {
                         ? AppColors.accent.withValues(alpha: 0.1)
                         : AppColors.textTertiary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: isActive
+                          ? AppColors.accent.withValues(alpha: 0.3)
+                          : AppColors.textTertiary.withValues(alpha: 0.3),
+                      width: 0.5,
+                    ),
                   ),
                   child: Text(
                     isActive ? 'Active' : 'Completed',
@@ -152,13 +172,22 @@ class SubscriptionsScreen extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 8),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: LinearProgressIndicator(
-                    value: progress / 100,
-                    backgroundColor: AppColors.surfaceGrey,
-                    color: AppColors.primary,
-                    minHeight: 8,
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: AppColors.primary.withValues(alpha: 0.2),
+                      width: 0.5,
+                    ),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: LinearProgressIndicator(
+                      value: progress / 100,
+                      backgroundColor: AppColors.surfaceGrey,
+                      color: AppColors.primary,
+                      minHeight: 8,
+                    ),
                   ),
                 ),
               ],

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/constants/app_strings.dart';
 import '../../../../../core/widgets/custom_button.dart';
 import '../../../../../core/widgets/custom_text_field.dart';
 import '../../../../../core/widgets/custom_phone_input.dart';
@@ -106,7 +105,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       
                       // Welcome Text
                       Text(
-                        AppStrings.appName,
+                        'Academy Plus',
                         style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.w600,
                           color: AppColors.textPrimary,
@@ -143,7 +142,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                             // Full Name Field
                             CustomTextField(
-                              hintText: AppStrings.fullName,
+                              hintText: 'Full Name',
                               controller: _nameController,
                               prefixIcon: const Icon(Ionicons.person_outline),
                               validator: (value) {
@@ -158,7 +157,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                             // Password Field
                             CustomTextField(
-                              hintText: AppStrings.password,
+                              hintText: 'Password',
                               controller: _passwordController,
                               isPassword: true,
                               prefixIcon: const Icon(
@@ -179,7 +178,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                             // Confirm Password Field
                             CustomTextField(
-                              hintText: AppStrings.confirmPassword,
+                              hintText: 'Confirm Password',
                               controller: _confirmPasswordController,
                               isPassword: true,
                               prefixIcon: const Icon(
@@ -200,7 +199,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                             // Phone Number Field
                             CustomPhoneInput(
-                              hintText: AppStrings.phoneNumber,
+                              hintText: 'Phone Number',
                               controller: _phoneController,
                               initialCountryCode: 'EG',
                               validator: (value) {
@@ -218,7 +217,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  AppStrings.selectUniversity,
+                                  'Select University',
                                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                     fontWeight: FontWeight.w600,
                                     color: AppColors.textPrimary,
@@ -296,7 +295,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                             // Register Button
                             CustomButton(
-                              text: AppStrings.register,
+                              text: 'Register',
                               onPressed: () {
                                 setState(() {
                                   _hasAttemptedSubmit = true;
@@ -304,7 +303,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 
                                 if (_formKey.currentState!.validate() && _selectedUniversity != null) {
                                   // Navigate to OTP screen first
-                                  NavigationHelper.off(
+                                  NavigationHelper.to(
                                     path: '/otp',
                                     context: context,
                                     data: {
@@ -379,7 +378,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                           context: context,
                                         ),
                                         child: Text(
-                                          AppStrings.login,
+                                          'Login',
                                           style: Theme.of(context)
                                               .textTheme
                                               .bodyLarge

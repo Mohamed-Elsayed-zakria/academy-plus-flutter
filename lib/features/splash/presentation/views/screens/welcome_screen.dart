@@ -1,9 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/constants/app_strings.dart';
+import '../../../../../core/utils/navigation_helper.dart';
 import '../../../../../core/widgets/custom_button.dart';
+import 'package:flutter/material.dart';
+import 'package:ionicons/ionicons.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -26,16 +25,15 @@ class _WelcomeScreenState extends State<WelcomeScreen>
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeIn),
-    );
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
 
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, 0.3),
       end: Offset.zero,
-    ).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic),
-    );
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
 
     _controller.forward();
   }
@@ -54,11 +52,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              AppColors.primary,
-              AppColors.primaryLight,
-              Colors.white,
-            ],
+            colors: [AppColors.primary, AppColors.primaryLight, Colors.white],
             stops: const [0.0, 0.4, 1.0],
           ),
         ),
@@ -95,18 +89,19 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                         ),
                         const SizedBox(height: 32),
                         Text(
-                          AppStrings.welcome,
-                          style:
-                              Theme.of(context).textTheme.displayMedium?.copyWith(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                          'Welcome to Academy Plus',
+                          style: Theme.of(context).textTheme.displayMedium
+                              ?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 16),
                         Text(
                           'Your gateway to academic excellence',
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(
                                 color: Colors.white.withValues(alpha: 0.9),
                               ),
                           textAlign: TextAlign.center,
@@ -125,15 +120,21 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           CustomButton(
-                            text: AppStrings.login,
-                            onPressed: () => context.go('/login'),
+                            text: 'Login',
+                            onPressed: () => NavigationHelper.to(
+                              path: '/login',
+                              context: context,
+                            ),
                             isGradient: true,
                             width: double.infinity,
                           ),
                           const SizedBox(height: 16),
                           CustomButton(
-                            text: AppStrings.register,
-                            onPressed: () => context.go('/register'),
+                            text: 'Register',
+                            onPressed: () => NavigationHelper.to(
+                              path: '/register',
+                              context: context,
+                            ),
                             isOutlined: true,
                             width: double.infinity,
                           ),

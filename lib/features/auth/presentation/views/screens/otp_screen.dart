@@ -2,17 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/constants/app_strings.dart';
 import '../../../../../core/widgets/custom_button.dart';
 import '../../../../../core/utils/navigation_helper.dart';
 
 class OtpScreen extends StatefulWidget {
   final Map<String, dynamic>? extra;
 
-  const OtpScreen({
-    super.key,
-    this.extra,
-  });
+  const OtpScreen({super.key, this.extra});
 
   @override
   State<OtpScreen> createState() => _OtpScreenState();
@@ -33,14 +29,14 @@ class _OtpScreenState extends State<OtpScreen> {
   Widget build(BuildContext context) {
     final isResetPassword = widget.extra?['isResetPassword'] == true;
     final phoneNumber = widget.extra?['phone'] ?? '';
-    
+
     final defaultPinTheme = PinTheme(
       width: 60,
       height: 60,
       textStyle: Theme.of(context).textTheme.headlineMedium?.copyWith(
-            color: AppColors.textPrimary,
-            fontWeight: FontWeight.w600,
-          ),
+        color: AppColors.textPrimary,
+        fontWeight: FontWeight.w600,
+      ),
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(16),
@@ -62,14 +58,7 @@ class _OtpScreenState extends State<OtpScreen> {
     );
 
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Ionicons.arrow_back_outline),
-          onPressed: () => isResetPassword 
-              ? NavigationHelper.off(path: '/forgot-password', context: context)
-              : NavigationHelper.off(path: '/register', context: context),
-        ),
-      ),
+      appBar: AppBar(title: Text('Verify OTP')),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
@@ -78,15 +67,15 @@ class _OtpScreenState extends State<OtpScreen> {
             children: [
               const SizedBox(height: 20),
               Text(
-                AppStrings.verifyOTP,
+                'Verify OTP',
                 style: Theme.of(context).textTheme.displayMedium,
               ),
               const SizedBox(height: 8),
               Text(
-                AppStrings.enterOTP,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
+                'Enter the code sent to your phone',
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyLarge?.copyWith(color: AppColors.textSecondary),
               ),
               const SizedBox(height: 48),
               Center(
@@ -136,9 +125,9 @@ class _OtpScreenState extends State<OtpScreen> {
                     child: Text(
                       'Resend',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: AppColors.primary,
-                            fontWeight: FontWeight.w600,
-                          ),
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ],

@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/constants/app_strings.dart';
 
 class HomeScreenQuickAccessSection extends StatelessWidget {
   const HomeScreenQuickAccessSection({super.key});
@@ -17,8 +16,8 @@ class HomeScreenQuickAccessSection extends StatelessWidget {
         children: [
           Text(
             'Quick Access',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.w600,
               color: AppColors.textPrimary,
             ),
           ),
@@ -28,7 +27,7 @@ class HomeScreenQuickAccessSection extends StatelessWidget {
               Expanded(
                 child: _buildEnhancedQuickAccessCard(
                   context: context,
-                  title: AppStrings.assignments,
+                  title: 'Assignments',
                   subtitle: 'View & Submit',
                   icon: Ionicons.clipboard_outline,
                   color: AppColors.primary,
@@ -42,7 +41,7 @@ class HomeScreenQuickAccessSection extends StatelessWidget {
               Expanded(
                 child: _buildEnhancedQuickAccessCard(
                   context: context,
-                  title: AppStrings.quizzes,
+                  title: 'Quizzes',
                   subtitle: 'Take Quiz',
                   icon: Ionicons.school_outline,
                   color: AppColors.accent,
@@ -77,101 +76,81 @@ class HomeScreenQuickAccessSection extends StatelessWidget {
   }) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(16),
       child: Container(
         height: 135,
         decoration: BoxDecoration(
-          gradient: gradient,
-          borderRadius: BorderRadius.circular(20),
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: color.withValues(alpha: 0.3),
+            width: 1.5,
+          ),
           boxShadow: [
             BoxShadow(
-              color: color.withValues(alpha: 0.3),
-              blurRadius: 15,
-              offset: const Offset(0, 8),
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
             ),
           ],
         ),
-        child: Stack(
-          children: [
-            // Background pattern
-            Positioned(
-              top: -20,
-              right: -20,
-              child: Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white.withValues(alpha: 0.1),
-                ),
-              ),
-            ),
-            Positioned(
-              bottom: -10,
-              left: -10,
-              child: Container(
-                width: 60,
-                height: 60,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white.withValues(alpha: 0.08),
-                ),
-              ),
-            ),
-            // Content
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(10),
+                      color: color.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: color.withValues(alpha: 0.3),
+                        width: 0.5,
+                      ),
                     ),
-                    child: Icon(icon, color: Colors.white, size: 22),
+                    child: Icon(
+                      icon,
+                      color: color,
+                      size: 24,
+                    ),
                   ),
-                  const SizedBox(height: 12),
+                  const Spacer(),
+                  Icon(
+                    Ionicons.arrow_forward_outline,
+                    color: color,
+                    size: 18,
+                  ),
+                ],
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   Text(
                     title,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
                     ),
                   ),
-                  const SizedBox(height: 2),
+                  const SizedBox(height: 4),
                   Text(
                     subtitle,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.white.withValues(alpha: 0.8),
-                      fontSize: 14,
+                      color: AppColors.textSecondary,
                     ),
                   ),
                 ],
               ),
-            ),
-            // Arrow icon
-            Positioned(
-              top: 16,
-              right: 16,
-              child: Container(
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Ionicons.arrow_forward_outline,
-                  color: Colors.white,
-                  size: 16,
-                ),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 }
+
+
