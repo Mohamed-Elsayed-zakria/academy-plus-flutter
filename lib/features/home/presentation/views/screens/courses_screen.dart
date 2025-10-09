@@ -1,32 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/utils/whatsapp_launcher.dart';
 
 class CoursesScreen extends StatelessWidget {
   final Map<String, dynamic> subDepartmentData;
 
-  const CoursesScreen({
-    super.key,
-    required this.subDepartmentData,
-  });
+  const CoursesScreen({super.key, required this.subDepartmentData});
 
   @override
   Widget build(BuildContext context) {
     final subDepartmentName = subDepartmentData['subDepartmentName'] as String;
-    final color = subDepartmentData['color'] as Color;
-
     // Mock courses data with bilingual names
+
+    final List<String> coursesUrls = [
+      'https://talaeaalghad.edu.sa/wp-content/uploads/2023/06/66bbfa3d80600cd36191c46fa7983b7e-scaled.jpg',
+      'https://ia-bc.com/wp-content/uploads/2024/01/School-Science-Laboratory.jpg',
+      'https://ans.edu.jo/uploads/2024/09/66eaa687e6465.jpg',
+      'https://ans.edu.jo/uploads/2023/09/64f6c5a88eba4.jpg',
+      'https://ans.edu.jo/uploads/2023/08/64e709d3c69fe.jpg',
+      'https://ans.edu.jo/uploads/2019/09/5d7f60e877963.jpg',
+    ];
+
     final courses = List.generate(
-      5,
+      7,
       (index) => {
         'id': index,
-        'nameAr': 'مقدمة في $subDepartmentName',
+        'nameAr': subDepartmentName,
         'nameEn': 'Introduction to $subDepartmentName',
         'instructor': 'Dr. John Doe',
         'price': 299.99,
         'discount': 20,
-        'description': 'This comprehensive course covers fundamental and advanced concepts in $subDepartmentName. Perfect for students looking to master this subject.',
+        'description':
+            'This comprehensive course covers fundamental and advanced concepts in $subDepartmentName. Perfect for students looking to master this subject.',
         'image': 'https://via.placeholder.com/400x200',
         'hasWhatsApp': true,
         'hasPaymentGateway': true,
@@ -34,15 +39,21 @@ class CoursesScreen extends StatelessWidget {
     );
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(subDepartmentName),
-      ),
-      body: ListView.builder(
+      appBar: AppBar(title: Text(subDepartmentName)),
+      body: GridView.builder(
         padding: const EdgeInsets.all(16),
+        physics: BouncingScrollPhysics(),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 16,
+          mainAxisSpacing: 16,
+          childAspectRatio: 0.75,
+        ),
         itemCount: courses.length,
         itemBuilder: (context, index) {
           final course = courses[index];
-          final discountedPrice = (course['price'] as double) -
+          final discountedPrice =
+              (course['price'] as double) -
               ((course['price'] as double) * (course['discount'] as int) / 100);
 
           return GestureDetector(
@@ -50,237 +61,245 @@ class CoursesScreen extends StatelessWidget {
               context.push('/course/${course['id']}', extra: course);
             },
             child: Card(
-              margin: const EdgeInsets.only(bottom: 16),
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Course Cover Image with Play Button
-                  Stack(
-                    children: [
-                      Container(
-                        height: 180,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [color, color.withValues(alpha: 0.7)],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
+                  // Course Cover Image
+                  Expanded(
+                    flex: 3,
+                    child: Stack(
+                      children: [
+                        Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            borderRadius: const BorderRadius.vertical(
+                              top: Radius.circular(16),
+                            ),
                           ),
-                          borderRadius: const BorderRadius.vertical(
-                            top: Radius.circular(16),
+                          child: ClipRRect(
+                            borderRadius: const BorderRadius.vertical(
+                              top: Radius.circular(16),
+                            ),
+                            child: Image.network(
+                              coursesUrls[index % coursesUrls.length],
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                              height: double.infinity,
+                              loadingBuilder:
+                                  (context, child, loadingProgress) {
+                                    if (loadingProgress == null) return child;
+                                    return Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius:
+                                            const BorderRadius.vertical(
+                                              top: Radius.circular(16),
+                                            ),
+                                        gradient: LinearGradient(
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomRight,
+                                          colors: [
+                                            AppColors.primary.withValues(
+                                              alpha: 0.8,
+                                            ),
+                                            AppColors.accent.withValues(
+                                              alpha: 0.8,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      child: Center(
+                                        child: CircularProgressIndicator(
+                                          color: Colors.white,
+                                          strokeWidth: 2,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                              errorBuilder: (context, error, stackTrace) {
+                                return Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: const BorderRadius.vertical(
+                                      top: Radius.circular(16),
+                                    ),
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                      colors: [
+                                        AppColors.primary.withValues(
+                                          alpha: 0.8,
+                                        ),
+                                        AppColors.accent.withValues(alpha: 0.8),
+                                      ],
+                                    ),
+                                  ),
+                                  child: Center(
+                                    child: Icon(
+                                      Icons.image_outlined,
+                                      color: Colors.white,
+                                      size: 40,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
                           ),
                         ),
-                      ),
-                      // Free Intro Video Play Button
-                      Positioned.fill(
-                        child: Center(
+                        // Course Preview Badge
+                        Positioned(
+                          top: 8,
+                          right: 8,
                           child: Container(
-                            padding: const EdgeInsets.all(16),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
                             decoration: BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.2),
-                                  blurRadius: 10,
+                              color: AppColors.accent,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.visibility,
+                                  size: 12,
+                                  color: Colors.white,
+                                ),
+                                const SizedBox(width: 2),
+                                Text(
+                                  'Preview',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                               ],
                             ),
-                            child: Icon(
-                              Icons.play_arrow,
-                              size: 40,
-                              color: color,
+                          ),
+                        ),
+                        // Favorite Button
+                        Positioned(
+                          top: 8,
+                          left: 8,
+                          child: GestureDetector(
+                            onTap: () {},
+                            child: Container(
+                              padding: const EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.9),
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.1),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: Icon(
+                                Icons.favorite_border,
+                                size: 16,
+                                color: AppColors.error,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      // Free Preview Badge
-                      Positioned(
-                        top: 12,
-                        right: 12,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
+                      ],
+                    ),
+                  ),
+                  // Course Details
+                  Expanded(
+                    flex: 2,
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Course Name
+                          Text(
+                            course['nameEn'] as String,
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(color: AppColors.textSecondary),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          decoration: BoxDecoration(
-                            color: AppColors.accent,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
+                          const SizedBox(height: 8),
+                          // Instructor
+                          Row(
                             children: [
                               Icon(
-                                Icons.play_circle,
-                                size: 16,
-                                color: Colors.white,
+                                Icons.person_outline,
+                                size: 12,
+                                color: AppColors.textSecondary,
                               ),
                               const SizedBox(width: 4),
-                              Text(
-                                'Free Preview',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
+                              Expanded(
+                                child: Text(
+                                  course['instructor'] as String,
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                             ],
                           ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Bilingual Course Name
-                        Text(
-                          course['nameAr'] as String,
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          course['nameEn'] as String,
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                color: AppColors.textSecondary,
-                              ),
-                        ),
-                        const SizedBox(height: 12),
+                          const Spacer(),
 
-                        // Instructor
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.person_outline,
-                              size: 16,
-                              color: AppColors.textSecondary,
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              course['instructor'] as String,
-                              style: Theme.of(context).textTheme.bodyMedium,
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-
-                        // Price Section
-                        Row(
-                          children: [
-                            if (course['discount'] as int > 0) ...[
-                              Text(
-                                '\$${course['price']}',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium
-                                    ?.copyWith(
-                                      decoration: TextDecoration.lineThrough,
-                                      color: AppColors.textTertiary,
-                                    ),
-                              ),
-                              const SizedBox(width: 8),
-                            ],
-                            Text(
-                              '\$${discountedPrice.toStringAsFixed(2)}',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleLarge
-                                  ?.copyWith(
-                                    color: AppColors.accent,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                            ),
-                            if (course['discount'] as int > 0) ...[
-                              const SizedBox(width: 8),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 4,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: AppColors.error.withValues(alpha: 0.1),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Text(
-                                  '${course['discount']}% OFF',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall
+                          // Price Section
+                          Row(
+                            children: [
+                              if (course['discount'] as int > 0) ...[
+                                Text(
+                                  '\$${course['price']}',
+                                  style: Theme.of(context).textTheme.bodySmall
                                       ?.copyWith(
-                                        color: AppColors.error,
+                                        decoration: TextDecoration.lineThrough,
+                                        color: AppColors.textTertiary,
+                                      ),
+                                ),
+                                const SizedBox(width: 4),
+                              ],
+                              Expanded(
+                                child: Text(
+                                  '\$${discountedPrice.toStringAsFixed(2)}',
+                                  style: Theme.of(context).textTheme.titleSmall
+                                      ?.copyWith(
+                                        color: AppColors.accent,
                                         fontWeight: FontWeight.bold,
                                       ),
                                 ),
                               ),
+                              if (course['discount'] as int > 0)
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 4,
+                                    vertical: 2,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.error.withValues(
+                                      alpha: 0.1,
+                                    ),
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: Text(
+                                    '${course['discount']}%',
+                                    style: Theme.of(context).textTheme.bodySmall
+                                        ?.copyWith(
+                                          color: AppColors.error,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 10,
+                                        ),
+                                  ),
+                                ),
                             ],
-                          ],
-                        ),
-                        const SizedBox(height: 16),
-
-                        // Subscription Options
-                        Row(
-                          children: [
-                            if (course['hasWhatsApp'] as bool)
-                              Expanded(
-                                child: OutlinedButton.icon(
-                                  onPressed: () async {
-                                    final courseName = course['nameAr'] as String? ??
-                                                      course['nameEn'] as String? ??
-                                                      'this course';
-
-                                    // Default WhatsApp business number
-                                    const whatsappNumber = '201234567890'; // Replace with actual number
-
-                                    try {
-                                      await WhatsAppLauncher.openForCourseSubscription(
-                                        phoneNumber: whatsappNumber,
-                                        courseName: courseName,
-                                        courseId: course['id'].toString(),
-                                      );
-                                    } catch (e) {
-                                      if (context.mounted) {
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(
-                                            content: Text('Could not open WhatsApp. Please make sure it is installed.'),
-                                            backgroundColor: AppColors.error,
-                                          ),
-                                        );
-                                      }
-                                    }
-                                  },
-                                  style: OutlinedButton.styleFrom(
-                                    foregroundColor: Color(0xFF25D366),
-                                    side: BorderSide(color: Color(0xFF25D366)),
-                                    padding: const EdgeInsets.symmetric(vertical: 12),
-                                  ),
-                                  icon: Icon(Icons.chat, size: 18),
-                                  label: Text('WhatsApp'),
-                                ),
-                              ),
-                            if (course['hasWhatsApp'] as bool &&
-                                course['hasPaymentGateway'] as bool)
-                              const SizedBox(width: 12),
-                            if (course['hasPaymentGateway'] as bool)
-                              Expanded(
-                                child: ElevatedButton.icon(
-                                  onPressed: () {
-                                    // Payment gateway
-                                    context.push('/course/${course['id']}', extra: course);
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: AppColors.primary,
-                                    padding: const EdgeInsets.symmetric(vertical: 12),
-                                  ),
-                                  icon: Icon(Icons.payment, size: 18),
-                                  label: Text('Subscribe'),
-                                ),
-                              ),
-                          ],
-                        ),
-                      ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],

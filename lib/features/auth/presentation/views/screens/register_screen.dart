@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:ionicons/ionicons.dart';
-import 'dart:io';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_strings.dart';
 import '../../../../../core/widgets/custom_button.dart';
 import '../../../../../core/widgets/custom_text_field.dart';
 import '../../../../../core/widgets/custom_phone_input.dart';
+import '../../../../../core/utils/navigation_helper.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -16,15 +14,14 @@ class RegisterScreen extends StatefulWidget {
   State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen>
-    with TickerProviderStateMixin {
+class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  File? _profileImage;
   String? _selectedUniversity;
+  bool _hasAttemptedSubmit = false;
 
   final List<String> _universities = [
     'Cairo University',
@@ -34,76 +31,28 @@ class _RegisterScreenState extends State<RegisterScreen>
     'Mansoura University',
   ];
 
-  late AnimationController _logoAnimationController;
-  late AnimationController _formAnimationController;
-  late Animation<double> _logoFadeAnimation;
-  late Animation<double> _logoScaleAnimation;
-  late Animation<Offset> _formSlideAnimation;
-  late Animation<double> _formFadeAnimation;
-
   @override
   void initState() {
     super.initState();
-
-    // Logo animation controller
-    _logoAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 1200),
-      vsync: this,
-    );
-
-    // Form animation controller
-    _formAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 800),
-      vsync: this,
-    );
-
-    // Logo animations
-    _logoFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _logoAnimationController,
-        curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
-      ),
-    );
-
-    _logoScaleAnimation = Tween<double>(begin: 0.5, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _logoAnimationController,
-        curve: const Interval(0.0, 0.8, curve: Curves.elasticOut),
-      ),
-    );
-
-    // Form animations
-    _formSlideAnimation =
-        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
-          CurvedAnimation(
-            parent: _formAnimationController,
-            curve: Curves.easeOutCubic,
-          ),
-        );
-
-    _formFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _formAnimationController,
-        curve: const Interval(0.2, 1.0, curve: Curves.easeOut),
-      ),
-    );
-
-    // Start animations
-    _logoAnimationController.forward();
-    Future.delayed(const Duration(milliseconds: 400), () {
-      _formAnimationController.forward();
-    });
   }
 
-  Future<void> _pickImage() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-
-    if (pickedFile != null) {
-      setState(() {
-        _profileImage = File(pickedFile.path);
-      });
-    }
+  void _showUniversityPicker() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => _UniversityPickerBottomSheet(
+        universities: _universities,
+        selectedUniversity: _selectedUniversity,
+        onUniversitySelected: (university) {
+          setState(() {
+            _selectedUniversity = university;
+            _hasAttemptedSubmit = false; // Reset the attempt flag when university is selected
+          });
+          Navigator.pop(context);
+        },
+      ),
+    );
   }
 
   @override
@@ -112,194 +61,85 @@ class _RegisterScreenState extends State<RegisterScreen>
     _phoneController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
-    _logoAnimationController.dispose();
-    _formAnimationController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [AppColors.primary, AppColors.primaryLight, Colors.white],
-            stops: const [0.0, 0.3, 1.0],
-          ),
-        ),
-        child: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 18.0),
+      backgroundColor: AppColors.background,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14.0),
             child: Column(
               children: [
-                const SizedBox(height: 40),
-
-                // App Logo Section with Animation
-                FadeTransition(
-                  opacity: _logoFadeAnimation,
-                  child: ScaleTransition(
-                    scale: _logoScaleAnimation,
-                    child: Column(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(24),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.1),
-                                blurRadius: 20,
-                                offset: const Offset(0, 10),
-                              ),
-                            ],
-                          ),
-                          child: Icon(
-                            Ionicons.school_outline,
-                            size: 60,
-                            color: AppColors.primary,
-                          ),
+                const SizedBox(height: 60),
+                
+                // App Logo and Header Section
+                Center(
+                  child: Column(
+                    children: [
+                      // App Logo
+                      Container(
+                        width: 80,
+                        height: 80,
+                        decoration: BoxDecoration(
+                          gradient: AppColors.primaryGradient,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.primary.withValues(alpha: 0.3),
+                              blurRadius: 20,
+                              offset: const Offset(0, 10),
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 24),
-                        Text(
-                          AppStrings.appName,
-                          style: Theme.of(context).textTheme.displayMedium
-                              ?.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 1.2,
-                              ),
+                        child: const Icon(
+                          Ionicons.school_outline,
+                          size: 40,
+                          color: Colors.white,
                         ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Join Our Academic Community',
-                          style: Theme.of(context).textTheme.titleMedium
-                              ?.copyWith(
-                                color: Colors.white.withValues(alpha: 0.9),
-                                fontWeight: FontWeight.w500,
-                              ),
-                          textAlign: TextAlign.center,
+                      ),
+                      
+                      const SizedBox(height: 24),
+                      
+                      // Welcome Text
+                      Text(
+                        AppStrings.appName,
+                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textPrimary,
                         ),
-                      ],
-                    ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
                   ),
                 ),
 
-                const SizedBox(height: 40),
-
-                // Register Form Section with Animation
-                SlideTransition(
-                  position: _formSlideAnimation,
-                  child: FadeTransition(
-                    opacity: _formFadeAnimation,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 32,
+                const SizedBox(height: 48),
+                // Register Form Section
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 24,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.surface,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.05),
+                        blurRadius: 20,
+                        offset: const Offset(0, 10),
                       ),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(24),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.1),
-                            blurRadius: 20,
-                            offset: const Offset(0, 10),
-                          ),
-                        ],
-                      ),
+                    ],
+                  ),
                       child: Form(
                         key: _formKey,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Register Header
-                            Center(
-                              child: Column(
-                                children: [
-                                  Text(
-                                    AppStrings.register,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .headlineMedium
-                                        ?.copyWith(
-                                          fontWeight: FontWeight.bold,
-                                          color: AppColors.textPrimary,
-                                        ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    'Create your account to get started',
-                                    style: Theme.of(context).textTheme.bodyLarge
-                                        ?.copyWith(
-                                          color: AppColors.textSecondary,
-                                        ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ],
-                              ),
-                            ),
-
-                            const SizedBox(height: 32),
-
-                            // Profile Picture Section
-                            Center(
-                              child: Column(
-                                children: [
-                                  GestureDetector(
-                                    onTap: _pickImage,
-                                    child: Container(
-                                      width: 100,
-                                      height: 100,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: AppColors.surfaceGrey,
-                                        border: Border.all(
-                                          color: AppColors.primary,
-                                          width: 3,
-                                        ),
-                                        image: _profileImage != null
-                                            ? DecorationImage(
-                                                image: FileImage(
-                                                  _profileImage!,
-                                                ),
-                                                fit: BoxFit.cover,
-                                              )
-                                            : null,
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.black.withValues(
-                                              alpha: 0.1,
-                                            ),
-                                            blurRadius: 10,
-                                            offset: const Offset(0, 5),
-                                          ),
-                                        ],
-                                      ),
-                                      child: _profileImage == null
-                                          ? Icon(
-                                              Ionicons.camera_outline,
-                                              size: 40,
-                                              color: AppColors.textTertiary,
-                                            )
-                                          : null,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 12),
-                                  Text(
-                                    'Tap to upload profile picture',
-                                    style: Theme.of(context).textTheme.bodySmall
-                                        ?.copyWith(
-                                          color: AppColors.textSecondary,
-                                        ),
-                                  ),
-                                ],
-                              ),
-                            ),
-
-                            const SizedBox(height: 32),
 
                             // Full Name Field
                             CustomTextField(
@@ -373,63 +213,83 @@ class _RegisterScreenState extends State<RegisterScreen>
 
                             const SizedBox(height: 20),
 
-                            // University Dropdown
-                            DropdownButtonFormField<String>(
-                              initialValue: _selectedUniversity,
-                              decoration: InputDecoration(
-                                hintText: AppStrings.selectUniversity,
-                                prefixIcon: const Icon(Ionicons.school_outline),
-                                filled: true,
-                                fillColor: AppColors.surface,
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 20,
-                                  vertical: 16,
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                  borderSide: BorderSide(
-                                    color: AppColors.surfaceGrey,
+                            // University Selection
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  AppStrings.selectUniversity,
+                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.textPrimary,
+                                    fontSize: 14,
                                   ),
                                 ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                  borderSide: BorderSide(
-                                    color: AppColors.surfaceGrey,
-                                  ),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                  borderSide: BorderSide(
-                                    color: AppColors.primary,
-                                    width: 2,
-                                  ),
-                                ),
-                                errorBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                  borderSide: BorderSide(
-                                    color: AppColors.error,
-                                  ),
-                                ),
-                              ),
-                              items: _universities
-                                  .map(
-                                    (university) => DropdownMenuItem(
-                                      value: university,
-                                      child: Text(university),
+                                const SizedBox(height: 12),
+                                GestureDetector(
+                                  onTap: _showUniversityPicker,
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 16,
                                     ),
-                                  )
-                                  .toList(),
-                              onChanged: (value) {
-                                setState(() {
-                                  _selectedUniversity = value;
-                                });
-                              },
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please select your university';
-                                }
-                                return null;
-                              },
+                                    decoration: BoxDecoration(
+                                      color: AppColors.surface,
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: _hasAttemptedSubmit && _selectedUniversity == null
+                                          ? Border.all(color: AppColors.error, width: 1.5)
+                                          : null,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withValues(alpha: 0.02),
+                                          blurRadius: 8,
+                                          offset: const Offset(0, 2),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Ionicons.school_outline,
+                                          size: 18,
+                                          color: _selectedUniversity != null
+                                              ? AppColors.primary
+                                              : AppColors.textSecondary,
+                                        ),
+                                        const SizedBox(width: 12),
+                                        Expanded(
+                                          child: Text(
+                                            _selectedUniversity ?? 'اختر الجامعة',
+                                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                              fontWeight: FontWeight.w500,
+                                              color: _selectedUniversity != null
+                                                  ? AppColors.textPrimary
+                                                  : AppColors.textTertiary,
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ),
+                                        Icon(
+                                          Ionicons.chevron_down_outline,
+                                          size: 16,
+                                          color: AppColors.textSecondary,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                if (_hasAttemptedSubmit && _selectedUniversity == null)
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 8),
+                                    child: Text(
+                                      'Please select your university',
+                                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                        color: AppColors.error,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ),
+                              ],
                             ),
 
                             const SizedBox(height: 32),
@@ -438,11 +298,16 @@ class _RegisterScreenState extends State<RegisterScreen>
                             CustomButton(
                               text: AppStrings.register,
                               onPressed: () {
-                                if (_formKey.currentState!.validate()) {
-                                  // Navigate to OTP screen
-                                  context.go(
-                                    '/otp',
-                                    extra: {
+                                setState(() {
+                                  _hasAttemptedSubmit = true;
+                                });
+                                
+                                if (_formKey.currentState!.validate() && _selectedUniversity != null) {
+                                  // Navigate to OTP screen first
+                                  NavigationHelper.off(
+                                    path: '/otp',
+                                    context: context,
+                                    data: {
                                       'phone': _phoneController.text,
                                       'isResetPassword': false,
                                     },
@@ -451,6 +316,11 @@ class _RegisterScreenState extends State<RegisterScreen>
                               },
                               isGradient: true,
                               width: double.infinity,
+                              icon: const Icon(
+                                Ionicons.person_add_outline,
+                                color: Colors.white,
+                                size: 20,
+                              ),
                             ),
 
                             const SizedBox(height: 32),
@@ -504,7 +374,10 @@ class _RegisterScreenState extends State<RegisterScreen>
                                     ),
                                     WidgetSpan(
                                       child: GestureDetector(
-                                        onTap: () => context.go('/login'),
+                                        onTap: () => NavigationHelper.off(
+                                          path: '/login',
+                                          context: context,
+                                        ),
                                         child: Text(
                                           AppStrings.login,
                                           style: Theme.of(context)
@@ -525,61 +398,264 @@ class _RegisterScreenState extends State<RegisterScreen>
                         ),
                       ),
                     ),
-                  ),
-                ),
-
-                const SizedBox(height: 40),
-
-                // Back Button
-                SlideTransition(
-                  position: _formSlideAnimation,
-                  child: FadeTransition(
-                    opacity: _formFadeAnimation,
-                    child: Center(
-                      child: GestureDetector(
-                        onTap: () => context.go('/welcome'),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 12,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.2),
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.3),
-                            ),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Ionicons.arrow_back_outline,
-                                color: Colors.white,
-                                size: 20,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                'Back to Welcome',
-                                style: Theme.of(context).textTheme.bodyMedium
-                                    ?.copyWith(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
 
                 const SizedBox(height: 40),
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _UniversityPickerBottomSheet extends StatefulWidget {
+  final List<String> universities;
+  final String? selectedUniversity;
+  final Function(String) onUniversitySelected;
+
+  const _UniversityPickerBottomSheet({
+    required this.universities,
+    required this.selectedUniversity,
+    required this.onUniversitySelected,
+  });
+
+  @override
+  State<_UniversityPickerBottomSheet> createState() => _UniversityPickerBottomSheetState();
+}
+
+class _UniversityPickerBottomSheetState extends State<_UniversityPickerBottomSheet> {
+  late List<String> _filteredUniversities;
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _filteredUniversities = widget.universities;
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _filterUniversities(String query) {
+    setState(() {
+      if (query.isEmpty) {
+        _filteredUniversities = widget.universities;
+      } else {
+        _filteredUniversities = widget.universities.where((university) {
+          return university.toLowerCase().contains(query.toLowerCase());
+        }).toList();
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Calculate dynamic height based on number of universities
+    const double handleBarHeight = 28.0; // Handle bar + margins
+    const double headerHeight = 64.0; // Header section
+    const double searchBarHeight = 96.0; // Search bar section
+    const double universityItemHeight = 64.0; // Each university item
+    const double bottomPadding = 20.0; // Bottom padding
+    const double maxHeightPercentage = 0.7; // Maximum 70% of screen height
+    
+    final double calculatedHeight = handleBarHeight + 
+        headerHeight + 
+        searchBarHeight + 
+        (_filteredUniversities.length * universityItemHeight) + 
+        bottomPadding;
+    
+    final double maxHeight = MediaQuery.of(context).size.height * maxHeightPercentage;
+    final double dynamicHeight = calculatedHeight > maxHeight ? maxHeight : calculatedHeight;
+    
+    return Container(
+      height: dynamicHeight,
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 20,
+            offset: const Offset(0, -5),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          // Handle bar
+          Container(
+            margin: const EdgeInsets.only(top: 8),
+            width: 36,
+            height: 4,
+            decoration: BoxDecoration(
+              color: AppColors.textTertiary.withValues(alpha: 0.4),
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          
+          // Header
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+            child: Row(
+              children: [
+                Text(
+                  'اختر الجامعة',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                    fontSize: 18,
+                  ),
+                ),
+                const Spacer(),
+                GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: AppColors.surfaceGrey.withValues(alpha: 0.5),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(
+                      Ionicons.close_outline,
+                      size: 18,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          
+          // Search bar
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: TextField(
+              controller: _searchController,
+              onChanged: _filterUniversities,
+              decoration: InputDecoration(
+                hintText: 'ابحث عن الجامعة...',
+                hintStyle: TextStyle(
+                  color: AppColors.textTertiary,
+                  fontSize: 14,
+                ),
+                prefixIcon: Icon(
+                  Ionicons.search_outline,
+                  color: AppColors.textSecondary,
+                  size: 18,
+                ),
+                suffixIcon: _searchController.text.isNotEmpty
+                    ? GestureDetector(
+                        onTap: () {
+                          _searchController.clear();
+                          _filterUniversities('');
+                        },
+                        child: Icon(
+                          Ionicons.close_circle_outline,
+                          color: AppColors.textSecondary,
+                          size: 18,
+                        ),
+                      )
+                    : null,
+                filled: true,
+                fillColor: AppColors.surfaceGrey.withValues(alpha: 0.3),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide.none,
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide.none,
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(color: AppColors.primary, width: 1.5),
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+                isDense: true,
+              ),
+            ),
+          ),
+          
+          const SizedBox(height: 16),
+          
+          // Universities list
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              itemCount: _filteredUniversities.length,
+              itemBuilder: (context, index) {
+                final university = _filteredUniversities[index];
+                final isSelected = university == widget.selectedUniversity;
+                
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 6),
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? AppColors.primary.withValues(alpha: 0.08)
+                        : AppColors.surfaceGrey.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(10),
+                    border: isSelected
+                        ? Border.all(
+                            color: AppColors.primary.withValues(alpha: 0.2),
+                            width: 1,
+                          )
+                        : null,
+                  ),
+                  child: ListTile(
+                    onTap: () => widget.onUniversitySelected(university),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 2,
+                    ),
+                    leading: Icon(
+                      Ionicons.school_outline,
+                      size: 20,
+                      color: isSelected
+                          ? AppColors.primary
+                          : AppColors.textSecondary,
+                    ),
+                    title: Text(
+                      university,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontWeight: isSelected
+                            ? FontWeight.w600
+                            : FontWeight.w500,
+                        color: isSelected
+                            ? AppColors.primary
+                            : AppColors.textPrimary,
+                        fontSize: 14,
+                      ),
+                    ),
+                    trailing: isSelected
+                        ? Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              color: AppColors.primary,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Icon(
+                              Ionicons.checkmark,
+                              color: Colors.white,
+                              size: 14,
+                            ),
+                          )
+                        : null,
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

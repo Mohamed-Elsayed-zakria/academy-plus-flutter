@@ -195,12 +195,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     // Save profile changes
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Profile updated successfully'),
-                        backgroundColor: AppColors.accent,
-                      ),
-                    );
                     context.pop();
                   }
                 },

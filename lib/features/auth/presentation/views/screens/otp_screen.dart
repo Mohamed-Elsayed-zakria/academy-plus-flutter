@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:pinput/pinput.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_strings.dart';
 import '../../../../../core/widgets/custom_button.dart';
+import '../../../../../core/utils/navigation_helper.dart';
 
 class OtpScreen extends StatefulWidget {
   final Map<String, dynamic>? extra;
@@ -44,7 +44,7 @@ class _OtpScreenState extends State<OtpScreen> {
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.surfaceGrey, width: 2),
+        border: Border.all(color: AppColors.primaryLight, width: 2),
       ),
     );
 
@@ -66,8 +66,8 @@ class _OtpScreenState extends State<OtpScreen> {
         leading: IconButton(
           icon: const Icon(Ionicons.arrow_back_outline),
           onPressed: () => isResetPassword 
-              ? context.go('/forgot-password')
-              : context.go('/register'),
+              ? NavigationHelper.off(path: '/forgot-password', context: context)
+              : NavigationHelper.off(path: '/register', context: context),
         ),
       ),
       body: SafeArea(
@@ -103,18 +103,20 @@ class _OtpScreenState extends State<OtpScreen> {
                     if (pin == '123456') {
                       if (isResetPassword) {
                         // Navigate to reset password screen
-                        context.go('/reset-password', extra: {'phoneNumber': phoneNumber});
+                        NavigationHelper.off(
+                          path: '/reset-password',
+                          context: context,
+                          data: {'phoneNumber': phoneNumber},
+                        );
                       } else {
-                        // Navigate to main screen for registration
-                        context.go('/main');
+                        // Navigate to profile picture screen for registration
+                        NavigationHelper.off(
+                          path: '/profile-picture',
+                          context: context,
+                        );
                       }
                     } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Invalid OTP. Please try again.'),
-                          backgroundColor: AppColors.error,
-                        ),
-                      );
+                      // Invalid OTP - could show error in UI instead
                     }
                   },
                 ),
@@ -145,11 +147,29 @@ class _OtpScreenState extends State<OtpScreen> {
               CustomButton(
                 text: 'Verify',
                 onPressed: () {
-                  // Navigate to main screen after verification
-                  context.go('/main');
+                  // Simulate OTP verification
+                  if (isResetPassword) {
+                    // Navigate to reset password screen
+                    NavigationHelper.off(
+                      path: '/reset-password',
+                      context: context,
+                      data: {'phoneNumber': phoneNumber},
+                    );
+                  } else {
+                    // Navigate to profile picture screen for registration
+                    NavigationHelper.off(
+                      path: '/profile-picture',
+                      context: context,
+                    );
+                  }
                 },
                 isGradient: true,
                 width: double.infinity,
+                icon: const Icon(
+                  Ionicons.checkmark_circle_outline,
+                  color: Colors.white,
+                  size: 20,
+                ),
               ),
             ],
           ),

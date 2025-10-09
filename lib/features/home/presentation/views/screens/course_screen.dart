@@ -269,17 +269,7 @@ class CourseScreen extends StatelessWidget {
                             courseId: courseId,
                           );
                         } catch (e) {
-                          // Show error message to user
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  'Could not open WhatsApp. Please make sure it is installed.',
-                                ),
-                                backgroundColor: AppColors.error,
-                              ),
-                            );
-                          }
+                          // Could not open WhatsApp
                         }
                       },
                       isOutlined: true,

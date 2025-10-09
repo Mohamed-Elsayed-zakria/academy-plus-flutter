@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
       title: 'Academy Plus',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
+      // darkTheme: AppTheme.darkTheme,
       routerConfig: appRouter,
     );
   }

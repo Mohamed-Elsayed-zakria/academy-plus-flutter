@@ -3,6 +3,7 @@ import '../features/splash/presentation/views/screens/splash_screen.dart';
 import '../features/splash/presentation/views/screens/welcome_screen.dart';
 import '../features/auth/presentation/views/screens/login_screen.dart';
 import '../features/auth/presentation/views/screens/register_screen.dart';
+import '../features/auth/presentation/views/screens/profile_picture_screen.dart';
 import '../features/auth/presentation/views/screens/otp_screen.dart';
 import '../features/auth/presentation/views/screens/forgot_password_screen.dart';
 import '../features/auth/presentation/views/screens/reset_password_screen.dart';
@@ -18,7 +19,7 @@ import '../features/quizzes/presentation/views/screens/quiz_details_screen.dart'
 import '../features/profile/presentation/views/screens/edit_profile_screen.dart';
 
 final GoRouter appRouter = GoRouter(
-  initialLocation: '/',
+  initialLocation: '/main',
   routes: [
     // Splash Screen
     GoRoute(
@@ -40,6 +41,10 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/register',
       builder: (context, state) => const RegisterScreen(),
+    ),
+    GoRoute(
+      path: '/profile-picture',
+      builder: (context, state) => const ProfilePictureScreen(),
     ),
     GoRoute(
       path: '/otp',
@@ -137,4 +142,7 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => const EditProfileScreen(),
     ),
   ],
+
+
+  
 );

@@ -16,7 +16,8 @@ class AssignmentsScreen extends StatelessWidget {
         'course': 'Advanced Programming',
         'dueDate': '2024-02-15',
         'status': 'Pending',
-        'description': 'Implement a sorting algorithm and analyze its complexity.',
+        'description':
+            'Implement a sorting algorithm and analyze its complexity.',
         'grade': null,
       },
       {
@@ -25,7 +26,8 @@ class AssignmentsScreen extends StatelessWidget {
         'course': 'Database Systems',
         'dueDate': '2024-02-10',
         'status': 'Submitted',
-        'description': 'Design and implement a database for an e-commerce system.',
+        'description':
+            'Design and implement a database for an e-commerce system.',
         'submittedDate': '2024-02-08',
         'grade': null,
       },
@@ -45,7 +47,8 @@ class AssignmentsScreen extends StatelessWidget {
         'course': 'Data Structures',
         'dueDate': '2024-02-20',
         'status': 'Pending',
-        'description': 'Write a detailed report analyzing time and space complexity.',
+        'description':
+            'Write a detailed report analyzing time and space complexity.',
         'grade': null,
       },
       {
@@ -80,7 +83,10 @@ class AssignmentsScreen extends StatelessWidget {
           return _AssignmentCard(
             assignment: assignment,
             onTap: () {
-              context.push('/assignment/${assignment['id']}', extra: assignment);
+              context.push(
+                '/assignment/${assignment['id']}',
+                extra: assignment,
+              );
             },
           );
         },
@@ -93,10 +99,7 @@ class _AssignmentCard extends StatelessWidget {
   final Map<String, dynamic> assignment;
   final VoidCallback onTap;
 
-  const _AssignmentCard({
-    required this.assignment,
-    required this.onTap,
-  });
+  const _AssignmentCard({required this.assignment, required this.onTap});
 
   Color _getStatusColor(String status) {
     switch (status) {
@@ -212,9 +215,9 @@ class _AssignmentCard extends StatelessWidget {
               // Assignment Title
               Text(
                 assignment['title'] as String,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
               ),
 
               const SizedBox(height: 8),
@@ -231,8 +234,8 @@ class _AssignmentCard extends StatelessWidget {
                   Text(
                     assignment['course'] as String,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: AppColors.textSecondary,
-                        ),
+                      color: AppColors.textSecondary,
+                    ),
                   ),
                 ],
               ),
@@ -253,13 +256,13 @@ class _AssignmentCard extends StatelessWidget {
                   Text(
                     'Due: $dueDate',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: status == 'Pending'
-                              ? AppColors.error
-                              : AppColors.textSecondary,
-                          fontWeight: status == 'Pending'
-                              ? FontWeight.w600
-                              : FontWeight.normal,
-                        ),
+                      color: status == 'Pending'
+                          ? AppColors.error
+                          : AppColors.textSecondary,
+                      fontWeight: status == 'Pending'
+                          ? FontWeight.w600
+                          : FontWeight.normal,
+                    ),
                   ),
                   const Spacer(),
                   Icon(

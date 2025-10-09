@@ -89,7 +89,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withValues(alpha: 0.2),
+                                      color: Colors.black.withValues(
+                                        alpha: 0.2,
+                                      ),
                                       blurRadius: 15,
                                       offset: const Offset(0, 5),
                                     ),
@@ -100,33 +102,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   Ionicons.person_outline,
                                   size: 50,
                                   color: AppColors.primary,
-                                ),
-                              ),
-                              Positioned(
-                                bottom: 0,
-                                right: 0,
-                                child: GestureDetector(
-                                  onTap: () {
-                                    // Change profile picture
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.all(8),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      shape: BoxShape.circle,
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withValues(alpha: 0.2),
-                                          blurRadius: 5,
-                                        ),
-                                      ],
-                                    ),
-                                    child: Icon(
-                                      Ionicons.camera_outline,
-                                      size: 16,
-                                      color: AppColors.primary,
-                                    ),
-                                  ),
                                 ),
                               ),
                             ],
@@ -171,6 +146,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     'Personal Information',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -187,7 +163,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     icon: Ionicons.call_outline,
                     label: 'Phone',
                     value: user['phone'] as String,
-                    color: AppColors.accent,
+                    color: AppColors.primary,
                   ),
                   const SizedBox(height: 12),
 
@@ -195,77 +171,48 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     icon: Ionicons.school_outline,
                     label: 'University',
                     value: user['university'] as String,
-                    color: AppColors.accentPurple,
+                    color: AppColors.primary,
                   ),
 
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 40),
 
-                  // Settings Section
+                  // Settings & Actions Section
                   Text(
-                    'Settings',
+                    "Settings",
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 16),
 
                   // Language Selector
-                  _buildSettingsTile(
+                  _buildActionButton(
                     icon: Ionicons.language_outline,
                     title: 'Language',
-                    subtitle: _selectedLanguage,
-                    color: AppColors.info,
-                    trailing: DropdownButton<String>(
-                      value: _selectedLanguage,
-                      underline: const SizedBox(),
-                      items: ['English', 'العربية'].map((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                      onChanged: (String? newValue) {
-                        if (newValue != null) {
-                          setState(() {
-                            _selectedLanguage = newValue;
-                          });
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Language changed to $newValue'),
-                              duration: const Duration(seconds: 2),
-                            ),
-                          );
-                        }
-                      },
-                    ),
+                    subtitle: _selectedLanguage == 'English'
+                        ? 'الإنجليزية'
+                        : 'العربية',
+                    color: AppColors.primary,
+                    onTap: () {
+                      _showLanguageDialog(context);
+                    },
                   ),
                   const SizedBox(height: 12),
 
                   // Dark Mode Toggle
-                  _buildSettingsTile(
-                    icon: _isDarkMode ? Ionicons.moon_outline : Ionicons.sunny_outline,
+                  _buildActionButton(
+                    icon: _isDarkMode
+                        ? Ionicons.moon_outline
+                        : Ionicons.sunny_outline,
                     title: 'Dark Mode',
                     subtitle: _isDarkMode ? 'Enabled' : 'Disabled',
-                    color: _isDarkMode
-                        ? AppColors.accentPurple
-                        : AppColors.accentOrange,
-                    trailing: Switch(
-                      value: _isDarkMode,
-                      onChanged: (bool value) {},
-                      activeThumbColor: AppColors.primary,
-                    ),
+                    color: AppColors.primary,
+                    onTap: () {
+                      _showThemeDialog(context);
+                    },
                   ),
-
-                  const SizedBox(height: 32),
-
-                  // Actions Section
-                  Text(
-                    'Actions',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 12),
 
                   _buildActionButton(
                     icon: Ionicons.create_outline,
@@ -280,7 +227,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _buildActionButton(
                     icon: Ionicons.lock_closed_outline,
                     title: AppStrings.changePassword,
-                    color: AppColors.accentOrange,
+                    color: AppColors.primary,
                     onTap: () {
                       // Navigate to change password
                     },
@@ -290,7 +237,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _buildActionButton(
                     icon: Ionicons.help_circle_outline,
                     title: 'Help & Support',
-                    color: AppColors.info,
+                    color: AppColors.primary,
                     onTap: () {
                       // Navigate to help
                     },
@@ -300,7 +247,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _buildActionButton(
                     icon: Ionicons.information_circle_outline,
                     title: 'About',
-                    color: AppColors.accentPurple,
+                    color: AppColors.primary,
                     onTap: () {
                       // Show about dialog
                     },
@@ -317,19 +264,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       _showLogoutDialog(context);
                     },
                   ),
-
-                  const SizedBox(height: 32),
-
-                  // App Version
-                  Center(
-                    child: Text(
-                      'Version 1.0.0',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppColors.textTertiary,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 30),
                 ],
               ),
             ),
@@ -371,6 +306,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   label,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: AppColors.textSecondary,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -378,68 +314,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   value,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
                   ),
                 ),
               ],
             ),
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSettingsTile({
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required Color color,
-    required Widget trailing,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(icon, color: color, size: 24),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  subtitle,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: AppColors.textSecondary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          trailing,
         ],
       ),
     );
@@ -451,6 +331,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     required Color color,
     required VoidCallback onTap,
     bool isDestructive = false,
+    String? subtitle,
   }) {
     return InkWell(
       onTap: onTap,
@@ -458,11 +339,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isDestructive ? color.withValues(alpha: 0.1) : AppColors.surface,
+          color: isDestructive ? Colors.white : AppColors.surface,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isDestructive
-                ? color.withValues(alpha: 0.3)
+                ? AppColors.error.withValues(alpha: 0.3)
                 : color.withValues(alpha: 0.2),
           ),
         ),
@@ -478,15 +359,310 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             const SizedBox(width: 16),
             Expanded(
-              child: Text(
-                title,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: color,
-                  fontWeight: FontWeight.w600,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: isDestructive
+                          ? AppColors.error
+                          : AppColors.textPrimary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  if (subtitle != null) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: AppColors.textSecondary,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ],
               ),
             ),
             Icon(Ionicons.chevron_forward_outline, size: 16, color: color),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showLanguageDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          titlePadding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+          contentPadding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+          constraints: const BoxConstraints(maxWidth: 400, minWidth: 300),
+          title: Row(
+            children: [
+              Icon(Ionicons.language_outline, color: AppColors.primary),
+              const SizedBox(width: 12),
+              Text(
+                'اللغة',
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  color: AppColors.textPrimary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildLanguageOption(
+                context: context,
+                title: 'English',
+                subtitle: 'الإنجليزية',
+                icon: Ionicons.globe_outline,
+                isSelected: _selectedLanguage == 'English',
+                onTap: () {
+                  Navigator.pop(context);
+                  setState(() {
+                    _selectedLanguage = 'English';
+                  });
+                },
+              ),
+              const SizedBox(height: 12),
+              _buildLanguageOption(
+                context: context,
+                title: 'العربية',
+                subtitle: 'اللغة العربية',
+                icon: Ionicons.language_outline,
+                isSelected: _selectedLanguage == 'العربية',
+                onTap: () {
+                  Navigator.pop(context);
+                  setState(() {
+                    _selectedLanguage = 'العربية';
+                  });
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildLanguageOption({
+    required BuildContext context,
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? AppColors.primary.withValues(alpha: 0.1)
+              : AppColors.surface,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isSelected
+                ? AppColors.primary
+                : AppColors.surfaceGrey.withValues(alpha: 0.3),
+            width: isSelected ? 2 : 1,
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? AppColors.primary.withValues(alpha: 0.2)
+                    : AppColors.surfaceGrey.withValues(alpha: 0.3),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                icon,
+                color: isSelected ? AppColors.primary : AppColors.textSecondary,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: isSelected
+                          ? AppColors.primary
+                          : AppColors.textPrimary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (isSelected)
+              Icon(
+                Ionicons.checkmark_circle,
+                color: AppColors.primary,
+                size: 20,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showThemeDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          titlePadding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+          contentPadding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+          constraints: const BoxConstraints(maxWidth: 400, minWidth: 300),
+          title: Row(
+            children: [
+              Icon(Ionicons.color_palette_outline, color: AppColors.primary),
+              const SizedBox(width: 12),
+              Text(
+                'النظام',
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  color: AppColors.textPrimary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildThemeOption(
+                context: context,
+                title: 'الوضع العادي',
+                subtitle: 'النظام الافتراضي',
+                icon: Ionicons.sunny_outline,
+                isSelected: !_isDarkMode,
+                onTap: () {
+                  Navigator.pop(context);
+                  setState(() {
+                    _isDarkMode = false;
+                  });
+                },
+              ),
+              const SizedBox(height: 12),
+              _buildThemeOption(
+                context: context,
+                title: 'الدارك',
+                subtitle: 'الوضع الليلي',
+                icon: Ionicons.moon_outline,
+                isSelected: _isDarkMode,
+                onTap: () {
+                  Navigator.pop(context);
+                  setState(() {
+                    _isDarkMode = true;
+                  });
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildThemeOption({
+    required BuildContext context,
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? AppColors.primary.withValues(alpha: 0.1)
+              : AppColors.surface,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isSelected
+                ? AppColors.primary
+                : AppColors.surfaceGrey.withValues(alpha: 0.3),
+            width: isSelected ? 2 : 1,
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? AppColors.primary.withValues(alpha: 0.2)
+                    : AppColors.surfaceGrey.withValues(alpha: 0.3),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                icon,
+                color: isSelected ? AppColors.primary : AppColors.textSecondary,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: isSelected
+                          ? AppColors.primary
+                          : AppColors.textPrimary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (isSelected)
+              Icon(
+                Ionicons.checkmark_circle,
+                color: AppColors.primary,
+                size: 20,
+              ),
           ],
         ),
       ),
@@ -498,6 +674,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
@@ -505,16 +682,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
             children: [
               Icon(Ionicons.log_out_outline, color: AppColors.error),
               const SizedBox(width: 12),
-              const Text('Logout'),
+              Text(
+                'Logout',
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  color: AppColors.textPrimary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ],
           ),
-          content: const Text('Are you sure you want to logout?'),
+          content: Text(
+            'Are you sure you want to logout?',
+            style: Theme.of(
+              context,
+            ).textTheme.bodyLarge?.copyWith(color: AppColors.textSecondary),
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
               child: Text(
                 'Cancel',
-                style: TextStyle(color: AppColors.textSecondary),
+                style: TextStyle(
+                  color: AppColors.textSecondary,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
             ElevatedButton(

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:university/features/home/presentation/views/widgets/home_screen_banner_slider.dart';
+import 'package:university/features/home/presentation/views/widgets/home_screen_departments_tapbar.dart';
+import 'package:university/features/home/presentation/views/widgets/home_screen_quick_access_section.dart';
+import 'package:university/features/home/presentation/views/widgets/home_screen_search_bar.dart';
+import 'package:university/features/home/presentation/views/widgets/home_screen_sub_departments_grid.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_strings.dart';
 
@@ -12,14 +15,8 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  int _currentSlide = 0;
-
-  final List<String> _banners = [
-    'Banner 1',
-    'Banner 2',
-    'Banner 3',
-  ];
+class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
+  late TabController _tabController;
 
   // Main Departments
   final List<Map<String, dynamic>> _departments = [
@@ -27,299 +24,115 @@ class _HomeScreenState extends State<HomeScreen> {
       'id': 1,
       'name': 'Business',
       'icon': Ionicons.briefcase_outline,
-      'color': Color(0xFF6366F1),
-      'subDepartments': ['Accounting', 'Marketing', 'Finance', 'HR']
+      'subDepartments': ['Accounting', 'Marketing', 'Finance', 'HR'],
     },
     {
       'id': 2,
       'name': 'Engineering',
       'icon': Ionicons.construct_outline,
-      'color': Color(0xFF8B5CF6),
-      'subDepartments': ['Computer Science', 'Electrical', 'Mechanical', 'Civil']
+      'subDepartments': [
+        'Computer Science',
+        'Electrical',
+        'Mechanical',
+        'Civil',
+      ],
     },
     {
       'id': 3,
       'name': 'Medicine',
       'icon': Ionicons.medical_outline,
-      'color': Color(0xFFEC4899),
-      'subDepartments': ['General Medicine', 'Surgery', 'Pediatrics', 'Cardiology']
+      'subDepartments': [
+        'General Medicine',
+        'Surgery',
+        'Pediatrics',
+        'Cardiology',
+      ],
     },
     {
       'id': 4,
       'name': 'Arts',
       'icon': Ionicons.color_palette_outline,
-      'color': Color(0xFFF59E0B),
-      'subDepartments': ['Fine Arts', 'Music', 'Theater', 'Literature']
+      'subDepartments': ['Fine Arts', 'Music', 'Theater', 'Literature'],
     },
     {
       'id': 5,
       'name': 'Science',
       'icon': Ionicons.flask_outline,
-      'color': Color(0xFF10B981),
-      'subDepartments': ['Physics', 'Chemistry', 'Biology', 'Mathematics']
+      'subDepartments': ['Physics', 'Chemistry', 'Biology', 'Mathematics'],
     },
     {
       'id': 6,
       'name': 'Law',
       'icon': Ionicons.scale_outline,
-      'color': Color(0xFFEF4444),
-      'subDepartments': ['Criminal Law', 'Civil Law', 'International Law', 'Corporate Law']
+      'subDepartments': [
+        'Criminal Law',
+        'Civil Law',
+        'International Law',
+        'Corporate Law',
+      ],
     },
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: _departments.length, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(AppStrings.appName),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Search Bar
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: AppStrings.search,
-                  prefixIcon: const Icon(Ionicons.search_outline),
-                  filled: true,
-                  fillColor: AppColors.surface,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide.none,
-                  ),
+      appBar: AppBar(title: Text(AppStrings.appName)),
+      body: CustomScrollView(
+        slivers: [
+          // Search Bar
+          SliverToBoxAdapter(child: HomeScreenSearchBar()),
+
+          // Banner Slider
+          SliverToBoxAdapter(child: HomeScreenBannerSlider()),
+
+          SliverToBoxAdapter(child: const SizedBox(height: 24)),
+
+          // Quick Access Section
+          SliverToBoxAdapter(child: HomeScreenQuickAccessSection()),
+
+          SliverToBoxAdapter(child: const SizedBox(height: 24)),
+
+          // Departments Section
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                AppStrings.departments,
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
                 ),
               ),
             ),
-
-            // Banner Slider
-            CarouselSlider(
-              options: CarouselOptions(
-                height: 180,
-                autoPlay: true,
-                enlargeCenterPage: true,
-                viewportFraction: 0.9,
-                onPageChanged: (index, reason) {
-                  setState(() {
-                    _currentSlide = index;
-                  });
-                },
-              ),
-              items: _banners.map((banner) {
-                return Builder(
-                  builder: (BuildContext context) {
-                    return Container(
-                      width: MediaQuery.of(context).size.width,
-                      margin: const EdgeInsets.symmetric(horizontal: 5.0),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                        gradient: AppColors.primaryGradient,
-                      ),
-                      child: Center(
-                        child: Text(
-                          banner,
-                          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                                color: Colors.white,
-                              ),
-                        ),
-                      ),
-                    );
-                  },
-                );
-              }).toList(),
+          ),
+          SliverToBoxAdapter(child: const SizedBox(height: 16)),
+          // Tab Bar
+          SliverToBoxAdapter(
+            child: HomeScreenDepartmentsTapbar(
+              tabController: _tabController,
+              departments: _departments,
             ),
-
-            // Carousel Indicators
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: _banners.asMap().entries.map((entry) {
-                return Container(
-                  width: _currentSlide == entry.key ? 24 : 8,
-                  height: 8,
-                  margin: const EdgeInsets.symmetric(horizontal: 4.0),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(4),
-                    color: _currentSlide == entry.key
-                        ? AppColors.primary
-                        : AppColors.textTertiary.withValues(alpha: 0.3),
-                  ),
-                );
-              }).toList(),
-            ),
-
-            const SizedBox(height: 24),
-
-            // Assignments & Quizzes
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: _buildQuickAccessCard(
-                      title: AppStrings.assignments,
-                      icon: Ionicons.document_text_outline,
-                      color: AppColors.primary,
-                      onTap: () {
-                        context.push('/assignments');
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: _buildQuickAccessCard(
-                      title: AppStrings.quizzes,
-                      icon: Ionicons.help_circle_outline,
-                      color: AppColors.accent,
-                      onTap: () {
-                        context.push('/quizzes');
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 24),
-
-            // Departments Section
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Text(
-                AppStrings.departments,
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-                childAspectRatio: 1.1,
-              ),
-              itemCount: _departments.length,
-              itemBuilder: (context, index) {
-                final department = _departments[index];
-                return _buildDepartmentCard(
-                  name: department['name'],
-                  icon: department['icon'],
-                  color: department['color'],
-                  onTap: () {
-                    context.push(
-                      '/department/${department['id']}',
-                      extra: department,
-                    );
-                  },
-                );
-              },
-            ),
-
-            const SizedBox(height: 24),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildQuickAccessCard({
-    required String title,
-    required IconData icon,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.1),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                icon,
-                color: color,
-                size: 32,
-              ),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              title,
-              style: Theme.of(context).textTheme.titleMedium,
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDepartmentCard({
-    required String name,
-    required IconData icon,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.1),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                icon,
-                color: color,
-                size: 40,
-              ),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              name,
-              style: Theme.of(context).textTheme.titleMedium,
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
+          ),
+          SliverToBoxAdapter(child: const SizedBox(height: 20)),
+          // Sub-departments content
+          HomeScreenSubDepartmentsGrid(
+            tabController: _tabController,
+            departments: _departments,
+          ),
+          SliverToBoxAdapter(child: const SizedBox(height: 24)),
+        ],
       ),
     );
   }
