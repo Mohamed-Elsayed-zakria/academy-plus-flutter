@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/localization/app_localizations.dart';
+import '../../../../../core/widgets/custom_text_field.dart';
+import '../../../../../core/widgets/date_picker_widget.dart';
 
 class AddQuizScreen extends StatefulWidget {
   const AddQuizScreen({super.key});
@@ -80,7 +82,7 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
   }
 
   void _selectDate() async {
-    final date = await showDatePicker(
+    final date = await DatePickerWidget.showCustomDatePicker(
       context: context,
       initialDate: DateTime.now().add(const Duration(days: 1)),
       firstDate: DateTime.now(),
@@ -183,15 +185,10 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
             // Quiz Title
             _buildSectionTitle(AppLocalizations.quizTitle),
             const SizedBox(height: 8),
-            TextFormField(
+            CustomTextField(
               controller: _titleController,
-              decoration: InputDecoration(
-                hintText: AppLocalizations.quizTitle,
-                prefixIcon: const Icon(Ionicons.document_text_outline),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
+              hintText: AppLocalizations.quizTitle,
+              prefixIcon: const Icon(Ionicons.document_text_outline),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return AppLocalizations.pleaseEnterTitle;
@@ -202,40 +199,37 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
             
             const SizedBox(height: 24),
             
-            // Description
+            // Description (Optional)
             _buildSectionTitle(AppLocalizations.description),
             const SizedBox(height: 8),
-            TextFormField(
+            CustomTextField(
               controller: _descriptionController,
-              maxLines: 4,
-              decoration: InputDecoration(
-                hintText: AppLocalizations.description,
-                prefixIcon: const Icon(Ionicons.text_outline),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return AppLocalizations.pleaseEnterDescription;
-                }
-                return null;
-              },
+              hintText: AppLocalizations.description,
+              prefixIcon: const Icon(Ionicons.text_outline),
+              // No validator - description is optional
             ),
             
             const SizedBox(height: 24),
             
-            // Quiz Date
+            // Quiz Date (Required)
             _buildSectionTitle(AppLocalizations.quizDate),
             const SizedBox(height: 8),
             InkWell(
               onTap: _selectDate,
               borderRadius: BorderRadius.circular(12),
               child: Container(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                 decoration: BoxDecoration(
-                  border: Border.all(color: AppColors.border),
+                  color: AppColors.surface,
                   borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: AppColors.textTertiary),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.02),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
                 ),
                 child: Row(
                   children: [
@@ -253,11 +247,12 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
                           color: _selectedDate != null 
                               ? AppColors.textPrimary 
                               : AppColors.textSecondary,
+                          fontSize: 14,
                         ),
                       ),
                     ),
                     Icon(
-                      Ionicons.calendar_outline,
+                      Ionicons.chevron_down_outline,
                       color: AppColors.textSecondary,
                     ),
                   ],
@@ -307,15 +302,10 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
                   const SizedBox(height: 16),
                   
                   // Admin Username
-                  TextFormField(
+                  CustomTextField(
                     controller: _adminUsernameController,
-                    decoration: InputDecoration(
-                      hintText: AppLocalizations.adminUsername,
-                      prefixIcon: const Icon(Ionicons.person_outline),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
+                    hintText: AppLocalizations.adminUsername,
+                    prefixIcon: const Icon(Ionicons.person_outline),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return AppLocalizations.pleaseEnterAdminUsername;
@@ -327,16 +317,11 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
                   const SizedBox(height: 16),
                   
                   // Admin Password
-                  TextFormField(
+                  CustomTextField(
                     controller: _adminPasswordController,
-                    obscureText: true,
-                    decoration: InputDecoration(
-                      hintText: AppLocalizations.adminPassword,
-                      prefixIcon: const Icon(Ionicons.lock_closed_outline),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
+                    hintText: AppLocalizations.adminPassword,
+                    prefixIcon: const Icon(Ionicons.lock_closed_outline),
+                    isPassword: true,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return AppLocalizations.pleaseEnterAdminPassword;
