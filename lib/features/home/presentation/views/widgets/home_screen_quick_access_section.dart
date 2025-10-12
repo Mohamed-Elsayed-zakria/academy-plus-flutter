@@ -2,6 +2,7 @@ import '../../../../../core/localization/app_localizations.dart';
 import '../../../../../core/constants/app_colors.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class HomeScreenQuickAccessSection extends StatelessWidget {
   const HomeScreenQuickAccessSection({super.key});
@@ -24,7 +25,9 @@ class HomeScreenQuickAccessSection extends StatelessWidget {
                   icon: Ionicons.clipboard_outline,
                   color: AppColors.primary,
                   gradient: AppColors.primaryGradient,
-                  onTap: () {},
+                  onTap: () {
+                    context.push('/assignments');
+                  },
                 ),
               ),
               const SizedBox(width: 16),
@@ -43,7 +46,9 @@ class HomeScreenQuickAccessSection extends StatelessWidget {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
-                  onTap: () {},
+                  onTap: () {
+                    context.push('/quizzes');
+                  },
                 ),
               ),
             ],

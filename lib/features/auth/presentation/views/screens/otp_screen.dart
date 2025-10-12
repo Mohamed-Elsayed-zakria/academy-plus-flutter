@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/localization/app_localizations.dart';
 import '../../../../../core/widgets/custom_button.dart';
@@ -59,118 +60,167 @@ class _OtpScreenState extends State<OtpScreen> {
     );
 
     return Scaffold(
-      appBar: AppBar(title: Text(AppLocalizations.verifyOtp)),
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 20),
-              Text(
-                AppLocalizations.verifyOtp,
-                style: Theme.of(context).textTheme.displayMedium,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                AppLocalizations.enterOtp,
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyLarge?.copyWith(color: AppColors.textSecondary),
-              ),
-              const SizedBox(height: 32),
-              // OTP Label
-              Text(
-                AppLocalizations.enterOtp,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: AppColors.textSecondary,
-                  fontSize: 14,
-                ),
-              ),
-              const SizedBox(height: 16),
-              Center(
-                child: Pinput(
-                  controller: _pinController,
-                  focusNode: _focusNode,
-                  length: 6,
-                  defaultPinTheme: defaultPinTheme,
-                  focusedPinTheme: focusedPinTheme,
-                  submittedPinTheme: submittedPinTheme,
-                  showCursor: true,
-                  onCompleted: (pin) {
-                    // Simulate OTP verification
-                    if (pin == '123456') {
-                      if (isResetPassword) {
-                        // Navigate to reset password screen
-                        NavigationHelper.off(
-                          path: '/reset-password',
-                          context: context,
-                          data: {'phoneNumber': phoneNumber},
-                        );
-                      } else {
-                        // Navigate to profile picture screen for registration
-                        NavigationHelper.off(
-                          path: '/profile-picture',
-                          context: context,
-                        );
-                      }
-                    } else {
-                      // Invalid OTP - could show error in UI instead
-                    }
-                  },
-                ),
-              ),
-              const SizedBox(height: 32),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    AppLocalizations.didntReceiveCode,
-                    style: Theme.of(context).textTheme.bodyMedium,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14.0),
+            child: Column(
+              children: [
+                const SizedBox(height: 60),
+
+                // OTP Illustration and Header Section
+                Center(
+                  child: Column(
+                    children: [
+                      // OTP Illustration
+                      Container(
+                        width: 240,
+                        height: 240,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.primary.withValues(alpha: 0.1),
+                              blurRadius: 20,
+                              offset: const Offset(0, 10),
+                            ),
+                          ],
+                        ),
+                        child: SvgPicture.asset(
+                          'assets/images/Enter OTP-amico.svg',
+                          width: 240,
+                          height: 240,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      // Title
+                      Text(
+                        AppLocalizations.verifyOtp,
+                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.textPrimary,
+                            ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        AppLocalizations.enterOtp,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: AppColors.textSecondary,
+                            ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      // Resend OTP logic
-                    },
-                    child: Text(
-                      AppLocalizations.resend,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppColors.primary,
-                        fontWeight: FontWeight.w600,
+                ),
+                const SizedBox(height: 48),
+
+                // OTP Input Section
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // OTP Input
+                    Center(
+                      child: Pinput(
+                        controller: _pinController,
+                        focusNode: _focusNode,
+                        length: 6,
+                        defaultPinTheme: defaultPinTheme,
+                        focusedPinTheme: focusedPinTheme,
+                        submittedPinTheme: submittedPinTheme,
+                        showCursor: true,
+                        onCompleted: (pin) {
+                          // Simulate OTP verification
+                          if (pin == '123456') {
+                            if (isResetPassword) {
+                              // Navigate to reset password screen
+                              NavigationHelper.off(
+                                path: '/reset-password',
+                                context: context,
+                                data: {'phoneNumber': phoneNumber},
+                              );
+                            } else {
+                              // Navigate to profile picture screen for registration
+                              NavigationHelper.off(
+                                path: '/profile-picture',
+                                context: context,
+                              );
+                            }
+                          } else {
+                            // Invalid OTP - could show error in UI instead
+                          }
+                        },
                       ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 48),
-              CustomButton(
-                text: AppLocalizations.verify,
-                onPressed: () {
-                  // Simulate OTP verification
-                  if (isResetPassword) {
-                    // Navigate to reset password screen
-                    NavigationHelper.off(
-                      path: '/reset-password',
-                      context: context,
-                      data: {'phoneNumber': phoneNumber},
-                    );
-                  } else {
-                    // Navigate to profile picture screen for registration
-                    NavigationHelper.off(
-                      path: '/profile-picture',
-                      context: context,
-                    );
-                  }
-                },
-                isOutlined: true,
-                width: double.infinity,
-                icon: const Icon(
-                  Ionicons.checkmark_circle_outline,
-                  color: AppColors.primary,
-                  size: 20,
+                    const SizedBox(height: 32),
+
+                    // Resend Code Section
+                    Center(
+                      child: RichText(
+                        text: TextSpan(
+                          style: Theme.of(context).textTheme.bodyMedium,
+                          children: [
+                            TextSpan(
+                              text: AppLocalizations.didntReceiveCode,
+                              style: TextStyle(color: AppColors.textSecondary),
+                            ),
+                            WidgetSpan(
+                              child: GestureDetector(
+                                onTap: () {
+                                  // Resend OTP logic
+                                },
+                                child: Text(
+                                  AppLocalizations.resend,
+                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: AppColors.primary,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 32),
+
+                    // Verify Button
+                    CustomButton(
+                      text: AppLocalizations.verify,
+                      onPressed: () {
+                        // Simulate OTP verification
+                        if (isResetPassword) {
+                          // Navigate to reset password screen
+                          NavigationHelper.off(
+                            path: '/reset-password',
+                            context: context,
+                            data: {'phoneNumber': phoneNumber},
+                          );
+                        } else {
+                          // Navigate to profile picture screen for registration
+                          NavigationHelper.off(
+                            path: '/profile-picture',
+                            context: context,
+                          );
+                        }
+                      },
+                      isOutlined: true,
+                      width: double.infinity,
+                      icon: const Icon(
+                        Ionicons.checkmark_circle_outline,
+                        color: AppColors.primary,
+                        size: 20,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
+
+                const SizedBox(height: 40),
+              ],
+            ),
           ),
         ),
       ),

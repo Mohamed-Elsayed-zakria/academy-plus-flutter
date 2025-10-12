@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/localization/app_localizations.dart';
-import '../../../../../core/widgets/empty_state.dart';
+import '../../../../../core/widgets/empty_state_widget.dart';
 
 class NotificationsScreen extends StatelessWidget {
   const NotificationsScreen({super.key});
@@ -55,10 +55,11 @@ class NotificationsScreen extends StatelessWidget {
         ],
       ),
       body: notifications.isEmpty
-          ? EmptyState(
-              icon: Ionicons.notifications_outline,
-              message: AppLocalizations.noNotifications,
-              subtitle: 'We\'ll notify you when something new arrives',
+          ? EmptyStateWidget(
+              title: AppLocalizations.noNotifications,
+              description: 'We\'ll notify you when something new arrives',
+              buttonText: '',
+              onButtonPressed: () {},
             )
           : ListView.builder(
               padding: const EdgeInsets.all(16),

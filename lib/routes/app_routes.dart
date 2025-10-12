@@ -9,18 +9,20 @@ import '../features/auth/presentation/views/screens/forgot_password_screen.dart'
 import '../features/auth/presentation/views/screens/reset_password_screen.dart';
 import '../features/home/presentation/views/screens/main_screen.dart';
 import '../features/home/presentation/views/screens/sub_departments_screen.dart';
-import '../features/home/presentation/views/screens/courses_screen.dart';
-import '../features/home/presentation/views/screens/course_screen.dart';
-import '../features/home/presentation/views/screens/course_content_screen.dart';
+import '../features/courses/presentation/screens/courses_screen.dart';
+import '../features/courses/presentation/screens/course_content_screen.dart';
 import '../features/assignments/presentation/views/screens/assignments_screen.dart';
 import '../features/assignments/presentation/views/screens/assignment_details_screen.dart';
+import '../features/assignments/presentation/views/screens/add_assignment_screen.dart';
 import '../features/quizzes/presentation/views/screens/quizzes_screen.dart';
 import '../features/quizzes/presentation/views/screens/quiz_details_screen.dart';
+import '../features/quizzes/presentation/views/screens/add_quiz_screen.dart';
 import '../features/profile/presentation/views/screens/edit_profile_screen.dart';
 import '../features/onboarding/presentation/views/screens/onboarding_screen.dart';
+import '../features/cart/presentation/screens/cart_screen.dart';
 
 GoRouter createAppRouter({required bool isOnboardingCompleted}) => GoRouter(
-  initialLocation: isOnboardingCompleted ? '/welcome' : '/onboarding',
+  initialLocation: isOnboardingCompleted ? '/main' : '/onboarding',
   routes: [
     // Splash Screen
     GoRoute(
@@ -98,22 +100,13 @@ GoRouter createAppRouter({required bool isOnboardingCompleted}) => GoRouter(
       },
     ),
 
-    // Course Screen
-    GoRoute(
-      path: '/course/:id',
-      builder: (context, state) {
-        final courseId = state.pathParameters['id'] ?? '';
-        final courseData = state.extra as Map<String, dynamic>?;
-        return CourseScreen(courseId: courseId, courseData: courseData);
-      },
-    ),
-
-    // Course Content Screen (after subscription)
+    // Course Content Screen (merged with course details)
     GoRoute(
       path: '/course/:id/content',
       builder: (context, state) {
         final courseId = state.pathParameters['id'] ?? '';
-        return CourseContentScreen(courseId: courseId);
+        final courseData = state.extra as Map<String, dynamic>?;
+        return CourseContentScreen(courseId: courseId, courseData: courseData);
       },
     ),
 
@@ -121,6 +114,10 @@ GoRouter createAppRouter({required bool isOnboardingCompleted}) => GoRouter(
     GoRoute(
       path: '/assignments',
       builder: (context, state) => const AssignmentsScreen(),
+    ),
+    GoRoute(
+      path: '/add-assignment',
+      builder: (context, state) => const AddAssignmentScreen(),
     ),
     GoRoute(
       path: '/assignment/:id',
@@ -136,6 +133,10 @@ GoRouter createAppRouter({required bool isOnboardingCompleted}) => GoRouter(
       builder: (context, state) => const QuizzesScreen(),
     ),
     GoRoute(
+      path: '/add-quiz',
+      builder: (context, state) => const AddQuizScreen(),
+    ),
+    GoRoute(
       path: '/quiz/:id',
       builder: (context, state) {
         final quiz = state.extra as Map<String, dynamic>;
@@ -147,6 +148,12 @@ GoRouter createAppRouter({required bool isOnboardingCompleted}) => GoRouter(
     GoRoute(
       path: '/profile/edit',
       builder: (context, state) => const EditProfileScreen(),
+    ),
+
+    // Cart Route
+    GoRoute(
+      path: '/cart',
+      builder: (context, state) => const CartScreen(),
     ),
   ],
 );

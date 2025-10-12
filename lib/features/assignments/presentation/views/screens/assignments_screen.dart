@@ -3,67 +3,21 @@ import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/localization/app_localizations.dart';
+import '../../../../../core/widgets/empty_state_widget.dart';
 
-class AssignmentsScreen extends StatelessWidget {
+class AssignmentsScreen extends StatefulWidget {
   const AssignmentsScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    // Mock assignments data
-    final assignments = [
-      {
-        'id': 1,
-        'title': 'Programming Assignment 1',
-        'course': 'Advanced Programming',
-        'dueDate': '2024-02-15',
-        'status': 'Pending',
-        'description':
-            'Implement a sorting algorithm and analyze its complexity.',
-        'grade': null,
-      },
-      {
-        'id': 2,
-        'title': 'Database Design Project',
-        'course': 'Database Systems',
-        'dueDate': '2024-02-10',
-        'status': 'Submitted',
-        'description':
-            'Design and implement a database for an e-commerce system.',
-        'submittedDate': '2024-02-08',
-        'grade': null,
-      },
-      {
-        'id': 3,
-        'title': 'Web Development Task',
-        'course': 'Web Development',
-        'dueDate': '2024-01-30',
-        'status': 'Graded',
-        'description': 'Create a responsive landing page using modern CSS.',
-        'submittedDate': '2024-01-28',
-        'grade': 95,
-      },
-      {
-        'id': 4,
-        'title': 'Algorithm Analysis Report',
-        'course': 'Data Structures',
-        'dueDate': '2024-02-20',
-        'status': 'Pending',
-        'description':
-            'Write a detailed report analyzing time and space complexity.',
-        'grade': null,
-      },
-      {
-        'id': 5,
-        'title': 'Mobile App Prototype',
-        'course': 'Mobile Development',
-        'dueDate': '2024-01-25',
-        'status': 'Graded',
-        'description': 'Design a mobile app prototype using Figma.',
-        'submittedDate': '2024-01-24',
-        'grade': 88,
-      },
-    ];
+  State<AssignmentsScreen> createState() => _AssignmentsScreenState();
+}
 
+class _AssignmentsScreenState extends State<AssignmentsScreen> {
+  // Mock assignments data - in real app this would come from a service
+  List<Map<String, dynamic>> assignments = [];
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -77,21 +31,30 @@ class AssignmentsScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: assignments.length,
-        itemBuilder: (context, index) {
-          final assignment = assignments[index];
-          return _AssignmentCard(
-            assignment: assignment,
-            onTap: () {
-              context.push(
-                '/assignment/${assignment['id']}',
-                extra: assignment,
-              );
-            },
-          );
+      body: assignments.isEmpty
+          ? const EmptyAssignmentsWidget()
+          : ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: assignments.length,
+              itemBuilder: (context, index) {
+                final assignment = assignments[index];
+                return _AssignmentCard(
+                  assignment: assignment,
+                  onTap: () {
+                    context.push(
+                      '/assignment/${assignment['id']}',
+                      extra: assignment,
+                    );
+                  },
+                );
+              },
+            ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          context.push('/add-assignment');
         },
+        backgroundColor: AppColors.primary,
+        child: const Icon(Ionicons.add, color: Colors.white),
       ),
     );
   }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_colors.dart';
 
 class CoursesScreen extends StatelessWidget {
   final Map<String, dynamic> subDepartmentData;
@@ -42,12 +42,12 @@ class CoursesScreen extends StatelessWidget {
       backgroundColor: Colors.white,
       appBar: AppBar(title: Text(subDepartmentName)),
       body: GridView.builder(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(8.0),
         physics: BouncingScrollPhysics(),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 16,
+          crossAxisSpacing: 8,
+          mainAxisSpacing: 8,
           childAspectRatio: 0.75,
         ),
         itemCount: courses.length,
@@ -59,7 +59,7 @@ class CoursesScreen extends StatelessWidget {
 
           return GestureDetector(
             onTap: () {
-              context.push('/course/${course['id']}', extra: course);
+              context.push('/course/${course['id']}/content', extra: course);
             },
             child: Card(
               elevation: 4,

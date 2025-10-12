@@ -4,7 +4,9 @@ import '../../../../profile/presentation/views/screens/profile_screen.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:go_router/go_router.dart';
 import 'home_screen.dart';
 
 class MainScreen extends StatefulWidget {
@@ -79,7 +81,10 @@ class _MainScreenState extends State<MainScreen> {
   Widget _buildShoppingCartFAB() {
     return FloatingActionButton(
       onPressed: () {
-        // Navigate to shopping cart or show cart dialog
+        // Add haptic feedback
+        HapticFeedback.lightImpact();
+        
+        // Show shopping cart dialog
         _showShoppingCartDialog();
       },
       backgroundColor: AppColors.primary,
@@ -219,7 +224,8 @@ class _MainScreenState extends State<MainScreen> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(context);
-                // Navigate to checkout
+                // Navigate to cart screen
+                context.push('/cart');
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,

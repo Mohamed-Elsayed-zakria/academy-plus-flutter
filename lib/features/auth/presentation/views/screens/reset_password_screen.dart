@@ -115,148 +115,131 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 const SizedBox(height: 48),
                 
                 // Reset Password Form Section
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 24,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.surface,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.05),
-                        blurRadius: 20,
-                        offset: const Offset(0, 10),
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Header
+                      Center(
+                        child: Column(
+                          children: [
+                            Text(
+                              AppLocalizations.resetPassword,
+                              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.textPrimary,
+                                  ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              AppLocalizations.createStrongPassword,
+                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: AppColors.textSecondary,
+                                  ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(height: 32),
+
+                      // Phone Number Display
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: AppColors.success.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: AppColors.success.withValues(alpha: 0.3),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Ionicons.checkmark_circle_outline,
+                              color: AppColors.success,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                AppLocalizations.otpVerifiedFor.replaceAll('{phone}', widget.phoneNumber),
+                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                      color: AppColors.success,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      // New Password Field
+                      CustomTextField(
+                        label: AppLocalizations.newPassword,
+                        hintText: AppLocalizations.newPassword,
+                        controller: _passwordController,
+                        isPassword: true,
+                        prefixIcon: const Icon(Ionicons.lock_closed_outline),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return AppLocalizations.pleaseEnterNewPassword;
+                          }
+                          if (value.length < 6) {
+                            return AppLocalizations.passwordMustBeAtLeast6;
+                          }
+                          return null;
+                        },
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      // Confirm Password Field
+                      CustomTextField(
+                        label: AppLocalizations.confirmNewPassword,
+                        hintText: AppLocalizations.confirmNewPassword,
+                        controller: _confirmPasswordController,
+                        isPassword: true,
+                        prefixIcon: const Icon(Ionicons.lock_closed_outline),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return AppLocalizations.pleaseConfirmNewPassword;
+                          }
+                          if (value != _passwordController.text) {
+                            return AppLocalizations.passwordsDoNotMatch;
+                          }
+                          return null;
+                        },
+                      ),
+
+                      const SizedBox(height: 32),
+
+                      // Reset Password Button
+                      CustomButton(
+                        text: _isLoading ? AppLocalizations.resetting : AppLocalizations.resetPasswordButton,
+                        onPressed: _isLoading ? null : () => _resetPassword(),
+                        isOutlined: true,
+                        width: double.infinity,
+                        icon: _isLoading 
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+                                ),
+                              )
+                            : const Icon(
+                                Ionicons.checkmark_outline,
+                                color: AppColors.primary,
+                                size: 22,
+                              ),
                       ),
                     ],
-                  ),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Header
-                        Center(
-                          child: Column(
-                            children: [
-                              Text(
-                                AppLocalizations.resetPassword,
-                                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColors.textPrimary,
-                                    ),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                AppLocalizations.createStrongPassword,
-                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                      color: AppColors.textSecondary,
-                                    ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        const SizedBox(height: 32),
-
-                        // Phone Number Display
-                        Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: AppColors.success.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: AppColors.success.withValues(alpha: 0.3),
-                            ),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(
-                                Ionicons.checkmark_circle_outline,
-                                color: AppColors.success,
-                                size: 20,
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Text(
-                                  AppLocalizations.otpVerifiedFor.replaceAll('{phone}', widget.phoneNumber),
-                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                        color: AppColors.success,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        const SizedBox(height: 24),
-
-                        // New Password Field
-                        CustomTextField(
-                          label: AppLocalizations.newPassword,
-                          hintText: AppLocalizations.newPassword,
-                          controller: _passwordController,
-                          isPassword: true,
-                          prefixIcon: const Icon(Ionicons.lock_closed_outline),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return AppLocalizations.pleaseEnterNewPassword;
-                            }
-                            if (value.length < 6) {
-                              return AppLocalizations.passwordMustBeAtLeast6;
-                            }
-                            return null;
-                          },
-                        ),
-
-                        const SizedBox(height: 20),
-
-                        // Confirm Password Field
-                        CustomTextField(
-                          label: AppLocalizations.confirmNewPassword,
-                          hintText: AppLocalizations.confirmNewPassword,
-                          controller: _confirmPasswordController,
-                          isPassword: true,
-                          prefixIcon: const Icon(Ionicons.lock_closed_outline),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return AppLocalizations.pleaseConfirmNewPassword;
-                            }
-                            if (value != _passwordController.text) {
-                              return AppLocalizations.passwordsDoNotMatch;
-                            }
-                            return null;
-                          },
-                        ),
-
-                        const SizedBox(height: 32),
-
-                        // Reset Password Button
-                        CustomButton(
-                          text: _isLoading ? AppLocalizations.resetting : AppLocalizations.resetPasswordButton,
-                          onPressed: _isLoading ? null : () => _resetPassword(),
-                          isOutlined: true,
-                          width: double.infinity,
-                          icon: _isLoading 
-                              ? const SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
-                                  ),
-                                )
-                              : const Icon(
-                                  Ionicons.checkmark_outline,
-                                  color: AppColors.primary,
-                                  size: 22,
-                                ),
-                        ),
-                      ],
-                    ),
                   ),
                 ),
 

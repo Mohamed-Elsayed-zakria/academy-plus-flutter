@@ -3,71 +3,21 @@ import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/localization/app_localizations.dart';
+import '../../../../../core/widgets/empty_state_widget.dart';
 
-class QuizzesScreen extends StatelessWidget {
+class QuizzesScreen extends StatefulWidget {
   const QuizzesScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    // Mock quizzes data
-    final quizzes = [
-      {
-        'id': 1,
-        'title': 'Programming Fundamentals Quiz',
-        'course': 'Advanced Programming',
-        'questions': 20,
-        'duration': 30, // minutes
-        'status': 'Available',
-        'attempts': 0,
-        'bestScore': null,
-        'deadline': '2024-02-18',
-      },
-      {
-        'id': 2,
-        'title': 'Database Concepts Test',
-        'course': 'Database Systems',
-        'questions': 15,
-        'duration': 25,
-        'status': 'Completed',
-        'attempts': 2,
-        'bestScore': 85,
-        'deadline': '2024-02-05',
-      },
-      {
-        'id': 3,
-        'title': 'CSS & HTML Assessment',
-        'course': 'Web Development',
-        'questions': 25,
-        'duration': 40,
-        'status': 'Available',
-        'attempts': 1,
-        'bestScore': 78,
-        'deadline': '2024-02-22',
-      },
-      {
-        'id': 4,
-        'title': 'Data Structures Quiz',
-        'course': 'Data Structures',
-        'questions': 30,
-        'duration': 45,
-        'status': 'Unavailable',
-        'attempts': 0,
-        'bestScore': null,
-        'deadline': '2024-03-01',
-      },
-      {
-        'id': 5,
-        'title': 'Flutter Basics Quiz',
-        'course': 'Mobile Development',
-        'questions': 18,
-        'duration': 30,
-        'status': 'Completed',
-        'attempts': 1,
-        'bestScore': 92,
-        'deadline': '2024-01-28',
-      },
-    ];
+  State<QuizzesScreen> createState() => _QuizzesScreenState();
+}
 
+class _QuizzesScreenState extends State<QuizzesScreen> {
+  // Mock quizzes data - in real app this would come from a service
+  List<Map<String, dynamic>> quizzes = [];
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -81,18 +31,27 @@ class QuizzesScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: quizzes.length,
-        itemBuilder: (context, index) {
-          final quiz = quizzes[index];
-          return _QuizCard(
-            quiz: quiz,
-            onTap: () {
-              context.push('/quiz/${quiz['id']}', extra: quiz);
-            },
-          );
+      body: quizzes.isEmpty
+          ? const EmptyQuizzesWidget()
+          : ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: quizzes.length,
+              itemBuilder: (context, index) {
+                final quiz = quizzes[index];
+                return _QuizCard(
+                  quiz: quiz,
+                  onTap: () {
+                    context.push('/quiz/${quiz['id']}', extra: quiz);
+                  },
+                );
+              },
+            ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          context.push('/add-quiz');
         },
+        backgroundColor: AppColors.primary,
+        child: const Icon(Ionicons.add, color: Colors.white),
       ),
     );
   }

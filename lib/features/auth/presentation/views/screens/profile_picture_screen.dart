@@ -299,130 +299,116 @@ class _ProfilePictureScreenState extends State<ProfilePictureScreen> {
               ),
               const SizedBox(height: 30),
               // Profile Picture Section
-              Container(
-                padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
-                  color: AppColors.surface,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.05),
-                      blurRadius: 20,
-                      offset: const Offset(0, 10),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Profile Picture Display
-                    GestureDetector(
-                      onTap: _showImageSourceDialog,
-                      child: Container(
-                        width: 200,
-                        height: 200,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: _profileImage != null
-                              ? Colors.transparent
-                              : AppColors.surfaceGrey.withValues(alpha: 0.3),
-                          border: Border.all(
-                            color: AppColors.primary.withValues(alpha: 0.3),
-                            width: 3,
-                          ),
-                          image: _profileImage != null
-                              ? DecorationImage(
-                                  image: FileImage(_profileImage!),
-                                  fit: BoxFit.cover,
-                                )
-                              : null,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.1),
-                              blurRadius: 20,
-                              offset: const Offset(0, 10),
-                            ),
-                          ],
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Profile Picture Display
+                  GestureDetector(
+                    onTap: _showImageSourceDialog,
+                    child: Container(
+                      width: 200,
+                      height: 200,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: _profileImage != null
+                            ? Colors.transparent
+                            : AppColors.surfaceGrey.withValues(alpha: 0.3),
+                        border: Border.all(
+                          color: AppColors.primary.withValues(alpha: 0.3),
+                          width: 3,
                         ),
-                        child: _profileImage == null
-                            ? Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Ionicons.camera_outline,
-                                    size: 60,
-                                    color: AppColors.textTertiary,
-                                  ),
-                                  const SizedBox(height: 16),
-                                  Text(
-                                    'اضغط لإضافة صورة',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyMedium
-                                        ?.copyWith(
-                                          color: AppColors.textSecondary,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                  ),
-                                ],
+                        image: _profileImage != null
+                            ? DecorationImage(
+                                image: FileImage(_profileImage!),
+                                fit: BoxFit.cover,
                               )
                             : null,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.1),
+                            blurRadius: 20,
+                            offset: const Offset(0, 10),
+                          ),
+                        ],
                       ),
+                      child: _profileImage == null
+                          ? Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Ionicons.camera_outline,
+                                  size: 60,
+                                  color: AppColors.textTertiary,
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  'اضغط لإضافة صورة',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.copyWith(
+                                        color: AppColors.textSecondary,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                ),
+                              ],
+                            )
+                          : null,
                     ),
+                  ),
 
-                    const SizedBox(height: 32),
+                  const SizedBox(height: 32),
 
-                    // Action Buttons
-                    Row(
-                      children: [
-                        // Skip Button
-                        Expanded(
-                          child: SizedBox(
-                            height: 58,
-                            child: CustomButton(
-                              text: 'تخطي',
-                              onPressed: () {
-                                // Navigate to main screen
-                                NavigationHelper.off(
-                                  path: '/main',
-                                  context: context,
-                                );
-                              },
-                              isOutlined: true,
+                  // Action Buttons
+                  Row(
+                    children: [
+                      // Skip Button
+                      Expanded(
+                        child: SizedBox(
+                          height: 58,
+                          child: CustomButton(
+                            text: 'تخطي',
+                            onPressed: () {
+                              // Navigate to main screen
+                              NavigationHelper.off(
+                                path: '/main',
+                                context: context,
+                              );
+                            },
+                            isOutlined: true,
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(width: 16),
+
+                      // Continue Button
+                      Expanded(
+                        child: SizedBox(
+                          height: 58,
+                          child: CustomButton(
+                            text: 'متابعة',
+                            onPressed: _profileImage != null
+                                ? () {
+                                    // Navigate to main screen with profile image
+                                    NavigationHelper.off(
+                                      path: '/main',
+                                      context: context,
+                                    );
+                                  }
+                                : null,
+                            isGradient: true,
+                            icon: const Icon(
+                              Ionicons.checkmark_outline,
+                              color: Colors.white,
+                              size: 20,
                             ),
                           ),
                         ),
-
-                        const SizedBox(width: 16),
-
-                        // Continue Button
-                        Expanded(
-                          child: SizedBox(
-                            height: 58,
-                            child: CustomButton(
-                              text: 'متابعة',
-                              onPressed: _profileImage != null
-                                  ? () {
-                                      // Navigate to main screen with profile image
-                                      NavigationHelper.off(
-                                        path: '/main',
-                                        context: context,
-                                      );
-                                    }
-                                  : null,
-                              isGradient: true,
-                              icon: const Icon(
-                                Ionicons.checkmark_outline,
-                                color: Colors.white,
-                                size: 20,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
               const SizedBox(height: 40),
             ],

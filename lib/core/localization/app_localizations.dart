@@ -93,6 +93,10 @@ class AppLocalizations {
   static String get noNotifications => 'no_notifications'.tr();
   static String get noSubscriptions => 'no_subscriptions'.tr();
   static String get noCourses => 'no_courses'.tr();
+  static String get noAssignments => 'no_assignments'.tr();
+  static String get noAssignmentsDescription => 'no_assignments_description'.tr();
+  static String get noQuizzes => 'no_quizzes'.tr();
+  static String get noQuizzesDescription => 'no_quizzes_description'.tr();
   
   // Progress & Status
   static String get progress => 'progress'.tr();
@@ -106,6 +110,22 @@ class AppLocalizations {
   static String get total => 'total'.tr();
   static String get shoppingCart => 'shopping_cart'.tr();
   static String get qty => 'qty'.tr();
+  
+  // Cart specific
+  static String get cart => 'cart'.tr();
+  static String get emptyCartTitle => 'empty_cart_title'.tr();
+  static String get emptyCartDescription => 'empty_cart_description'.tr();
+  static String get browseCourses => 'browse_courses'.tr();
+  static String get subtotal => 'subtotal'.tr();
+  static String get tax => 'tax'.tr();
+  static String get proceedToCheckout => 'proceed_to_checkout'.tr();
+  static String get removeItem => 'remove_item'.tr();
+  static String get clearCartTitle => 'clear_cart_title'.tr();
+  static String get clearCartMessage => 'clear_cart_message'.tr();
+  static String get delete => 'delete'.tr();
+  static String get checkoutMessage => 'checkout_message'.tr();
+  static String get originalTotal => 'original_total'.tr();
+  static String get discountAmount => 'discount_amount'.tr();
   
   // Languages
   static String get english => 'english'.tr();
@@ -179,5 +199,27 @@ class AppLocalizations {
   static String get onboardingDescription2 => 'onboarding_description_2'.tr();
   static String get onboardingTitle3 => 'onboarding_title_3'.tr();
   static String get onboardingDescription3 => 'onboarding_description_3'.tr();
+  
+  // Add Assignment/Quiz
+  static String get addAssignment => 'add_assignment'.tr();
+  static String get addQuiz => 'add_quiz'.tr();
+  static String get subject => 'subject'.tr();
+  static String get assignmentTitle => 'assignment_title'.tr();
+  static String get quizTitle => 'quiz_title'.tr();
+  static String get description => 'description'.tr();
+  static String get dueDate => 'due_date'.tr();
+  static String get quizDate => 'quiz_date'.tr();
+  static String get adminUsername => 'admin_username'.tr();
+  static String get adminPassword => 'admin_password'.tr();
+  static String get selectSubject => 'select_subject'.tr();
+  static String get save => 'save'.tr();
+  static String get addFirstAssignment => 'add_first_assignment'.tr();
+  static String get addFirstQuiz => 'add_first_quiz'.tr();
+  static String get pleaseSelectSubject => 'please_select_subject'.tr();
+  static String get pleaseEnterTitle => 'please_enter_title'.tr();
+  static String get pleaseEnterDescription => 'please_enter_description'.tr();
+  static String get pleaseSelectDate => 'please_select_date'.tr();
+  static String get pleaseEnterAdminUsername => 'please_enter_admin_username'.tr();
+  static String get pleaseEnterAdminPassword => 'please_enter_admin_password'.tr();
 }
 

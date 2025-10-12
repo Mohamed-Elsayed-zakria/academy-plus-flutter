@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/localization/app_localizations.dart';
-import '../../../../../core/widgets/empty_state.dart';
+import '../../../../../core/widgets/empty_state_widget.dart';
 
 class SubscriptionsScreen extends StatelessWidget {
   const SubscriptionsScreen({super.key});
@@ -43,10 +43,11 @@ class SubscriptionsScreen extends StatelessWidget {
         title: Text(AppLocalizations.subscriptions),
       ),
       body: subscriptions.isEmpty
-          ? EmptyState(
-              icon: Ionicons.card_outline,
-              message: AppLocalizations.noSubscriptions,
-              subtitle: 'Subscribe to courses to see them here',
+          ? EmptyStateWidget(
+              title: AppLocalizations.noSubscriptions,
+              description: 'Subscribe to courses to see them here',
+              buttonText: '',
+              onButtonPressed: () {},
             )
           : ListView.builder(
               padding: const EdgeInsets.all(16),
