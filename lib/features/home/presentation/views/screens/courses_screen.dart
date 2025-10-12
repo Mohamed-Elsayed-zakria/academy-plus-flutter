@@ -39,6 +39,7 @@ class CoursesScreen extends StatelessWidget {
     );
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(title: Text(subDepartmentName)),
       body: GridView.builder(
         padding: const EdgeInsets.all(16),

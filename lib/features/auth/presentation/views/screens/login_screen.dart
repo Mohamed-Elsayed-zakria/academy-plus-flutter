@@ -103,6 +103,7 @@ class _LoginScreenState extends State<LoginScreen>
                       children: [
                         // Phone Number Field
                         CustomPhoneInput(
+                          label: AppLocalizations.phoneNumber,
                           hintText: AppLocalizations.phoneNumber,
                           controller: _phoneController,
                           initialCountryCode: 'EG',
@@ -118,6 +119,7 @@ class _LoginScreenState extends State<LoginScreen>
 
                         // Password Field
                         CustomTextField(
+                          label: AppLocalizations.password,
                           hintText: AppLocalizations.password,
                           controller: _passwordController,
                           isPassword: true,
@@ -165,12 +167,12 @@ class _LoginScreenState extends State<LoginScreen>
                               );
                             }
                           },
-                          isGradient: true,
+                          isOutlined: true,
                           width: double.infinity,
                           icon: const Icon(
-                            Ionicons.log_in_outline,
-                            color: Colors.white,
-                            size: 20,
+                            Ionicons.enter_outline,
+                            color: AppColors.primary,
+                            size: 22,
                           ),
                         ),
                       ],
@@ -220,7 +222,7 @@ class _LoginScreenState extends State<LoginScreen>
                         ),
                         WidgetSpan(
                           child: GestureDetector(
-                                onTap: () => NavigationHelper.off(
+                                onTap: () => NavigationHelper.to(
                                   path: '/register',
                                   context: context,
                                 ),
@@ -238,7 +240,6 @@ class _LoginScreenState extends State<LoginScreen>
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 40),
               ],
             ),

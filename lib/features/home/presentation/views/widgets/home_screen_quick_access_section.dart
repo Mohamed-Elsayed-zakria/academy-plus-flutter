@@ -1,9 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:ionicons/ionicons.dart';
-
-import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/localization/app_localizations.dart';
+import '../../../../../core/constants/app_colors.dart';
+import 'package:ionicons/ionicons.dart';
+import 'package:flutter/material.dart';
 
 class HomeScreenQuickAccessSection extends StatelessWidget {
   const HomeScreenQuickAccessSection({super.key});
@@ -15,13 +13,6 @@ class HomeScreenQuickAccessSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            AppLocalizations.quickAccess,
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
-            ),
-          ),
           const SizedBox(height: 16),
           Row(
             children: [
@@ -33,9 +24,7 @@ class HomeScreenQuickAccessSection extends StatelessWidget {
                   icon: Ionicons.clipboard_outline,
                   color: AppColors.primary,
                   gradient: AppColors.primaryGradient,
-                  onTap: () {
-                    context.push('/assignments');
-                  },
+                  onTap: () {},
                 ),
               ),
               const SizedBox(width: 16),
@@ -54,9 +43,7 @@ class HomeScreenQuickAccessSection extends StatelessWidget {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
-                  onTap: () {
-                    context.push('/quizzes');
-                  },
+                  onTap: () {},
                 ),
               ),
             ],
@@ -83,10 +70,7 @@ class HomeScreenQuickAccessSection extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColors.surface,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: color.withValues(alpha: 0.3),
-            width: 1.5,
-          ),
+          border: Border.all(color: color.withValues(alpha: 0.3), width: 1.5),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.05),
@@ -113,18 +97,10 @@ class HomeScreenQuickAccessSection extends StatelessWidget {
                         width: 0.5,
                       ),
                     ),
-                    child: Icon(
-                      icon,
-                      color: color,
-                      size: 24,
-                    ),
+                    child: Icon(icon, color: color, size: 24),
                   ),
                   const Spacer(),
-                  Icon(
-                    Ionicons.arrow_forward_outline,
-                    color: color,
-                    size: 18,
-                  ),
+                  Icon(Ionicons.arrow_forward_outline, color: color, size: 18),
                 ],
               ),
               Column(
@@ -153,5 +129,3 @@ class HomeScreenQuickAccessSection extends StatelessWidget {
     );
   }
 }
-
-

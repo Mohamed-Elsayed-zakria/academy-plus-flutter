@@ -49,6 +49,7 @@ class _CourseContentScreenState extends State<CourseContentScreen>
     return DefaultTabController(
       length: 2,
       child: Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
           title: Text(AppLocalizations.courseContent),
           backgroundColor: AppColors.surface,

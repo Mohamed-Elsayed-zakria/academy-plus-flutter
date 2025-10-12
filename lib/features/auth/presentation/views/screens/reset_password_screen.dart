@@ -94,7 +94,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                       const SizedBox(height: 24),
                       // Welcome Text
                       Text(
-                        'Create New Password',
+                        AppLocalizations.createNewPassword,
                         style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                               fontWeight: FontWeight.w600,
                               color: AppColors.textPrimary,
@@ -103,7 +103,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Enter your new password below',
+                        AppLocalizations.enterNewPasswordBelow,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                               color: AppColors.textSecondary,
                             ),
@@ -141,7 +141,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                           child: Column(
                             children: [
                               Text(
-                                'Reset Password',
+                                AppLocalizations.resetPassword,
                                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                                       fontWeight: FontWeight.bold,
                                       color: AppColors.textPrimary,
@@ -149,7 +149,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                               ),
                               const SizedBox(height: 8),
                               Text(
-                                'Create a strong password for your account',
+                                AppLocalizations.createStrongPassword,
                                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                       color: AppColors.textSecondary,
                                     ),
@@ -181,7 +181,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                               const SizedBox(width: 12),
                               Expanded(
                                 child: Text(
-                                  'OTP verified for ${widget.phoneNumber}',
+                                  AppLocalizations.otpVerifiedFor.replaceAll('{phone}', widget.phoneNumber),
                                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                         color: AppColors.success,
                                         fontWeight: FontWeight.w600,
@@ -196,6 +196,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
                         // New Password Field
                         CustomTextField(
+                          label: AppLocalizations.newPassword,
                           hintText: AppLocalizations.newPassword,
                           controller: _passwordController,
                           isPassword: true,
@@ -215,6 +216,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
                         // Confirm Password Field
                         CustomTextField(
+                          label: AppLocalizations.confirmNewPassword,
                           hintText: AppLocalizations.confirmNewPassword,
                           controller: _confirmPasswordController,
                           isPassword: true,
@@ -234,9 +236,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
                         // Reset Password Button
                         CustomButton(
-                          text: _isLoading ? 'Resetting...' : 'Reset Password',
+                          text: _isLoading ? AppLocalizations.resetting : AppLocalizations.resetPasswordButton,
                           onPressed: _isLoading ? null : () => _resetPassword(),
-                          isGradient: true,
+                          isOutlined: true,
                           width: double.infinity,
                           icon: _isLoading 
                               ? const SizedBox(
@@ -244,13 +246,13 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                   height: 20,
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
                                   ),
                                 )
                               : const Icon(
                                   Ionicons.checkmark_outline,
-                                  color: Colors.white,
-                                  size: 20,
+                                  color: AppColors.primary,
+                                  size: 22,
                                 ),
                         ),
                       ],
@@ -271,7 +273,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Text(
-                        'OR',
+                        AppLocalizations.or,
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: AppColors.textTertiary,
                           fontWeight: FontWeight.w500,
@@ -307,7 +309,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                               );
                             },
                             child: Text(
-                              'Back to Login',
+                              AppLocalizations.backToLogin,
                               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                                     color: AppColors.primary,
                                     fontWeight: FontWeight.w600,

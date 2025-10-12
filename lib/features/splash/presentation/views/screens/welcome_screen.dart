@@ -48,16 +48,8 @@ class _WelcomeScreenState extends State<WelcomeScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [AppColors.primary, AppColors.primaryLight, Colors.white],
-            stops: const [0.0, 0.4, 1.0],
-          ),
-        ),
-        child: SafeArea(
+      backgroundColor: Colors.white,
+      body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(24.0),
             child: Column(
@@ -72,20 +64,20 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                         Container(
                           padding: const EdgeInsets.all(32),
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            gradient: AppColors.primaryGradient,
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: AppColors.primary.withValues(alpha: 0.3),
+                                color: AppColors.primary.withValues(alpha: 0.2),
                                 blurRadius: 30,
                                 offset: const Offset(0, 15),
                               ),
                             ],
                           ),
-                          child: Icon(
+                          child: const Icon(
                             Ionicons.school_outline,
                             size: 100,
-                            color: AppColors.primary,
+                            color: Colors.white,
                           ),
                         ),
                         const SizedBox(height: 32),
@@ -93,7 +85,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                           AppLocalizations.welcome,
                           style: Theme.of(context).textTheme.displayMedium
                               ?.copyWith(
-                                color: Colors.white,
+                                color: AppColors.textPrimary,
                                 fontWeight: FontWeight.bold,
                               ),
                           textAlign: TextAlign.center,
@@ -103,7 +95,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                           AppLocalizations.welcomeSubtitle,
                           style: Theme.of(context).textTheme.titleMedium
                               ?.copyWith(
-                                color: Colors.white.withValues(alpha: 0.9),
+                                color: AppColors.textSecondary,
                               ),
                           textAlign: TextAlign.center,
                         ),
@@ -148,7 +140,6 @@ class _WelcomeScreenState extends State<WelcomeScreen>
             ),
           ),
         ),
-      ),
     );
   }
 }

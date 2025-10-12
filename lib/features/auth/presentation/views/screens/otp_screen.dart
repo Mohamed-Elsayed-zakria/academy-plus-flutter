@@ -78,7 +78,16 @@ class _OtpScreenState extends State<OtpScreen> {
                   context,
                 ).textTheme.bodyLarge?.copyWith(color: AppColors.textSecondary),
               ),
-              const SizedBox(height: 48),
+              const SizedBox(height: 32),
+              // OTP Label
+              Text(
+                AppLocalizations.enterOtp,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: AppColors.textSecondary,
+                  fontSize: 14,
+                ),
+              ),
+              const SizedBox(height: 16),
               Center(
                 child: Pinput(
                   controller: _pinController,
@@ -124,7 +133,7 @@ class _OtpScreenState extends State<OtpScreen> {
                       // Resend OTP logic
                     },
                     child: Text(
-                      'Resend',
+                      AppLocalizations.resend,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: AppColors.primary,
                         fontWeight: FontWeight.w600,
@@ -153,11 +162,11 @@ class _OtpScreenState extends State<OtpScreen> {
                     );
                   }
                 },
-                isGradient: true,
+                isOutlined: true,
                 width: double.infinity,
                 icon: const Icon(
                   Ionicons.checkmark_circle_outline,
-                  color: Colors.white,
+                  color: AppColors.primary,
                   size: 20,
                 ),
               ),

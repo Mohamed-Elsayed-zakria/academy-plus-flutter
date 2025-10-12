@@ -12,7 +12,7 @@ class AppColors {
   static const Color accentPurple = Color(0xFF8B5CF6);
 
   // Background
-  static const Color background = Color(0xFFF9FAFB);
+  static const Color background = Color(0xFFFFFFFF);
   static const Color surface = Color(0xFFFFFFFF);
   static const Color surfaceGrey = Color(0xFFF3F4F6);
 

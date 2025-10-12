@@ -32,6 +32,7 @@ class AssignmentDetailsScreen extends StatelessWidget {
     final grade = assignment['grade'] as int?;
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(AppLocalizations.assignmentDetails),
       ),

@@ -69,6 +69,7 @@ class QuizzesScreen extends StatelessWidget {
     ];
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(AppLocalizations.quizzes),
         actions: [

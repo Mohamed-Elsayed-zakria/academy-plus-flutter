@@ -9,6 +9,7 @@ class CustomTextField extends StatefulWidget {
   final TextInputType keyboardType;
   final Widget? prefixIcon;
   final String? Function(String?)? validator;
+  final String? label;
 
   const CustomTextField({
     super.key,
@@ -18,6 +19,7 @@ class CustomTextField extends StatefulWidget {
     this.keyboardType = TextInputType.text,
     this.prefixIcon,
     this.validator,
+    this.label,
   });
 
   @override
@@ -47,7 +49,12 @@ class _CustomTextFieldState extends State<CustomTextField> {
         keyboardType: widget.keyboardType,
         validator: widget.validator,
         decoration: InputDecoration(
+          labelText: widget.label,
           hintText: widget.hintText,
+          labelStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            color: AppColors.textSecondary,
+            fontSize: 14,
+          ),
           hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
             color: AppColors.textTertiary,
             fontSize: 14,
@@ -77,7 +84,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: AppColors.surfaceGrey),
+            borderSide: BorderSide(color: AppColors.textTertiary),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),

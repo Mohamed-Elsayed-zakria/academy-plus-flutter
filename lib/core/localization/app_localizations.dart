@@ -29,6 +29,12 @@ class AppLocalizations {
   static String get verify => 'verify'.tr();
   static String get didntReceiveCode => 'didnt_receive_code'.tr();
   static String get resend => 'resend'.tr();
+  static String get createNewPassword => 'create_new_password'.tr();
+  static String get enterNewPasswordBelow => 'enter_new_password_below'.tr();
+  static String get createStrongPassword => 'create_strong_password'.tr();
+  static String get otpVerifiedFor => 'otp_verified_for'.tr();
+  static String get resetting => 'resetting'.tr();
+  static String get resetPasswordButton => 'reset_password_button'.tr();
   
   // Navigation
   static String get home => 'home'.tr();

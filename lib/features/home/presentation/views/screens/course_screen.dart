@@ -33,6 +33,7 @@ class CourseScreen extends StatelessWidget {
         ((course['price'] as double) * (course['discount'] as int) / 100);
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(title: Text(AppLocalizations.courseDetails)),
       body: SingleChildScrollView(
         child: Column(

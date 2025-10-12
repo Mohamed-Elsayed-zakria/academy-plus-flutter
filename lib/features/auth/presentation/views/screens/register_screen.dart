@@ -143,6 +143,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                             // Full Name Field
                             CustomTextField(
+                              label: AppLocalizations.fullName,
                               hintText: AppLocalizations.fullName,
                               controller: _nameController,
                               prefixIcon: const Icon(Ionicons.person_outline),
@@ -158,6 +159,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                             // Password Field
                             CustomTextField(
+                              label: AppLocalizations.password,
                               hintText: AppLocalizations.password,
                               controller: _passwordController,
                               isPassword: true,
@@ -179,6 +181,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                             // Confirm Password Field
                             CustomTextField(
+                              label: AppLocalizations.confirmPassword,
                               hintText: AppLocalizations.confirmPassword,
                               controller: _confirmPasswordController,
                               isPassword: true,
@@ -200,6 +203,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                             // Phone Number Field
                             CustomPhoneInput(
+                              label: AppLocalizations.phoneNumber,
                               hintText: AppLocalizations.phoneNumber,
                               controller: _phoneController,
                               initialCountryCode: 'EG',
@@ -238,7 +242,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       borderRadius: BorderRadius.circular(12),
                                       border: _hasAttemptedSubmit && _selectedUniversity == null
                                           ? Border.all(color: AppColors.error, width: 1.5)
-                                          : null,
+                                          : Border.all(color: AppColors.textTertiary),
                                       boxShadow: [
                                         BoxShadow(
                                           color: Colors.black.withValues(alpha: 0.02),
@@ -314,11 +318,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   );
                                 }
                               },
-                              isGradient: true,
+                              isOutlined: true,
                               width: double.infinity,
                               icon: const Icon(
                                 Ionicons.person_add_outline,
-                                color: Colors.white,
+                                color: AppColors.primary,
                                 size: 20,
                               ),
                             ),

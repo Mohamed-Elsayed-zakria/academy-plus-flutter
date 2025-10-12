@@ -158,6 +158,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
                         // Phone Number Field
                         CustomPhoneInput(
+                          label: AppLocalizations.phoneNumber,
                           hintText: AppLocalizations.phoneNumber,
                           controller: _phoneController,
                           initialCountryCode: 'EG',
@@ -178,7 +179,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         CustomButton(
                           text: _isLoading ? AppLocalizations.sending : AppLocalizations.sendOtp,
                           onPressed: _isLoading ? null : () => _sendOTP(),
-                          isGradient: true,
+                          isOutlined: true,
                           width: double.infinity,
                           icon: _isLoading 
                               ? const SizedBox(
@@ -186,13 +187,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                   height: 20,
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
                                   ),
                                 )
                               : const Icon(
                                   Ionicons.chatbubble_outline,
-                                  color: Colors.white,
-                                  size: 20,
+                                  color: AppColors.primary,
+                                  size: 22,
                                 ),
                         ),
                       ],

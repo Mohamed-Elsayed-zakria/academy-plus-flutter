@@ -26,6 +26,7 @@ class DepartmentScreen extends StatelessWidget {
     );
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(departmentName),
       ),

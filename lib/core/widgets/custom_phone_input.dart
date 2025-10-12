@@ -23,6 +23,7 @@ class CustomPhoneInput extends StatefulWidget {
   final String? Function(String?)? validator;
   final String? initialCountryCode;
   final Function(String countryCode, String dialCode)? onCountryChanged;
+  final String? label;
 
   const CustomPhoneInput({
     super.key,
@@ -31,6 +32,7 @@ class CustomPhoneInput extends StatefulWidget {
     this.validator,
     this.initialCountryCode,
     this.onCountryChanged,
+    this.label,
   });
 
   @override
@@ -155,7 +157,12 @@ class _CustomPhoneInputState extends State<CustomPhoneInput> {
             keyboardType: TextInputType.phone,
             validator: _validatePhoneNumber,
             decoration: InputDecoration(
+              labelText: widget.label,
               hintText: widget.hintText,
+              labelStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: AppColors.textSecondary,
+                fontSize: 14,
+              ),
               hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: AppColors.textTertiary,
                 fontSize: 14,
@@ -165,7 +172,7 @@ class _CustomPhoneInputState extends State<CustomPhoneInput> {
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: AppColors.surfaceGrey),
+                borderSide: BorderSide(color: AppColors.textTertiary),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),

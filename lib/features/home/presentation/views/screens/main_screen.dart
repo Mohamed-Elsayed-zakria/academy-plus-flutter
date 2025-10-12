@@ -27,6 +27,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: _screens[_currentIndex],
       floatingActionButton: _buildShoppingCartFAB(),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
@@ -148,7 +149,7 @@ class _MainScreenState extends State<MainScreen> {
               Icon(Ionicons.cart_outline, color: AppColors.primary, size: 24),
               const SizedBox(width: 12),
               Text(
-                'Shopping Cart',
+                AppLocalizations.shoppingCart,
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: AppColors.textPrimary,
@@ -183,7 +184,7 @@ class _MainScreenState extends State<MainScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Total:',
+                        AppLocalizations.total,
                         style: Theme.of(context).textTheme.titleMedium
                             ?.copyWith(
                               fontWeight: FontWeight.bold,
@@ -208,7 +209,7 @@ class _MainScreenState extends State<MainScreen> {
             TextButton(
               onPressed: () => Navigator.pop(context),
               child: Text(
-                'Continue Shopping',
+                AppLocalizations.continueShopping,
                 style: TextStyle(
                   color: AppColors.textSecondary,
                   fontWeight: FontWeight.w600,
@@ -226,9 +227,9 @@ class _MainScreenState extends State<MainScreen> {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: const Text(
-                'Checkout',
-                style: TextStyle(color: Colors.white),
+              child: Text(
+                AppLocalizations.checkout,
+                style: const TextStyle(color: Colors.white),
               ),
             ),
           ],
@@ -278,7 +279,7 @@ class _MainScreenState extends State<MainScreen> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Qty: $quantity',
+                  '${AppLocalizations.qty} $quantity',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: AppColors.textSecondary,
                   ),

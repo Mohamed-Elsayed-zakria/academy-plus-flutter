@@ -163,6 +163,12 @@
   "onboarding_title_2": "Interactive Learning",
   "onboarding_description_2": "Engage with dynamic quizzes, assignments, and real-time feedback to maximize your learning potential and track your progress.",
   "onboarding_title_3": "University Ready",
-  "onboarding_description_3": "Prepare for your college journey with specialized courses, expert guidance, and comprehensive resources tailored for academic success."
+  "onboarding_description_3": "Prepare for your college journey with specialized courses, expert guidance, and comprehensive resources tailored for academic success.",
+  "create_new_password": "Create New Password",
+  "enter_new_password_below": "Enter your new password below",
+  "create_strong_password": "Create a strong password for your account",
+  "otp_verified_for": "OTP verified for {phone}",
+  "resetting": "Resetting...",
+  "reset_password_button": "Reset Password"
 }
 

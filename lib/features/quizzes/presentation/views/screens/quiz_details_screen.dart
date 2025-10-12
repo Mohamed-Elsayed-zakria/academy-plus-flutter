@@ -21,6 +21,7 @@ class QuizDetailsScreen extends StatelessWidget {
     final bestScore = quiz['bestScore'] as int?;
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(AppLocalizations.quizDetails),
       ),

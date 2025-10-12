@@ -33,6 +33,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     };
 
     return Scaffold(
+      backgroundColor: Colors.white,
       body: CustomScrollView(
         slivers: [
           // Modern App Bar with Gradient
@@ -137,7 +138,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           // Content
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.all(20.0),
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -216,7 +217,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                   _buildActionButton(
                     icon: Ionicons.create_outline,
-                    title: 'Edit Profile',
+                    title: AppLocalizations.editProfile,
                     color: AppColors.primary,
                     onTap: () {
                       context.push('/profile/edit');
@@ -226,7 +227,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                   _buildActionButton(
                     icon: Ionicons.lock_closed_outline,
-                    title: 'Change Password',
+                    title: AppLocalizations.changePassword,
                     color: AppColors.primary,
                     onTap: () {
                       // Navigate to change password
@@ -257,7 +258,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   // Logout Button
                   _buildActionButton(
                     icon: Ionicons.log_out_outline,
-                    title: 'Logout',
+                    title: AppLocalizations.logout,
                     color: AppColors.error,
                     isDestructive: true,
                     onTap: () {
@@ -683,7 +684,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Icon(Ionicons.log_out_outline, color: AppColors.error),
               const SizedBox(width: 12),
               Text(
-                'Logout',
+                AppLocalizations.logout,
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   color: AppColors.textPrimary,
                   fontWeight: FontWeight.bold,
@@ -692,7 +693,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ],
           ),
           content: Text(
-            'Are you sure you want to logout?',
+            AppLocalizations.logoutConfirmation,
             style: Theme.of(
               context,
             ).textTheme.bodyLarge?.copyWith(color: AppColors.textSecondary),
@@ -701,7 +702,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             TextButton(
               onPressed: () => Navigator.pop(context),
               child: Text(
-                'Cancel',
+                AppLocalizations.cancel,
                 style: TextStyle(
                   color: AppColors.textSecondary,
                   fontWeight: FontWeight.w600,

@@ -98,6 +98,7 @@ class _SubDepartmentsScreenState extends State<SubDepartmentsScreen>
     final departmentIcon = widget.department['icon'] as IconData;
 
     return Scaffold(
+      backgroundColor: Colors.white,
       body: CustomScrollView(
         slivers: [
           // Modern App Bar with gradient

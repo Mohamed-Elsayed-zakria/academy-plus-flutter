@@ -65,6 +65,7 @@ class AssignmentsScreen extends StatelessWidget {
     ];
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(AppLocalizations.assignments),
         actions: [
