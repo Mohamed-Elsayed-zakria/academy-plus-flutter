@@ -186,8 +186,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     context.pop();
                   }
                 },
-                isGradient: true,
+                isOutlined: true,
                 width: double.infinity,
+                icon: Icon(
+                  Ionicons.checkmark_outline,
+                  color: AppColors.primary,
+                ),
               ),
             ],
           ),

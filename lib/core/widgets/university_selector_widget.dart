@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import '../constants/app_colors.dart';
 import '../localization/app_localizations.dart';
+import 'custom_text_field.dart';
 
 class UniversitySelectorWidget extends StatefulWidget {
   final String? selectedUniversity;
@@ -142,12 +143,18 @@ class _UniversityPickerBottomSheetState extends State<_UniversityPickerBottomShe
   void initState() {
     super.initState();
     _filteredUniversities = widget.universities;
+    _searchController.addListener(_onSearchChanged);
   }
 
   @override
   void dispose() {
+    _searchController.removeListener(_onSearchChanged);
     _searchController.dispose();
     super.dispose();
+  }
+
+  void _onSearchChanged() {
+    _filterUniversities(_searchController.text);
   }
 
   void _filterUniversities(String query) {
@@ -216,44 +223,13 @@ class _UniversityPickerBottomSheetState extends State<_UniversityPickerBottomShe
           // Search bar
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: TextField(
+            child: CustomTextField(
               controller: _searchController,
-              onChanged: _filterUniversities,
-              decoration: InputDecoration(
-                hintText: AppLocalizations.searchUniversityPlaceholder,
-                hintStyle: TextStyle(
-                  color: AppColors.textTertiary,
-                  fontSize: 14,
-                ),
-                prefixIcon: Icon(
-                  Ionicons.search_outline,
-                  color: AppColors.textSecondary,
-                  size: 18,
-                ),
-                suffixIcon: _searchController.text.isNotEmpty
-                    ? GestureDetector(
-                        onTap: () {
-                          _searchController.clear();
-                          _filterUniversities('');
-                        },
-                        child: Icon(
-                          Ionicons.close_circle_outline,
-                          color: AppColors.textSecondary,
-                          size: 18,
-                        ),
-                      )
-                    : null,
-                filled: true,
-                fillColor: AppColors.surfaceGrey.withValues(alpha: 0.3),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide.none,
-                ),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-                isDense: true,
+              hintText: AppLocalizations.searchUniversityPlaceholder,
+              prefixIcon: Icon(
+                Ionicons.search_outline,
+                color: AppColors.textSecondary,
+                size: 18,
               ),
             ),
           ),

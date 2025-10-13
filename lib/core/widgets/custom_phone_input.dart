@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import '../constants/app_colors.dart';
 import '../localization/app_localizations.dart';
+import 'custom_text_field.dart';
 
 class Country {
   final String name;
@@ -152,41 +153,13 @@ class _CustomPhoneInputState extends State<CustomPhoneInput> {
 
         // Phone Number Input
         Expanded(
-          child: TextFormField(
+          child: CustomTextField(
             controller: widget.controller,
             keyboardType: TextInputType.phone,
             validator: _validatePhoneNumber,
-            decoration: InputDecoration(
-              labelText: widget.label,
-              hintText: widget.hintText,
-              labelStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: AppColors.textSecondary,
-                fontSize: 14,
-              ),
-              hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: AppColors.textTertiary,
-                fontSize: 14,
-              ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: AppColors.textTertiary),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: AppColors.primary, width: 2),
-              ),
-              errorBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: AppColors.error),
-              ),
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 16,
-              ),
-            ),
+            hintText: widget.hintText,
+            label: widget.label,
+            textDirection: TextDirection.ltr,
           ),
         ),
       ],

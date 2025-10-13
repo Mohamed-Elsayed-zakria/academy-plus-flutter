@@ -9,7 +9,7 @@ import '../features/auth/presentation/views/screens/forgot_password_screen.dart'
 import '../features/auth/presentation/views/screens/reset_password_screen.dart';
 import '../features/home/presentation/views/screens/main_screen.dart';
 import '../features/home/presentation/views/screens/sub_departments_screen.dart';
-import '../features/courses/presentation/screens/courses_screen.dart';
+import '../features/home/presentation/views/screens/courses_screen.dart';
 import '../features/courses/presentation/screens/course_content_screen.dart';
 import '../features/assignments/presentation/views/screens/assignments_screen.dart';
 import '../features/assignments/presentation/views/screens/assignment_details_screen.dart';
@@ -18,6 +18,7 @@ import '../features/quizzes/presentation/views/screens/quizzes_screen.dart';
 import '../features/quizzes/presentation/views/screens/quiz_details_screen.dart';
 import '../features/quizzes/presentation/views/screens/add_quiz_screen.dart';
 import '../features/profile/presentation/views/screens/edit_profile_screen.dart';
+import '../features/profile/presentation/views/screens/change_password_screen.dart';
 import '../features/onboarding/presentation/views/screens/onboarding_screen.dart';
 import '../features/cart/presentation/screens/cart_screen.dart';
 
@@ -84,7 +85,7 @@ GoRouter createAppRouter({required bool isOnboardingCompleted}) => GoRouter(
 
     // Department Screen (shows sub-departments)
     GoRoute(
-      path: '/department/:id',
+      path: '/department/:id/subdepartments',
       builder: (context, state) {
         final department = state.extra as Map<String, dynamic>;
         return SubDepartmentsScreen(department: department);
@@ -95,8 +96,8 @@ GoRouter createAppRouter({required bool isOnboardingCompleted}) => GoRouter(
     GoRoute(
       path: '/subdepartment/:deptId/:subDeptId/courses',
       builder: (context, state) {
-        final subDepartmentData = state.extra as Map<String, dynamic>;
-        return CoursesScreen(subDepartmentData: subDepartmentData);
+        final data = state.extra as Map<String, dynamic>;
+        return CoursesScreen(data: data);
       },
     ),
 
@@ -148,6 +149,10 @@ GoRouter createAppRouter({required bool isOnboardingCompleted}) => GoRouter(
     GoRoute(
       path: '/profile/edit',
       builder: (context, state) => const EditProfileScreen(),
+    ),
+    GoRoute(
+      path: '/profile/change-password',
+      builder: (context, state) => const ChangePasswordScreen(),
     ),
 
     // Cart Route

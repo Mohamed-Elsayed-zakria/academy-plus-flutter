@@ -101,11 +101,12 @@ class HomeScreenQuickAccessSection extends StatelessWidget {
                         color: color.withValues(alpha: 0.3),
                         width: 0.5,
                       ),
+
                     ),
                     child: Icon(icon, color: color, size: 24),
                   ),
                   const Spacer(),
-                  Icon(Ionicons.arrow_forward_outline, color: color, size: 18),
+                  Icon(Ionicons.arrow_back_sharp, color: color, size: 18),
                 ],
               ),
               Column(
@@ -134,3 +135,4 @@ class HomeScreenQuickAccessSection extends StatelessWidget {
     );
   }
 }
+

@@ -46,16 +46,16 @@ class _CourseContentScreenState extends State<CourseContentScreen>
           'nameEn': 'Advanced Programming',
           'instructor': 'Dr. Sarah Johnson',
           'description': 'Learn advanced programming concepts and techniques.',
-          'price': 299.99,
+          'price': 299,
           'discount': 20,
           'isSubscribed': false,
           'hasWhatsApp': true,
           'hasPaymentGateway': true,
         };
 
-    final discountedPrice =
-        (course['price'] as double) -
-        ((course['price'] as double) * (course['discount'] as int) / 100);
+    final price = (course['price'] as int?) ?? 0;
+    final discount = (course['discount'] as int?) ?? 0;
+    final discountedPrice = price.toDouble() - (price.toDouble() * discount / 100);
 
     return DefaultTabController(
       length: 3,
@@ -94,6 +94,7 @@ class _CourseContentScreenState extends State<CourseContentScreen>
                 children: [
                   CourseContentDetailsTab(
                     course: course,
+                    originalPrice: price.toDouble(),
                     discountedPrice: discountedPrice,
                   ),
                   CourseContentContentTab(),

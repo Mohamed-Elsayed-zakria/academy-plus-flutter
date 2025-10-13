@@ -10,6 +10,7 @@ class CustomTextField extends StatefulWidget {
   final Widget? prefixIcon;
   final String? Function(String?)? validator;
   final String? label;
+  final TextDirection? textDirection;
 
   const CustomTextField({
     super.key,
@@ -20,6 +21,7 @@ class CustomTextField extends StatefulWidget {
     this.prefixIcon,
     this.validator,
     this.label,
+    this.textDirection,
   });
 
   @override
@@ -31,77 +33,53 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: TextFormField(
-        controller: widget.controller,
-        obscureText: widget.isPassword && _obscureText,
-        keyboardType: widget.keyboardType,
-        validator: widget.validator,
-        decoration: InputDecoration(
-          labelText: widget.label,
-          hintText: widget.hintText,
-          labelStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: AppColors.textSecondary,
-            fontSize: 14,
-          ),
-          hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: AppColors.textTertiary,
-            fontSize: 14,
-          ),
-          prefixIcon: widget.prefixIcon != null
-              ? Padding(
-                  padding: const EdgeInsets.only(left: 4),
-                  child: widget.prefixIcon,
-                )
-              : null,
-          suffixIcon: widget.isPassword
-              ? IconButton(
-                  icon: Icon(
-                    _obscureText
-                        ? Ionicons.eye_off_outline
-                        : Ionicons.eye_outline,
-                    color: AppColors.textSecondary,
-                    size: 18,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _obscureText = !_obscureText;
-                    });
-                  },
-                )
-              : null,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: AppColors.textTertiary),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: AppColors.primary, width: 2),
-          ),
-          errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: AppColors.error),
-          ),
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 16,
-          ),
+    return TextFormField(
+      controller: widget.controller,
+      obscureText: widget.isPassword && _obscureText,
+      keyboardType: widget.keyboardType,
+      validator: widget.validator,
+      textDirection: widget.textDirection,
+      decoration: InputDecoration(
+        labelText: widget.label,
+        hintText: widget.hintText,
+        prefixIcon: widget.prefixIcon != null
+            ? Padding(
+                padding: const EdgeInsets.only(left: 4),
+                child: widget.prefixIcon,
+              )
+            : null,
+        suffixIcon: widget.isPassword
+            ? IconButton(
+                icon: Icon(
+                  _obscureText
+                      ? Ionicons.eye_off_outline
+                      : Ionicons.eye_outline,
+                  color: AppColors.textSecondary,
+                  size: 18,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _obscureText = !_obscureText;
+                  });
+                },
+              )
+            : null,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: AppColors.textTertiary),
         ),
-        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-          color: AppColors.textPrimary,
-          fontSize: 14,
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: AppColors.primary, width: 2),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: AppColors.error),
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 16,
         ),
       ),
     );
