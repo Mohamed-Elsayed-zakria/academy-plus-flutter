@@ -5,6 +5,8 @@ import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/localization/app_localizations.dart';
 import '../../../../../core/widgets/custom_text_field.dart';
 import '../../../../../core/widgets/date_picker_widget.dart';
+import '../../../../../core/widgets/custom_button.dart';
+import '../../../../../core/widgets/subject_selector_widget.dart';
 
 class AddAssignmentScreen extends StatefulWidget {
   const AddAssignmentScreen({super.key});
@@ -20,6 +22,7 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
   
   String? _selectedSubject;
   DateTime? _selectedDate;
+  bool _showSubjectError = false;
   
   // Mock subjects list - in real app this would come from a service
   final List<String> _subjects = [
@@ -60,6 +63,7 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
                 onTap: () {
                   setState(() {
                     _selectedSubject = subject;
+                    _showSubjectError = false; // Hide error when subject is selected
                   });
                   Navigator.of(context).pop();
                 },
@@ -93,12 +97,13 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
   }
 
   void _saveAssignment() {
+    setState(() {
+      _showSubjectError = _selectedSubject == null;
+    });
+    
     if (_formKey.currentState!.validate()) {
       if (_selectedSubject == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.pleaseSelectSubject)),
-        );
-        return;
+        return; // Error already shown via _showSubjectError
       }
       
       if (_selectedDate == null) {
@@ -139,50 +144,20 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
           padding: const EdgeInsets.all(16),
           children: [
             // Subject Selection
-            _buildSectionTitle(AppLocalizations.subject),
-            const SizedBox(height: 8),
-            InkWell(
+            SubjectSelectorWidget(
+              selectedSubject: _selectedSubject,
               onTap: _selectSubject,
-              borderRadius: BorderRadius.circular(12),
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  border: Border.all(color: AppColors.border),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Ionicons.book_outline,
-                      color: AppColors.textSecondary,
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        _selectedSubject ?? AppLocalizations.selectSubject,
-                        style: TextStyle(
-                          color: _selectedSubject != null 
-                              ? AppColors.textPrimary 
-                              : AppColors.textSecondary,
-                        ),
-                      ),
-                    ),
-                    Icon(
-                      Ionicons.chevron_down_outline,
-                      color: AppColors.textSecondary,
-                    ),
-                  ],
-                ),
-              ),
+              label: AppLocalizations.subject,
+              hasError: _showSubjectError,
+              errorText: _showSubjectError ? AppLocalizations.pleaseSelectSubject : null,
             ),
             
             const SizedBox(height: 24),
             
             // Assignment Title
-            _buildSectionTitle(AppLocalizations.assignmentTitle),
-            const SizedBox(height: 8),
             CustomTextField(
               controller: _titleController,
+              label: AppLocalizations.assignmentTitle,
               hintText: AppLocalizations.assignmentTitle,
               prefixIcon: const Icon(Ionicons.document_text_outline),
               validator: (value) {
@@ -196,10 +171,9 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
             const SizedBox(height: 24),
             
             // Description (Optional)
-            _buildSectionTitle(AppLocalizations.description),
-            const SizedBox(height: 8),
             CustomTextField(
               controller: _descriptionController,
+              label: AppLocalizations.description,
               hintText: AppLocalizations.description,
               prefixIcon: const Icon(Ionicons.text_outline),
               // No validator - description is optional
@@ -208,76 +182,76 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
             const SizedBox(height: 24),
             
             // Due Date (Required)
-            _buildSectionTitle(AppLocalizations.dueDate),
-            const SizedBox(height: 8),
-            InkWell(
-              onTap: _selectDate,
-              borderRadius: BorderRadius.circular(12),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                decoration: BoxDecoration(
-                  color: AppColors.surface,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  AppLocalizations.dueDate,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                InkWell(
+                  onTap: _selectDate,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppColors.textTertiary),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.02),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Ionicons.calendar_outline,
-                      color: AppColors.textSecondary,
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        _selectedDate != null
-                            ? '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}'
-                            : AppLocalizations.dueDate,
-                        style: TextStyle(
-                          color: _selectedDate != null 
-                              ? AppColors.textPrimary 
-                              : AppColors.textSecondary,
-                          fontSize: 14,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                    decoration: BoxDecoration(
+                      color: AppColors.surface,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: AppColors.textTertiary),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.02),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
                         ),
-                      ),
+                      ],
                     ),
-                    Icon(
-                      Ionicons.chevron_down_outline,
-                      color: AppColors.textSecondary,
+                    child: Row(
+                      children: [
+                        Icon(
+                          Ionicons.calendar_outline,
+                          color: AppColors.textSecondary,
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            _selectedDate != null
+                                ? '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}'
+                                : AppLocalizations.dueDate,
+                            style: TextStyle(
+                              color: _selectedDate != null 
+                                  ? AppColors.textPrimary 
+                                  : AppColors.textSecondary,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                        Icon(
+                          Ionicons.chevron_down_outline,
+                          color: AppColors.textSecondary,
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
             
             const SizedBox(height: 32),
             
             // Save Button
-            SizedBox(
+            CustomButton(
+              text: AppLocalizations.save,
+              onPressed: _saveAssignment,
               width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _saveAssignment,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: Text(
-                  AppLocalizations.save,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+              icon: const Icon(
+                Ionicons.save_outline,
+                size: 20,
+                color: Colors.white,
               ),
             ),
           ],
@@ -286,13 +260,4 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
     );
   }
 
-  Widget _buildSectionTitle(String title) {
-    return Text(
-      title,
-      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-        fontWeight: FontWeight.w600,
-        color: AppColors.textPrimary,
-      ),
-    );
-  }
 }

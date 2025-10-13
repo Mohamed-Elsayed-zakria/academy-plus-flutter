@@ -288,8 +288,8 @@ class _CartScreenState extends State<CartScreen> {
       (sum, item) => sum + (item['price'] * item['discount'] / 100),
     );
     final subtotal = originalTotal - discountAmount;
-    final tax = subtotal * 0.1; // 10% tax
-    final total = subtotal + tax;
+    // Tax removed - no tax calculation
+    final total = subtotal; // Total equals subtotal without tax
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -356,25 +356,6 @@ class _CartScreenState extends State<CartScreen> {
               ),
               Text(
                 '\$${subtotal.toStringAsFixed(2)}',
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                AppLocalizations.tax,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: AppColors.textSecondary,
-                ),
-              ),
-              Text(
-                '\$${tax.toStringAsFixed(2)}',
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),

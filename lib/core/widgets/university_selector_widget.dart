@@ -1,0 +1,337 @@
+import 'package:flutter/material.dart';
+import 'package:ionicons/ionicons.dart';
+import '../constants/app_colors.dart';
+import '../localization/app_localizations.dart';
+
+class UniversitySelectorWidget extends StatefulWidget {
+  final String? selectedUniversity;
+  final Function(String) onUniversitySelected;
+  final String label;
+  final bool hasError;
+  final String? errorText;
+  final List<String> universities;
+
+  const UniversitySelectorWidget({
+    super.key,
+    required this.selectedUniversity,
+    required this.onUniversitySelected,
+    required this.label,
+    required this.universities,
+    this.hasError = false,
+    this.errorText,
+  });
+
+  @override
+  State<UniversitySelectorWidget> createState() => _UniversitySelectorWidgetState();
+}
+
+class _UniversitySelectorWidgetState extends State<UniversitySelectorWidget> {
+  void _showUniversityPicker() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => _UniversityPickerBottomSheet(
+        universities: widget.universities,
+        selectedUniversity: widget.selectedUniversity,
+        onUniversitySelected: widget.onUniversitySelected,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          widget.label,
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.w600,
+            color: AppColors.textPrimary,
+          ),
+        ),
+        const SizedBox(height: 8),
+        GestureDetector(
+          onTap: _showUniversityPicker,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: widget.hasError ? AppColors.error : AppColors.textTertiary,
+                width: widget.hasError ? 2 : 1,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.02),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Ionicons.school_outline,
+                  size: 18,
+                  color: widget.hasError 
+                      ? AppColors.error 
+                      : (widget.selectedUniversity != null 
+                          ? AppColors.primary 
+                          : AppColors.textSecondary),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    widget.selectedUniversity ?? AppLocalizations.chooseUniversity,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w500,
+                      color: widget.selectedUniversity != null
+                          ? AppColors.textPrimary
+                          : AppColors.textTertiary,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+                Icon(
+                  Ionicons.chevron_down_outline,
+                  size: 16,
+                  color: widget.hasError ? AppColors.error : AppColors.textSecondary,
+                ),
+              ],
+            ),
+          ),
+        ),
+        if (widget.hasError && widget.errorText != null) ...[
+          const SizedBox(height: 4),
+          Text(
+            widget.errorText!,
+            style: TextStyle(
+              color: AppColors.error,
+              fontSize: 12,
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+class _UniversityPickerBottomSheet extends StatefulWidget {
+  final List<String> universities;
+  final String? selectedUniversity;
+  final Function(String) onUniversitySelected;
+
+  const _UniversityPickerBottomSheet({
+    required this.universities,
+    required this.selectedUniversity,
+    required this.onUniversitySelected,
+  });
+
+  @override
+  State<_UniversityPickerBottomSheet> createState() => _UniversityPickerBottomSheetState();
+}
+
+class _UniversityPickerBottomSheetState extends State<_UniversityPickerBottomSheet> {
+  final TextEditingController _searchController = TextEditingController();
+  List<String> _filteredUniversities = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _filteredUniversities = widget.universities;
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _filterUniversities(String query) {
+    setState(() {
+      _filteredUniversities = widget.universities
+          .where((university) =>
+              university.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.7,
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      child: Column(
+        children: [
+          // Handle bar
+          Container(
+            margin: const EdgeInsets.only(top: 8),
+            width: 40,
+            height: 4,
+            decoration: BoxDecoration(
+              color: AppColors.textTertiary,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+
+          // Header
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+            child: Row(
+              children: [
+                Text(
+                  AppLocalizations.chooseUniversity,
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                    fontSize: 18,
+                  ),
+                ),
+                const Spacer(),
+                GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: AppColors.surfaceGrey.withValues(alpha: 0.5),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(
+                      Ionicons.close_outline,
+                      size: 18,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Search bar
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: TextField(
+              controller: _searchController,
+              onChanged: _filterUniversities,
+              decoration: InputDecoration(
+                hintText: AppLocalizations.searchUniversityPlaceholder,
+                hintStyle: TextStyle(
+                  color: AppColors.textTertiary,
+                  fontSize: 14,
+                ),
+                prefixIcon: Icon(
+                  Ionicons.search_outline,
+                  color: AppColors.textSecondary,
+                  size: 18,
+                ),
+                suffixIcon: _searchController.text.isNotEmpty
+                    ? GestureDetector(
+                        onTap: () {
+                          _searchController.clear();
+                          _filterUniversities('');
+                        },
+                        child: Icon(
+                          Ionicons.close_circle_outline,
+                          color: AppColors.textSecondary,
+                          size: 18,
+                        ),
+                      )
+                    : null,
+                filled: true,
+                fillColor: AppColors.surfaceGrey.withValues(alpha: 0.3),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+                isDense: true,
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          // Universities list
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              itemCount: _filteredUniversities.length,
+              itemBuilder: (context, index) {
+                final university = _filteredUniversities[index];
+                final isSelected = university == widget.selectedUniversity;
+
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 6),
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? AppColors.primary.withValues(alpha: 0.08)
+                        : AppColors.surfaceGrey.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(10),
+                    border: isSelected
+                        ? Border.all(
+                            color: AppColors.primary.withValues(alpha: 0.2),
+                            width: 1,
+                          )
+                        : null,
+                  ),
+                  child: ListTile(
+                    onTap: () {
+                      widget.onUniversitySelected(university);
+                      Navigator.pop(context);
+                    },
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 2,
+                    ),
+                    leading: Icon(
+                      Ionicons.school_outline,
+                      size: 20,
+                      color: isSelected
+                          ? AppColors.primary
+                          : AppColors.textSecondary,
+                    ),
+                    title: Text(
+                      university,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontWeight: isSelected
+                            ? FontWeight.w600
+                            : FontWeight.w500,
+                        color: isSelected
+                            ? AppColors.primary
+                            : AppColors.textPrimary,
+                        fontSize: 14,
+                      ),
+                    ),
+                    trailing: isSelected
+                        ? Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              color: AppColors.primary,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Icon(
+                              Ionicons.checkmark,
+                              color: Colors.white,
+                              size: 14,
+                            ),
+                          )
+                        : null,
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

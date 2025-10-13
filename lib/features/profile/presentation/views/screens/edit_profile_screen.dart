@@ -7,6 +7,7 @@ import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/localization/app_localizations.dart';
 import '../../../../../core/widgets/custom_button.dart';
 import '../../../../../core/widgets/custom_text_field.dart';
+import '../../../../../core/widgets/university_selector_widget.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -164,29 +165,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 },
               ),
               const SizedBox(height: 16),
-              DropdownButtonFormField<String>(
-                initialValue: _selectedUniversity,
-                decoration: InputDecoration(
-                  hintText: AppLocalizations.selectUniversity,
-                  prefixIcon: const Icon(Ionicons.school_outline),
-                ),
-                items: _universities
-                    .map((university) => DropdownMenuItem(
-                          value: university,
-                          child: Text(university),
-                        ))
-                    .toList(),
-                onChanged: (value) {
+              UniversitySelectorWidget(
+                selectedUniversity: _selectedUniversity,
+                onUniversitySelected: (university) {
                   setState(() {
-                    _selectedUniversity = value;
+                    _selectedUniversity = university;
                   });
                 },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return AppLocalizations.pleaseSelectUniversity;
-                  }
-                  return null;
-                },
+                label: AppLocalizations.selectUniversity,
+                universities: _universities,
               ),
               const SizedBox(height: 32),
 
