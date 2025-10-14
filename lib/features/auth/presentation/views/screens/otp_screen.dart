@@ -123,15 +123,17 @@ class _OtpScreenState extends State<OtpScreen> {
                   children: [
                     // OTP Input
                     Center(
-                      child: Pinput(
-                        controller: _pinController,
-                        focusNode: _focusNode,
-                        length: 6,
-                        defaultPinTheme: defaultPinTheme,
-                        focusedPinTheme: focusedPinTheme,
-                        submittedPinTheme: submittedPinTheme,
-                        showCursor: true,
-                        onCompleted: (pin) {
+                      child: Directionality(
+                        textDirection: TextDirection.ltr,
+                        child: Pinput(
+                          controller: _pinController,
+                          focusNode: _focusNode,
+                          length: 6,
+                          defaultPinTheme: defaultPinTheme,
+                          focusedPinTheme: focusedPinTheme,
+                          submittedPinTheme: submittedPinTheme,
+                          showCursor: true,
+                          onCompleted: (pin) {
                           // Simulate OTP verification
                           if (pin == '123456') {
                             if (isResetPassword) {
@@ -152,6 +154,7 @@ class _OtpScreenState extends State<OtpScreen> {
                             // Invalid OTP - could show error in UI instead
                           }
                         },
+                        ),
                       ),
                     ),
                     const SizedBox(height: 32),
