@@ -1,0 +1,2067 @@
+{
+	"info": {
+		"_postman_id": "academy-plus-complete-v2",
+		"name": "Academy Plus - Complete API Collection",
+		"description": "Complete API collection for Academy Plus - Educational Platform Backend\n\n**Authentication:**\n- Token is automatically set after successful login/registration\n- All endpoints (except auth) require authentication - unauthenticated users get 401\n\n**Data Visibility:**\n- Users only see their university's data\n- Main Departments filtered by user's university\n- Sub Departments filtered by user's main departments\n- Courses filtered by user's sub departments\n- Unauthenticated users see NO data\n\n**Role-Based Access Control:**\n- Four roles (enum): Super Admin, Admin, Teacher, Student\n- Default role: Student (auto-assigned)\n- Student permissions: view courses, enroll, access materials, submit assignments, view grades, edit profile",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "academy-plus"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set('auth_token', response.data.token);",
+									"    pm.environment.set('user_id', response.data.user.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "full_name",
+									"value": "John Doe",
+									"type": "text"
+								},
+								{
+									"key": "phone_number",
+									"value": "+201234567890",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "password123",
+									"type": "text"
+								},
+								{
+									"key": "university_id",
+									"value": "{{university_id}}",
+									"type": "text"
+								},
+								{
+									"key": "profile_image",
+									"type": "file",
+									"src": [],
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/register",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "register"]
+						},
+						"description": "Register a new user account with optional profile image upload"
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set('auth_token', response.data.token);",
+									"    pm.environment.set('user_id', response.data.user.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"phone_number\": \"+201234567890\",\n  \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/login",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "login"]
+						},
+						"description": "Login with phone number and password"
+					},
+					"response": []
+				},
+				{
+					"name": "Request OTP",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"phone_number\": \"+201234567890\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/otp/request",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "otp", "request"]
+						},
+						"description": "Request OTP for phone verification"
+					},
+					"response": []
+				},
+				{
+					"name": "Verify OTP",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"phone_number\": \"+201234567890\",\n  \"otp\": \"123456\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/otp/verify",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "otp", "verify"]
+						},
+						"description": "Verify OTP code"
+					},
+					"response": []
+				}
+			],
+			"description": "Authentication endpoints for user registration, login, and OTP verification. New users are automatically assigned the 'Student' role."
+		},
+		{
+			"name": "Roles & Permissions",
+			"item": [
+				{
+					"name": "Get All Roles",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/roles",
+							"host": ["{{base_url}}"],
+							"path": ["api", "roles"]
+						},
+						"description": "Get all available roles (Student, Teacher, Admin, Super Admin). Requires authentication."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Role by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/roles/{{role_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "roles", "{{role_id}}"]
+						},
+						"description": "Get role details with associated permissions. Requires authentication."
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Permissions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/permissions",
+							"host": ["{{base_url}}"],
+							"path": ["api", "permissions"]
+						},
+						"description": "Get all available permissions. Student permissions include: view_courses, enroll_course, access_course_materials, submit_assignment, take_quiz, view_own_grades, edit_own_profile."
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Role and Permissions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/users/me/permissions",
+							"host": ["{{base_url}}"],
+							"path": ["api", "users", "me", "permissions"]
+						},
+						"description": "Get current authenticated user's role and permissions"
+					},
+					"response": []
+				}
+			],
+			"description": "Role and Permission management. Default role is 'Student' with permissions to view courses, enroll, access materials, submit assignments, take quizzes, view grades, and edit profile. Other roles (Teacher, Admin, Super Admin) must be assigned manually."
+		},
+		{
+			"name": "Universities",
+			"item": [
+				{
+					"name": "Get All Universities",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.length > 0) {",
+									"        pm.environment.set('university_id', response.data[0].id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/universities",
+							"host": ["{{base_url}}"],
+							"path": ["api", "universities"]
+						},
+						"description": "Get list of all universities"
+					},
+					"response": []
+				},
+				{
+					"name": "Get University by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/universities/{{university_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "universities", "{{university_id}}"]
+						},
+						"description": "Get university details by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Create University",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.id) {",
+									"        pm.environment.set('university_id', response.data.id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name_ar",
+									"value": "جامعة جديدة",
+									"type": "text"
+								},
+								{
+									"key": "name_en",
+									"value": "New University",
+									"type": "text"
+								},
+								{
+									"key": "logo",
+									"type": "file",
+									"src": [],
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/universities",
+							"host": ["{{base_url}}"],
+							"path": ["api", "universities"]
+						},
+						"description": "Create a new university with optional logo upload (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update University",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name_ar",
+									"value": "اسم الجامعة المحدث",
+									"type": "text"
+								},
+								{
+									"key": "name_en",
+									"value": "Updated University Name",
+									"type": "text"
+								},
+								{
+									"key": "logo",
+									"type": "file",
+									"src": [],
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/universities/{{university_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "universities", "{{university_id}}"]
+						},
+						"description": "Update university with optional logo upload (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete University",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/universities/{{university_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "universities", "{{university_id}}"]
+						},
+						"description": "Delete university (Admin only)"
+					},
+					"response": []
+				}
+			],
+			"description": "University management endpoints"
+		},
+		{
+			"name": "Main Departments",
+			"item": [
+				{
+					"name": "Get All Main Departments",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.length > 0) {",
+									"        pm.environment.set('department_id', response.data[0].id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/departments",
+							"host": ["{{base_url}}"],
+							"path": ["api", "departments"]
+						},
+						"description": "Get all main departments"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Main Departments by University",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/main-departments?university_id={{university_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "departments"],
+							"query": [
+								{
+									"key": "university_id",
+									"value": "{{university_id}}"
+								}
+							]
+						},
+						"description": "Get main departments filtered by university"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Main Department by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/departments/{{department_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "departments", "{{department_id}}"]
+						},
+						"description": "Get main department details including sub departments"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Main Department",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.id) {",
+									"        pm.environment.set('department_id', response.data.id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name_ar",
+									"value": "الهندسة",
+									"type": "text"
+								},
+								{
+									"key": "name_en",
+									"value": "Engineering",
+									"type": "text"
+								},
+								{
+									"key": "university_id",
+									"value": "{{university_id}}",
+									"type": "text"
+								},
+								{
+									"key": "logo",
+									"type": "file",
+									"src": [],
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/departments",
+							"host": ["{{base_url}}"],
+							"path": ["api", "departments"]
+						},
+						"description": "Create a new main department with optional logo upload (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Main Department",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name_ar",
+									"value": "اسم الكلية المحدث",
+									"type": "text"
+								},
+								{
+									"key": "name_en",
+									"value": "Updated Main Department Name",
+									"type": "text"
+								},
+								{
+									"key": "university_id",
+									"value": "{{university_id}}",
+									"type": "text"
+								},
+								{
+									"key": "logo",
+									"type": "file",
+									"src": [],
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/departments/{{department_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "departments", "{{department_id}}"]
+						},
+						"description": "Update main department with optional logo upload (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Main Department",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/departments/{{department_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "departments", "{{department_id}}"]
+						},
+						"description": "Delete main department (Admin only)"
+					},
+					"response": []
+				}
+			],
+			"description": "Main Department management endpoints"
+		},
+		{
+			"name": "Sub Departments",
+			"item": [
+				{
+					"name": "Get All Sub Departments",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.length > 0) {",
+									"        pm.environment.set('sub_department_id', response.data[0].id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/sub-departments",
+							"host": ["{{base_url}}"],
+							"path": ["api", "sub-departments"]
+						},
+						"description": "Get all sub departments"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Sub Departments by Main Department",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/sub-departments?department_id={{department_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "sub-departments"],
+							"query": [
+								{
+									"key": "department_id",
+									"value": "{{department_id}}"
+								}
+							]
+						},
+						"description": "Get sub departments filtered by main department"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Sub Department by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/sub-departments/{{sub_department_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "sub-departments", "{{sub_department_id}}"]
+						},
+						"description": "Get sub department details"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Sub Department",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.id) {",
+									"        pm.environment.set('sub_department_id', response.data.id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name_ar",
+									"value": "علوم الحاسوب",
+									"type": "text"
+								},
+								{
+									"key": "name_en",
+									"value": "Computer Science",
+									"type": "text"
+								},
+								{
+									"key": "department_id",
+									"value": "{{department_id}}",
+									"type": "text"
+								},
+								{
+									"key": "logo",
+									"type": "file",
+									"src": [],
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/sub-departments",
+							"host": ["{{base_url}}"],
+							"path": ["api", "sub-departments"]
+						},
+						"description": "Create a new sub department with optional logo upload (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Sub Department",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name_ar",
+									"value": "اسم القسم الفرعي المحدث",
+									"type": "text"
+								},
+								{
+									"key": "name_en",
+									"value": "Updated Sub Department Name",
+									"type": "text"
+								},
+								{
+									"key": "department_id",
+									"value": "{{department_id}}",
+									"type": "text"
+								},
+								{
+									"key": "logo",
+									"type": "file",
+									"src": [],
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/sub-departments/{{sub_department_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "sub-departments", "{{sub_department_id}}"]
+						},
+						"description": "Update sub department with optional logo upload (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Sub Department",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/sub-departments/{{sub_department_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "sub-departments", "{{sub_department_id}}"]
+						},
+						"description": "Delete sub department (Admin only)"
+					},
+					"response": []
+				}
+			],
+			"description": "Sub Department management endpoints"
+		},
+		{
+			"name": "Courses",
+			"item": [
+				{
+					"name": "Get All Courses",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.length > 0) {",
+									"        pm.environment.set('course_id', response.data[0].id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/courses",
+							"host": ["{{base_url}}"],
+							"path": ["api", "courses"]
+						},
+						"description": "Get all courses"
+					},
+					"response": []
+				},
+				{
+					"name": "Search Courses",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/courses?search=programming&sub_department_id={{sub_department_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "courses"],
+							"query": [
+								{
+									"key": "search",
+									"value": "programming"
+								},
+								{
+									"key": "sub_department_id",
+									"value": "{{sub_department_id}}"
+								}
+							]
+						},
+						"description": "Search courses by keyword and filter by sub department"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Course by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}",
+								"description": "Optional - shows subscription status if provided"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/courses/{{course_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "courses", "{{course_id}}"]
+						},
+						"description": "Get course details by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Course Content",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/courses/{{course_id}}/content",
+							"host": ["{{base_url}}"],
+							"path": ["api", "courses", "{{course_id}}", "content"]
+						},
+						"description": "Get course content (requires active subscription)"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Course",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.id) {",
+									"        pm.environment.set('course_id', response.data.id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title_ar",
+									"value": "مقدمة في البرمجة",
+									"type": "text"
+								},
+								{
+									"key": "title_en",
+									"value": "Introduction to Programming",
+									"type": "text"
+								},
+								{
+									"key": "instructor_name",
+									"value": "Dr. Ahmed Hassan",
+									"type": "text"
+								},
+								{
+									"key": "price",
+									"value": "299.99",
+									"type": "text"
+								},
+								{
+									"key": "discount_price",
+									"value": "199.99",
+									"type": "text"
+								},
+								{
+									"key": "sub_department_id",
+									"value": "{{sub_department_id}}",
+									"type": "text",
+									"description": "Required - Sub Department ID"
+								},
+								{
+									"key": "cover_image",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "intro_video",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/courses",
+							"host": ["{{base_url}}"],
+							"path": ["api", "courses"]
+						},
+						"description": "Create a new course with file uploads (Admin only). Upload cover_image and intro_video as files. Uses sub_department_id instead of department_id."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Course",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title_ar",
+									"value": "عنوان الكورس المحدث",
+									"type": "text"
+								},
+								{
+									"key": "title_en",
+									"value": "Updated Course Title",
+									"type": "text"
+								},
+								{
+									"key": "price",
+									"value": "349.99",
+									"type": "text"
+								},
+								{
+									"key": "discount_price",
+									"value": "249.99",
+									"type": "text"
+								},
+								{
+									"key": "sub_department_id",
+									"value": "{{sub_department_id}}",
+									"type": "text",
+									"disabled": true,
+									"description": "Optional - Enable to update sub department"
+								},
+								{
+									"key": "cover_image",
+									"type": "file",
+									"src": [],
+									"disabled": true
+								},
+								{
+									"key": "intro_video",
+									"type": "file",
+									"src": [],
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/courses/{{course_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "courses", "{{course_id}}"]
+						},
+						"description": "Update course (Admin only). Enable and upload files if you want to update cover_image or intro_video."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Course",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/courses/{{course_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "courses", "{{course_id}}"]
+						},
+						"description": "Delete course (Admin only)"
+					},
+					"response": []
+				}
+			],
+			"description": "Course management endpoints (now using sub_department_id instead of department_id)"
+		},
+		{
+			"name": "Subscriptions",
+			"item": [
+				{
+					"name": "Create Subscription",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set('subscription_id', response.data.subscription.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"subscription_type\": \"course\",\n  \"course_id\": \"{{course_id}}\",\n  \"payment_method\": \"whatsapp\",\n  \"coupon_code\": \"WELCOME10\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/subscriptions",
+							"host": ["{{base_url}}"],
+							"path": ["api", "subscriptions"]
+						},
+						"description": "Create a new subscription"
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Subscriptions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/subscriptions",
+							"host": ["{{base_url}}"],
+							"path": ["api", "subscriptions"]
+						},
+						"description": "Get all subscriptions for current user"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Subscription by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/subscriptions/{{subscription_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "subscriptions", "{{subscription_id}}"]
+						},
+						"description": "Get subscription details by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Check Subscription Status",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/subscriptions/check/{{course_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "subscriptions", "check", "{{course_id}}"]
+						},
+						"description": "Check if user has active subscription for a course"
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel Subscription",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/subscriptions/{{subscription_id}}/cancel",
+							"host": ["{{base_url}}"],
+							"path": ["api", "subscriptions", "{{subscription_id}}", "cancel"]
+						},
+						"description": "Cancel a subscription"
+					},
+					"response": []
+				}
+			],
+			"description": "Subscription management endpoints"
+		},
+		{
+			"name": "Coupons",
+			"item": [
+				{
+					"name": "Validate Coupon",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/coupons/validate/WELCOME10",
+							"host": ["{{base_url}}"],
+							"path": ["api", "coupons", "validate", "WELCOME10"]
+						},
+						"description": "Validate a coupon code (public)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Coupons",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.length > 0) {",
+									"        pm.environment.set('coupon_id', response.data[0].id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/coupons",
+							"host": ["{{base_url}}"],
+							"path": ["api", "coupons"]
+						},
+						"description": "Get all coupons (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Coupon by Code",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/coupons/WELCOME10",
+							"host": ["{{base_url}}"],
+							"path": ["api", "coupons", "WELCOME10"]
+						},
+						"description": "Get coupon details by code"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Coupon",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"code\": \"NEWCOUPON\",\n  \"discount_value\": 15,\n  \"max_uses\": 100\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/coupons",
+							"host": ["{{base_url}}"],
+							"path": ["api", "coupons"]
+						},
+						"description": "Create a new coupon (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Coupon",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"discount_value\": 20,\n  \"max_uses\": 150\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/coupons/{{coupon_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "coupons", "{{coupon_id}}"]
+						},
+						"description": "Update coupon (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Coupon",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/coupons/{{coupon_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "coupons", "{{coupon_id}}"]
+						},
+						"description": "Delete coupon (Admin only)"
+					},
+					"response": []
+				}
+			],
+			"description": "Coupon management endpoints"
+		},
+		{
+			"name": "Notifications",
+			"item": [
+				{
+					"name": "Get User Notifications",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/notifications",
+							"host": ["{{base_url}}"],
+							"path": ["api", "notifications"]
+						},
+						"description": "Get all notifications for current user"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Unread Notifications",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/notifications?unread_only=true",
+							"host": ["{{base_url}}"],
+							"path": ["api", "notifications"],
+							"query": [
+								{
+									"key": "unread_only",
+									"value": "true"
+								}
+							]
+						},
+						"description": "Get only unread notifications"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Unread Count",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/notifications/unread/count",
+							"host": ["{{base_url}}"],
+							"path": ["api", "notifications", "unread", "count"]
+						},
+						"description": "Get count of unread notifications"
+					},
+					"response": []
+				},
+				{
+					"name": "Mark Notification as Read",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/notifications/{{notification_id}}/read",
+							"host": ["{{base_url}}"],
+							"path": ["api", "notifications", "{{notification_id}}", "read"]
+						},
+						"description": "Mark a notification as read"
+					},
+					"response": []
+				},
+				{
+					"name": "Mark All as Read",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/notifications/read-all",
+							"host": ["{{base_url}}"],
+							"path": ["api", "notifications", "read-all"]
+						},
+						"description": "Mark all notifications as read"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Notification",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/notifications/{{notification_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "notifications", "{{notification_id}}"]
+						},
+						"description": "Delete a notification"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Notification",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user_id\": \"{{user_id}}\",\n  \"title\": \"New Notification\",\n  \"message\": \"This is a notification message\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/notifications",
+							"host": ["{{base_url}}"],
+							"path": ["api", "notifications"]
+						},
+						"description": "Create a notification (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Broadcast Notification",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Important Announcement\",\n  \"message\": \"This message will be sent to all users\",\n  \"university_id\": \"{{university_id}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/notifications/broadcast",
+							"host": ["{{base_url}}"],
+							"path": ["api", "notifications", "broadcast"]
+						},
+						"description": "Broadcast notification to all users or specific university (Admin only)"
+					},
+					"response": []
+				}
+			],
+			"description": "Notification management endpoints"
+		},
+		{
+			"name": "Users & Profile",
+			"item": [
+				{
+					"name": "Get User Profile",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/users/profile",
+							"host": ["{{base_url}}"],
+							"path": ["api", "users", "profile"]
+						},
+						"description": "Get current user profile"
+					},
+					"response": []
+				},
+				{
+					"name": "Update User Profile",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "full_name",
+									"value": "Updated Name",
+									"type": "text"
+								},
+								{
+									"key": "profile_image",
+									"type": "file",
+									"src": [],
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/users/profile",
+							"host": ["{{base_url}}"],
+							"path": ["api", "users", "profile"]
+						},
+						"description": "Update user profile. Enable profile_image field and upload file if you want to update profile picture."
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Stats",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/users/stats",
+							"host": ["{{base_url}}"],
+							"path": ["api", "users", "stats"]
+						},
+						"description": "Get user statistics (subscriptions, notifications)"
+					},
+					"response": []
+				},
+				{
+					"name": "Change Password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"current_password\": \"password123\",\n  \"new_password\": \"newpassword123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/users/change-password",
+							"host": ["{{base_url}}"],
+							"path": ["api", "users", "change-password"]
+						},
+						"description": "Change user password"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Account",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/users/account",
+							"host": ["{{base_url}}"],
+							"path": ["api", "users", "account"]
+						},
+						"description": "Delete user account"
+					},
+					"response": []
+				}
+			],
+			"description": "User profile and account management endpoints"
+		},
+		{
+			"name": "Assignments",
+			"item": [
+				{
+					"name": "Get Course Assignments",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.length > 0) {",
+									"        pm.environment.set('assignment_id', response.data[0].id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/assignments/course/{{course_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "assignments", "course", "{{course_id}}"]
+						},
+						"description": "Get all assignments for a course (requires subscription)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Assignment by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/assignments/{{assignment_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "assignments", "{{assignment_id}}"]
+						},
+						"description": "Get assignment details by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Assignment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.id) {",
+									"        pm.environment.set('assignment_id', response.data.id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"course_id\": \"{{course_id}}\",\n  \"title_ar\": \"الواجب 1: المقدمة\",\n  \"title_en\": \"Assignment 1: Introduction\",\n  \"price\": 25.00,\n  \"due_date\": \"2024-12-31T23:59:59Z\",\n  \"assignment_type\": \"individual\",\n  \"status\": \"pending\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/assignments",
+							"host": ["{{base_url}}"],
+							"path": ["api", "assignments"]
+						},
+						"description": "Create a new assignment (Admin only). Price is required. assignment_type can be 'individual' or 'team' (defaults to 'individual')"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Assignment",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title_ar\": \"عنوان الواجب المحدث\",\n  \"title_en\": \"Updated Assignment Title\",\n  \"assignment_type\": \"team\",\n  \"status\": \"graded\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/assignments/{{assignment_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "assignments", "{{assignment_id}}"]
+						},
+						"description": "Update assignment (Admin only). assignment_type can be 'individual' or 'team'"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Assignment",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/assignments/{{assignment_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "assignments", "{{assignment_id}}"]
+						},
+						"description": "Delete assignment (Admin only)"
+					},
+					"response": []
+				}
+			],
+			"description": "Assignment management endpoints. Assignments can be either 'individual' or 'team' type."
+		},
+		{
+			"name": "Quizzes",
+			"item": [
+				{
+					"name": "Get Course Quizzes",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.length > 0) {",
+									"        pm.environment.set('quiz_id', response.data[0].id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/quizzes/course/{{course_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "quizzes", "course", "{{course_id}}"]
+						},
+						"description": "Get all quizzes for a course (requires subscription)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Quiz by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/quizzes/{{quiz_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "quizzes", "{{quiz_id}}"]
+						},
+						"description": "Get quiz details by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Quiz",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.id) {",
+									"        pm.environment.set('quiz_id', response.data.id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"course_id\": \"{{course_id}}\",\n  \"title_ar\": \"اختبار 1: المفاهيم الأساسية\",\n  \"title_en\": \"Quiz 1: Basic Concepts\",\n  \"price\": 15.00,\n  \"lms_username\": \"quiz_user\",\n  \"lms_password\": \"quiz_password123\",\n  \"status\": \"available\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/quizzes",
+							"host": ["{{base_url}}"],
+							"path": ["api", "quizzes"]
+						},
+						"description": "Create a new quiz (Admin only). Price is required. LMS username and password are optional fields for external LMS integration."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Quiz",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title_ar\": \"عنوان الاختبار المحدث\",\n  \"title_en\": \"Updated Quiz Title\",\n  \"lms_username\": \"updated_quiz_user\",\n  \"lms_password\": \"updated_password456\",\n  \"status\": \"unavailable\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/quizzes/{{quiz_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "quizzes", "{{quiz_id}}"]
+						},
+						"description": "Update quiz (Admin only). LMS username and password are optional fields for external LMS integration."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Quiz",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/quizzes/{{quiz_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "quizzes", "{{quiz_id}}"]
+						},
+						"description": "Delete quiz (Admin only)"
+					},
+					"response": []
+				}
+			],
+			"description": "Quiz management endpoints. Quizzes can include LMS username and password for external LMS integration."
+		},
+		{
+			"name": "File Upload",
+			"item": [
+				{
+					"name": "Upload Single File",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "folder",
+									"value": "uploads",
+									"type": "text",
+									"description": "Optional - folder to upload to (default: uploads)"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/upload/single",
+							"host": ["{{base_url}}"],
+							"path": ["api", "upload", "single"]
+						},
+						"description": "Upload a single file (image, video, or PDF). Returns file URL and metadata."
+					},
+					"response": []
+				},
+				{
+					"name": "Upload Multiple Files",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "files",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "files",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "files",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "folder",
+									"value": "uploads",
+									"type": "text",
+									"description": "Optional - folder to upload to (default: uploads)"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/upload/multiple",
+							"host": ["{{base_url}}"],
+							"path": ["api", "upload", "multiple"]
+						},
+						"description": "Upload multiple files at once (max 10 files). Use the same key 'files' for each file."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete File",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"filePath\": \"uploads/1234567890-filename.jpg\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/upload/file",
+							"host": ["{{base_url}}"],
+							"path": ["api", "upload", "file"]
+						},
+						"description": "Delete a file from Supabase storage using its path."
+					},
+					"response": []
+				}
+			],
+			"description": "File upload and management endpoints for images, videos, and PDFs"
+		},
+		{
+			"name": "Health Check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/health",
+					"host": ["{{base_url}}"],
+					"path": ["health"]
+				},
+				"description": "Check API health status"
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string"
+		}
+	]
+}
