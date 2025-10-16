@@ -48,12 +48,21 @@ GoRouter createAppRouter({required bool isOnboardingCompleted}) => GoRouter(
     ),
     GoRoute(
       path: '/profile-picture',
-      builder: (context, state) => const ProfilePictureScreen(),
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>?;
+        return ProfilePictureScreen(extraData: extra);
+      },
     ),
     GoRoute(
       path: '/otp',
-      builder: (context, state) =>
-          OtpScreen(extra: state.extra as Map<String, dynamic>?),
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>?;
+        return OtpScreen(
+          phoneNumber: extra?['phoneNumber'] ?? '',
+          isResetPassword: extra?['isResetPassword'] ?? false,
+          extraData: extra?['extraData'],
+        );
+      },
     ),
     GoRoute(
       path: '/forgot-password',
@@ -61,8 +70,14 @@ GoRouter createAppRouter({required bool isOnboardingCompleted}) => GoRouter(
     ),
     GoRoute(
       path: '/reset-password-otp',
-      builder: (context, state) =>
-          OtpScreen(extra: state.extra as Map<String, dynamic>?),
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>?;
+        return OtpScreen(
+          phoneNumber: extra?['phoneNumber'] ?? '',
+          isResetPassword: true,
+          extraData: extra?['extraData'],
+        );
+      },
     ),
     GoRoute(
       path: '/reset-password',

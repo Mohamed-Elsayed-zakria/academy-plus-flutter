@@ -4,10 +4,13 @@ import 'package:ionicons/ionicons.dart';
 import 'dart:io';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/widgets/custom_button.dart';
+import '../../../../../core/widgets/custom_toast.dart';
 import '../../../../../core/utils/navigation_helper.dart';
 
 class ProfilePictureScreen extends StatefulWidget {
-  const ProfilePictureScreen({super.key});
+  final Map<String, dynamic>? extraData;
+
+  const ProfilePictureScreen({super.key, this.extraData});
 
   @override
   State<ProfilePictureScreen> createState() => _ProfilePictureScreenState();
@@ -235,6 +238,21 @@ class _ProfilePictureScreenState extends State<ProfilePictureScreen> {
     );
   }
 
+  void _updateProfile() {
+    // Since registration is already completed, just update profile picture
+    // Navigate to home screen
+    NavigationHelper.off(
+      path: '/main',
+      context: context,
+    );
+    
+    // Show success message
+    CustomToast.showSuccess(
+      context,
+      message: 'تم إنشاء الحساب بنجاح!',
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -369,11 +387,7 @@ class _ProfilePictureScreenState extends State<ProfilePictureScreen> {
                           child: CustomButton(
                             text: 'تخطي',
                             onPressed: () {
-                              // Navigate to main screen
-                              NavigationHelper.off(
-                                path: '/main',
-                                context: context,
-                              );
+                              _updateProfile();
                             },
                             isOutlined: true,
                           ),
@@ -390,11 +404,7 @@ class _ProfilePictureScreenState extends State<ProfilePictureScreen> {
                             text: 'متابعة',
                             onPressed: _profileImage != null
                                 ? () {
-                                    // Navigate to main screen with profile image
-                                    NavigationHelper.off(
-                                      path: '/main',
-                                      context: context,
-                                    );
+                                    _updateProfile();
                                   }
                                 : null,
                             isGradient: true,

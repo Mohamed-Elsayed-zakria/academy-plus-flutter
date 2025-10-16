@@ -15,21 +15,22 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
   // Main Departments
   final List<Map<String, dynamic>> _departments = [
     {
       'id': 1,
       'name': 'الأعمال',
       'icon': Ionicons.briefcase_outline,
-      'image': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&h=300&fit=crop',
+      'image':
+          'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&h=300&fit=crop',
       'subDepartments': ['المحاسبة', 'التسويق', 'التمويل', 'الموارد البشرية'],
     },
     {
       'id': 2,
       'name': 'الهندسة',
       'icon': Ionicons.construct_outline,
-      'image': 'https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=500&h=300&fit=crop',
+      'image':
+          'https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=500&h=300&fit=crop',
       'subDepartments': [
         'علوم الحاسوب',
         'الهندسة الكهربائية',
@@ -41,28 +42,32 @@ class _HomeScreenState extends State<HomeScreen> {
       'id': 3,
       'name': 'الطب',
       'icon': Ionicons.medical_outline,
-      'image': 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=500&h=300&fit=crop',
+      'image':
+          'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=500&h=300&fit=crop',
       'subDepartments': ['الطب العام', 'الجراحة', 'طب الأطفال', 'أمراض القلب'],
     },
     {
       'id': 4,
       'name': 'الفنون',
       'icon': Ionicons.color_palette_outline,
-      'image': 'https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=500&h=300&fit=crop',
+      'image':
+          'https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=500&h=300&fit=crop',
       'subDepartments': ['الفنون الجميلة', 'الموسيقى', 'المسرح', 'الأدب'],
     },
     {
       'id': 5,
       'name': 'العلوم',
       'icon': Ionicons.flask_outline,
-      'image': 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=500&h=300&fit=crop',
+      'image':
+          'https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=500&h=300&fit=crop',
       'subDepartments': ['الفيزياء', 'الكيمياء', 'الأحياء', 'الرياضيات'],
     },
     {
       'id': 6,
       'name': 'القانون',
       'icon': Ionicons.scale_outline,
-      'image': 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=500&h=300&fit=crop',
+      'image':
+          'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=500&h=300&fit=crop',
       'subDepartments': [
         'القانون الجنائي',
         'القانون المدني',
@@ -72,6 +77,14 @@ class _HomeScreenState extends State<HomeScreen> {
     },
   ];
 
+  final List<String> _bannersUrls = [
+    'https://talaeaalghad.edu.sa/wp-content/uploads/2023/06/66bbfa3d80600cd36191c46fa7983b7e-scaled.jpg',
+    'https://ia-bc.com/wp-content/uploads/2024/01/School-Science-Laboratory.jpg',
+    'https://ans.edu.jo/uploads/2024/09/66eaa687e6465.jpg',
+    'https://ans.edu.jo/uploads/2023/09/64f6c5a88eba4.jpg',
+    'https://ans.edu.jo/uploads/2023/08/64e709d3c69fe.jpg',
+    'https://ans.edu.jo/uploads/2019/09/5d7f60e877963.jpg',
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +108,9 @@ class _HomeScreenState extends State<HomeScreen> {
           SliverToBoxAdapter(child: HomeScreenSearchBar()),
 
           // Banner Slider
-          SliverToBoxAdapter(child: HomeScreenBannerSlider()),
+          SliverToBoxAdapter(
+            child: HomeScreenBannerSlider(bannersUrls: _bannersUrls),
+          ),
 
           SliverToBoxAdapter(child: const SizedBox(height: 24)),
 
@@ -120,9 +135,7 @@ class _HomeScreenState extends State<HomeScreen> {
           SliverToBoxAdapter(child: const SizedBox(height: 16)),
           // Departments Grid
           SliverToBoxAdapter(
-            child: DepartmentsGridWidget(
-              departments: _departments,
-            ),
+            child: DepartmentsGridWidget(departments: _departments),
           ),
           SliverToBoxAdapter(child: const SizedBox(height: 24)),
         ],

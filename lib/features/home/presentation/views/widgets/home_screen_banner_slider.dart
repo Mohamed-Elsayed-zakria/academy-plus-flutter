@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 
 class HomeScreenBannerSlider extends StatefulWidget {
-  const HomeScreenBannerSlider({super.key});
+  final List<String> bannersUrls;
+  const HomeScreenBannerSlider({super.key, required this.bannersUrls});
 
   @override
   State<HomeScreenBannerSlider> createState() => _HomeScreenBannerSliderState();
@@ -15,15 +16,6 @@ class _HomeScreenBannerSliderState extends State<HomeScreenBannerSlider>
   int _currentSlide = 0;
   late Animation<double> _shimmerAnimation;
   late AnimationController _shimmerController;
-
-  final List<String> _bannersUrls = [
-    'https://talaeaalghad.edu.sa/wp-content/uploads/2023/06/66bbfa3d80600cd36191c46fa7983b7e-scaled.jpg',
-    'https://ia-bc.com/wp-content/uploads/2024/01/School-Science-Laboratory.jpg',
-    'https://ans.edu.jo/uploads/2024/09/66eaa687e6465.jpg',
-    'https://ans.edu.jo/uploads/2023/09/64f6c5a88eba4.jpg',
-    'https://ans.edu.jo/uploads/2023/08/64e709d3c69fe.jpg',
-    'https://ans.edu.jo/uploads/2019/09/5d7f60e877963.jpg',
-  ];
 
   @override
   void initState() {
@@ -60,7 +52,7 @@ class _HomeScreenBannerSliderState extends State<HomeScreenBannerSlider>
               });
             },
           ),
-          items: _bannersUrls.map((bannerUrl) {
+          items: widget.bannersUrls.map((bannerUrl) {
             return Builder(
               builder: (BuildContext context) {
                 return Container(
@@ -162,7 +154,7 @@ class _HomeScreenBannerSliderState extends State<HomeScreenBannerSlider>
         const SizedBox(height: 16),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: _bannersUrls.asMap().entries.map((entry) {
+          children: widget.bannersUrls.asMap().entries.map((entry) {
             return Container(
               width: _currentSlide == entry.key ? 24 : 8,
               height: 8,

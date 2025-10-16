@@ -2,11 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'core/theme/app_theme.dart';
 import 'core/localization/app_localization_config.dart';
+import 'core/services/service_locator.dart';
 import 'routes/app_routes.dart';
 import 'features/onboarding/data/services/onboarding_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize service locator
+  SetupLocator().setup();
   
   // Initialize Easy Localization
   await AppLocalizationConfig.initialize();

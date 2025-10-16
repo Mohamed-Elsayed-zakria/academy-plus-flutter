@@ -2043,6 +2043,162 @@
 			"description": "File upload and management endpoints for images, videos, and PDFs"
 		},
 		{
+			"name": "Ads",
+			"item": [
+				{
+					"name": "Get All Ads",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/ads",
+							"host": ["{{base_url}}"],
+							"path": ["api", "ads"]
+						},
+						"description": "Get all ads (public endpoint)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Ads by University",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/ads/university/{{university_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "ads", "university", "{{university_id}}"]
+						},
+						"description": "Get ads for a specific university (public endpoint)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Ad by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/ads/{{ad_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "ads", "{{ad_id}}"]
+						},
+						"description": "Get ad details by ID (public endpoint)"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Ad",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.id) {",
+									"        pm.environment.set('ad_id', response.data.id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "university_id",
+									"value": "{{university_id}}",
+									"type": "text",
+									"description": "Required - University ID"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": [],
+									"description": "Required - Ad image file"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/ads",
+							"host": ["{{base_url}}"],
+							"path": ["api", "ads"]
+						},
+						"description": "Create a new ad with image upload (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Ad",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "university_id",
+									"value": "{{university_id}}",
+									"type": "text",
+									"description": "Optional - Update university"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": [],
+									"disabled": true,
+									"description": "Optional - Enable to update ad image"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/ads/{{ad_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "ads", "{{ad_id}}"]
+						},
+						"description": "Update ad (Admin only). Enable image field and upload file if you want to update ad image."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Ad",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/ads/{{ad_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "ads", "{{ad_id}}"]
+						},
+						"description": "Delete ad (Admin only)"
+					},
+					"response": []
+				}
+			],
+			"description": "Ad management endpoints. Simple ads with university association and image upload."
+		},
+		{
 			"name": "Health Check",
 			"request": {
 				"method": "GET",

@@ -4,14 +4,17 @@ import '../constants/app_colors.dart';
 import '../localization/app_localizations.dart';
 import '../utils/navigation_helper.dart';
 import 'custom_text_field.dart';
+import '../../features/universities/data/models/university_model.dart';
 
 class UniversitySelectorWidget extends StatefulWidget {
-  final String? selectedUniversity;
-  final Function(String) onUniversitySelected;
+  final UniversityModel? selectedUniversity;
+  final Function(UniversityModel) onUniversitySelected;
+  final Function()? onTap;
   final String label;
   final bool hasError;
   final String? errorText;
-  final List<String> universities;
+  final List<UniversityModel> universities;
+  final bool isLoading;
 
   const UniversitySelectorWidget({
     super.key,
@@ -19,8 +22,10 @@ class UniversitySelectorWidget extends StatefulWidget {
     required this.onUniversitySelected,
     required this.label,
     required this.universities,
+    this.onTap,
     this.hasError = false,
     this.errorText,
+    this.isLoading = false,
   });
 
   @override
@@ -29,6 +34,12 @@ class UniversitySelectorWidget extends StatefulWidget {
 
 class _UniversitySelectorWidgetState extends State<UniversitySelectorWidget> {
   void _showUniversityPicker() {
+    if (widget.isLoading) return;
+    
+    if (widget.onTap != null) {
+      widget.onTap!();
+    }
+    
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -37,6 +48,7 @@ class _UniversitySelectorWidgetState extends State<UniversitySelectorWidget> {
         universities: widget.universities,
         selectedUniversity: widget.selectedUniversity,
         onUniversitySelected: widget.onUniversitySelected,
+        isLoading: widget.isLoading,
       ),
     );
   }
@@ -86,16 +98,40 @@ class _UniversitySelectorWidgetState extends State<UniversitySelectorWidget> {
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: Text(
-                    widget.selectedUniversity ?? AppLocalizations.chooseUniversity,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w500,
-                      color: widget.selectedUniversity != null
-                          ? AppColors.textPrimary
-                          : AppColors.textTertiary,
-                      fontSize: 14,
-                    ),
-                  ),
+                  child: widget.isLoading
+                      ? Row(
+                          children: [
+                            SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  AppColors.primary,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Loading universities...',
+                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.textTertiary,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        )
+                      : Text(
+                          widget.selectedUniversity?.nameEn ?? AppLocalizations.chooseUniversity,
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w500,
+                            color: widget.selectedUniversity != null
+                                ? AppColors.textPrimary
+                                : AppColors.textTertiary,
+                            fontSize: 14,
+                          ),
+                        ),
                 ),
                 Icon(
                   Ionicons.chevron_down_outline,
@@ -122,14 +158,16 @@ class _UniversitySelectorWidgetState extends State<UniversitySelectorWidget> {
 }
 
 class _UniversityPickerBottomSheet extends StatefulWidget {
-  final List<String> universities;
-  final String? selectedUniversity;
-  final Function(String) onUniversitySelected;
+  final List<UniversityModel> universities;
+  final UniversityModel? selectedUniversity;
+  final Function(UniversityModel) onUniversitySelected;
+  final bool isLoading;
 
   const _UniversityPickerBottomSheet({
     required this.universities,
     required this.selectedUniversity,
     required this.onUniversitySelected,
+    this.isLoading = false,
   });
 
   @override
@@ -138,7 +176,7 @@ class _UniversityPickerBottomSheet extends StatefulWidget {
 
 class _UniversityPickerBottomSheetState extends State<_UniversityPickerBottomSheet> {
   final TextEditingController _searchController = TextEditingController();
-  List<String> _filteredUniversities = [];
+  List<UniversityModel> _filteredUniversities = [];
 
   @override
   void initState() {
@@ -162,7 +200,8 @@ class _UniversityPickerBottomSheetState extends State<_UniversityPickerBottomShe
     setState(() {
       _filteredUniversities = widget.universities
           .where((university) =>
-              university.toLowerCase().contains(query.toLowerCase()))
+              university.nameEn.toLowerCase().contains(query.toLowerCase()) ||
+              university.nameAr.contains(query))
           .toList();
     });
   }
@@ -239,12 +278,32 @@ class _UniversityPickerBottomSheetState extends State<_UniversityPickerBottomShe
 
           // Universities list
           Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              itemCount: _filteredUniversities.length,
-              itemBuilder: (context, index) {
-                final university = _filteredUniversities[index];
-                final isSelected = university == widget.selectedUniversity;
+            child: widget.isLoading
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            AppColors.primary,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Loading universities...',
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    itemCount: _filteredUniversities.length,
+                    itemBuilder: (context, index) {
+                      final university = _filteredUniversities[index];
+                      final isSelected = university.id == widget.selectedUniversity?.id;
 
                 return Container(
                   margin: const EdgeInsets.only(bottom: 6),
@@ -277,7 +336,7 @@ class _UniversityPickerBottomSheetState extends State<_UniversityPickerBottomShe
                           : AppColors.textSecondary,
                     ),
                     title: Text(
-                      university,
+                      university.nameEn,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         fontWeight: isSelected
                             ? FontWeight.w600
@@ -288,6 +347,15 @@ class _UniversityPickerBottomSheetState extends State<_UniversityPickerBottomShe
                         fontSize: 14,
                       ),
                     ),
+                    subtitle: university.nameAr.isNotEmpty
+                        ? Text(
+                            university.nameAr,
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: AppColors.textSecondary,
+                              fontSize: 12,
+                            ),
+                          )
+                        : null,
                     trailing: isSelected
                         ? Container(
                             padding: const EdgeInsets.all(4),

@@ -1,12 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/localization/app_localizations.dart';
 import '../../../../../core/widgets/custom_button.dart';
 import '../../../../../core/widgets/custom_text_field.dart';
 import '../../../../../core/widgets/custom_phone_input.dart';
 import '../../../../../core/widgets/university_selector_widget.dart';
+import '../../../../../core/widgets/custom_toast.dart';
 import '../../../../../core/utils/navigation_helper.dart';
+import '../../../../../core/services/service_locator.dart';
+import '../../../../universities/presentation/manager/cubit/universities_cubit.dart';
+import '../../../../universities/presentation/manager/cubit/universities_state.dart';
+import '../../../../universities/data/models/university_model.dart';
+import '../../manager/cubit/register_cubit.dart';
+import '../../manager/cubit/register_state.dart';
+import '../../../data/models/register_model.dart';
+import '../../manager/cubit/otp_cubit.dart';
+import '../../manager/cubit/otp_state.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -21,20 +32,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  String? _selectedUniversity;
+  UniversityModel? _selectedUniversity;
   bool _hasAttemptedSubmit = false;
-
-  final List<String> _universities = [
-    'جامعة القاهرة',
-    'جامعة الإسكندرية',
-    'جامعة عين شمس',
-    'جامعة حلوان',
-    'جامعة المنصورة',
-  ];
+  late UniversitiesCubit _universitiesCubit;
+  late RegisterCubit _registerCubit;
+  late OtpCubit _otpCubit;
+  String _selectedDialCode = '+20'; // Default to Egypt dial code
 
   @override
   void initState() {
     super.initState();
+    _universitiesCubit = SetupLocator.locator<UniversitiesCubit>();
+    _registerCubit = SetupLocator.locator<RegisterCubit>();
+    _otpCubit = SetupLocator.locator<OtpCubit>();
   }
 
   @override
@@ -48,259 +58,376 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 14.0),
-            child: Column(
-              children: [
-                const SizedBox(height: 60),
-
-                // App Logo and Header Section
-                Center(
-                  child: Column(
-                    children: [
-                      // App Logo
-                      Container(
-                        width: 80,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          gradient: AppColors.primaryGradient,
-                          borderRadius: BorderRadius.circular(20),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.primary.withValues(alpha: 0.3),
-                              blurRadius: 20,
-                              offset: const Offset(0, 10),
-                            ),
-                          ],
-                        ),
-                        child: const Icon(
-                          Ionicons.school_outline,
-                          size: 40,
-                          color: Colors.white,
-                        ),
-                      ),
-
-                      const SizedBox(height: 24),
-
-                      // Welcome Text
-                      Text(
-                        AppLocalizations.appName,
-                        style: Theme.of(context).textTheme.headlineSmall
-                            ?.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.textPrimary,
-                            ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 48),
-                // Register Form Section
-                Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Full Name Field
-                      CustomTextField(
-                        label: AppLocalizations.fullName,
-                        hintText: AppLocalizations.fullName,
-                        controller: _nameController,
-                        prefixIcon: const Icon(Ionicons.person_outline),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return AppLocalizations.pleaseEnterFullName;
-                          }
-                          return null;
-                        },
-                      ),
-
-                      const SizedBox(height: 20),
-
-                      // Password Field
-                      CustomTextField(
-                        label: AppLocalizations.password,
-                        hintText: AppLocalizations.password,
-                        controller: _passwordController,
-                        isPassword: true,
-                        prefixIcon: const Icon(Ionicons.lock_closed_outline),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter your password';
-                          }
-                          if (value.length < 6) {
-                            return AppLocalizations.passwordMustBeAtLeast6;
-                          }
-                          return null;
-                        },
-                      ),
-
-                      const SizedBox(height: 20),
-
-                      // Confirm Password Field
-                      CustomTextField(
-                        label: AppLocalizations.confirmPassword,
-                        hintText: AppLocalizations.confirmPassword,
-                        controller: _confirmPasswordController,
-                        isPassword: true,
-                        prefixIcon: const Icon(Ionicons.lock_closed_outline),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return AppLocalizations.pleaseConfirmPassword;
-                          }
-                          if (value != _passwordController.text) {
-                            return AppLocalizations.passwordsDoNotMatch;
-                          }
-                          return null;
-                        },
-                      ),
-
-                      const SizedBox(height: 20),
-
-                      // Phone Number Field
-                      CustomPhoneInput(
-                        label: AppLocalizations.phoneNumber,
-                        hintText: AppLocalizations.phoneNumber,
-                        controller: _phoneController,
-                        initialCountryCode: 'EG',
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return AppLocalizations.pleaseEnterPhone;
-                          }
-                          return null;
-                        },
-                      ),
-
-                      const SizedBox(height: 20),
-
-                      // University Selection
-                      UniversitySelectorWidget(
-                        selectedUniversity: _selectedUniversity,
-                        onUniversitySelected: (university) {
-                          setState(() {
-                            _selectedUniversity = university;
-                            _hasAttemptedSubmit = false;
-                          });
-                        },
-                        label: AppLocalizations.selectUniversity,
-                        universities: _universities,
-                        hasError: _hasAttemptedSubmit && _selectedUniversity == null,
-                        errorText: _hasAttemptedSubmit && _selectedUniversity == null 
-                            ? 'Please select your university' 
-                            : null,
-                      ),
-
-                      const SizedBox(height: 32),
-
-                      // Register Button
-                      CustomButton(
-                        text: AppLocalizations.register,
-                        onPressed: () {
-                          setState(() {
-                            _hasAttemptedSubmit = true;
-                          });
-
-                          if (_formKey.currentState!.validate() &&
-                              _selectedUniversity != null) {
-                            // Navigate to OTP screen first
-                            NavigationHelper.to(
-                              path: '/otp',
-                              context: context,
-                              data: {
-                                'phone': _phoneController.text,
-                                'isResetPassword': false,
-                              },
-                            );
-                          }
-                        },
-                        isOutlined: true,
-                        width: double.infinity,
-                        icon: const Icon(
-                          Ionicons.person_add_outline,
-                          color: AppColors.primary,
-                          size: 20,
-                        ),
-                      ),
-
-                      const SizedBox(height: 32),
-
-                      // Divider
-                      Row(
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => _universitiesCubit),
+        BlocProvider(create: (context) => _registerCubit),
+        BlocProvider(create: (context) => _otpCubit),
+      ],
+      child: MultiBlocListener(
+        listeners: [
+          BlocListener<RegisterCubit, RegisterState>(
+            listener: (context, state) {
+              if (state is RegisterSuccess) {
+                final fullPhoneNumber =
+                    '$_selectedDialCode${_phoneController.text}';
+                // Request OTP after successful registration
+                _otpCubit.requestOtp(fullPhoneNumber);
+              } else if (state is RegisterError) {
+                // Show error toast
+                CustomToast.showError(context, message: state.error);
+              }
+            },
+          ),
+          BlocListener<OtpCubit, OtpState>(
+            listener: (context, state) {
+              if (state is OtpRequestSuccess) {
+                // Navigate to OTP screen after successful OTP request
+                final fullPhoneNumber =
+                    '$_selectedDialCode${_phoneController.text}';
+                NavigationHelper.to(
+                  path: '/otp',
+                  context: context,
+                  data: {
+                    'phoneNumber': fullPhoneNumber,
+                    'isResetPassword': false,
+                    'extraData': {
+                      'name': _nameController.text,
+                      'phone': fullPhoneNumber,
+                      'password': _passwordController.text,
+                      'universityId': _selectedUniversity!.id,
+                    },
+                  },
+                );
+              } else if (state is OtpRequestError) {
+                // Show error toast
+                CustomToast.showError(context, message: state.error);
+              }
+            },
+          ),
+        ],
+        child: Scaffold(
+          backgroundColor: AppColors.background,
+          body: SafeArea(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 14.0),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 60),
+                    // App Logo and Header Section
+                    Center(
+                      child: Column(
                         children: [
-                          Expanded(
-                            child: Divider(
-                              color: AppColors.textTertiary.withValues(
-                                alpha: 0.3,
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: Text(
-                              AppLocalizations.or,
-                              style: Theme.of(context).textTheme.bodySmall
-                                  ?.copyWith(
-                                    color: AppColors.textTertiary,
-                                    fontWeight: FontWeight.w500,
+                          // App Logo
+                          Container(
+                            width: 80,
+                            height: 80,
+                            decoration: BoxDecoration(
+                              gradient: AppColors.primaryGradient,
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColors.primary.withValues(
+                                    alpha: 0.3,
                                   ),
+                                  blurRadius: 20,
+                                  offset: const Offset(0, 10),
+                                ),
+                              ],
+                            ),
+                            child: const Icon(
+                              Ionicons.school_outline,
+                              size: 40,
+                              color: Colors.white,
                             ),
                           ),
-                          Expanded(
-                            child: Divider(
-                              color: AppColors.textTertiary.withValues(
-                                alpha: 0.3,
-                              ),
-                            ),
+
+                          const SizedBox(height: 24),
+
+                          // Welcome Text
+                          Text(
+                            AppLocalizations.appName,
+                            style: Theme.of(context).textTheme.headlineSmall
+                                ?.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.textPrimary,
+                                ),
+                            textAlign: TextAlign.center,
                           ),
                         ],
                       ),
+                    ),
 
-                      const SizedBox(height: 32),
+                    const SizedBox(height: 48),
+                    // Register Form Section
+                    Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Full Name Field
+                          CustomTextField(
+                            label: AppLocalizations.fullName,
+                            hintText: AppLocalizations.fullName,
+                            controller: _nameController,
+                            prefixIcon: const Icon(Ionicons.person_outline),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return AppLocalizations.pleaseEnterFullName;
+                              }
+                              return null;
+                            },
+                          ),
 
-                      // Login Link
-                      Center(
-                        child: RichText(
-                          text: TextSpan(
-                            style: Theme.of(context).textTheme.bodyLarge,
+                          const SizedBox(height: 20),
+
+                          // Password Field
+                          CustomTextField(
+                            label: AppLocalizations.password,
+                            hintText: AppLocalizations.password,
+                            controller: _passwordController,
+                            isPassword: true,
+                            prefixIcon: const Icon(
+                              Ionicons.lock_closed_outline,
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter your password';
+                              }
+                              if (value.length < 6) {
+                                return AppLocalizations.passwordMustBeAtLeast6;
+                              }
+                              return null;
+                            },
+                          ),
+
+                          const SizedBox(height: 20),
+
+                          // Confirm Password Field
+                          CustomTextField(
+                            label: AppLocalizations.confirmPassword,
+                            hintText: AppLocalizations.confirmPassword,
+                            controller: _confirmPasswordController,
+                            isPassword: true,
+                            prefixIcon: const Icon(
+                              Ionicons.lock_closed_outline,
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return AppLocalizations.pleaseConfirmPassword;
+                              }
+                              if (value != _passwordController.text) {
+                                return AppLocalizations.passwordsDoNotMatch;
+                              }
+                              return null;
+                            },
+                          ),
+
+                          const SizedBox(height: 20),
+
+                          // Phone Number Field
+                          CustomPhoneInput(
+                            label: AppLocalizations.phoneNumber,
+                            hintText: AppLocalizations.phoneNumber,
+                            controller: _phoneController,
+                            initialCountryCode: 'EG',
+                            onCountryChanged: (countryCode, dialCode) {
+                              setState(() {
+                                _selectedDialCode = dialCode;
+                              });
+                              print(
+                                'Country changed: $countryCode, Dial code: $dialCode',
+                              );
+                            },
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return AppLocalizations.pleaseEnterPhone;
+                              }
+                              return null;
+                            },
+                          ),
+
+                          const SizedBox(height: 20),
+
+                          // University Selection
+                          BlocBuilder<UniversitiesCubit, UniversitiesState>(
+                            builder: (context, state) {
+                              return UniversitySelectorWidget(
+                                selectedUniversity: _selectedUniversity,
+                                onUniversitySelected: (university) {
+                                  setState(() {
+                                    _selectedUniversity = university;
+                                    _hasAttemptedSubmit = false;
+                                  });
+                                },
+                                onTap: () {
+                                  if (state is UniversitiesInitial) {
+                                    _universitiesCubit.getUniversities();
+                                  }
+                                },
+                                label: AppLocalizations.selectUniversity,
+                                universities: state is UniversitiesSuccess
+                                    ? state.universities
+                                    : [],
+                                isLoading: state is UniversitiesLoading,
+                                hasError:
+                                    _hasAttemptedSubmit &&
+                                    _selectedUniversity == null,
+                                errorText:
+                                    _hasAttemptedSubmit &&
+                                        _selectedUniversity == null
+                                    ? 'Please select your university'
+                                    : null,
+                              );
+                            },
+                          ),
+
+                          const SizedBox(height: 32),
+
+                          // Register Button
+                          BlocBuilder<RegisterCubit, RegisterState>(
+                            builder: (context, state) {
+                              final isLoading = state is RegisterLoading;
+
+                              return CustomButton(
+                                text: isLoading
+                                    ? 'جاري إنشاء الحساب...'
+                                    : AppLocalizations.register,
+                                onPressed: isLoading
+                                    ? null
+                                    : () {
+                                        setState(() {
+                                          _hasAttemptedSubmit = true;
+                                        });
+
+                                        if (_formKey.currentState!.validate() &&
+                                            _selectedUniversity != null) {
+                                          // Prepare phone number with country code
+                                          final fullPhoneNumber =
+                                              '$_selectedDialCode${_phoneController.text}';
+
+                                          // Register user first
+                                          _registerCubit.register(
+                                            registerModel: RegisterModel(
+                                              name: _nameController.text,
+                                              phone: fullPhoneNumber,
+                                              password:
+                                                  _passwordController.text,
+                                              universityId:
+                                                  _selectedUniversity!.id,
+                                            ),
+                                          );
+                                        } else if (_selectedUniversity ==
+                                            null) {
+                                          CustomToast.showError(
+                                            context,
+                                            message: 'يرجى اختيار الجامعة',
+                                          );
+                                        }
+                                      },
+                                isOutlined: true,
+                                width: double.infinity,
+                                icon: isLoading
+                                    ? const SizedBox(
+                                        width: 20,
+                                        height: 20,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                                AppColors.primary,
+                                              ),
+                                        ),
+                                      )
+                                    : const Icon(
+                                        Ionicons.person_add_outline,
+                                        color: AppColors.primary,
+                                        size: 20,
+                                      ),
+                              );
+                            },
+                          ),
+
+                          const SizedBox(height: 32),
+
+                          // Divider
+                          Row(
                             children: [
-                              TextSpan(
-                                text: AppLocalizations.alreadyHaveAccount,
-                                style: TextStyle(
-                                  color: AppColors.textSecondary,
+                              Expanded(
+                                child: Divider(
+                                  color: AppColors.textTertiary.withValues(
+                                    alpha: 0.3,
+                                  ),
                                 ),
                               ),
-                              WidgetSpan(
-                                child: GestureDetector(
-                                  onTap: () => NavigationHelper.off(
-                                    path: '/login',
-                                    context: context,
-                                  ),
-                                  child: Text(
-                                    AppLocalizations.login,
-                                    style: Theme.of(context).textTheme.bodyLarge
-                                        ?.copyWith(
-                                          color: AppColors.primary,
-                                          fontWeight: FontWeight.w600,
-                                        ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                ),
+                                child: Text(
+                                  AppLocalizations.or,
+                                  style: Theme.of(context).textTheme.bodySmall
+                                      ?.copyWith(
+                                        color: AppColors.textTertiary,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                ),
+                              ),
+                              Expanded(
+                                child: Divider(
+                                  color: AppColors.textTertiary.withValues(
+                                    alpha: 0.3,
                                   ),
                                 ),
                               ),
                             ],
                           ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
 
-                const SizedBox(height: 40),
-              ],
+                          const SizedBox(height: 32),
+
+                          // Login Link
+                          Center(
+                            child: RichText(
+                              text: TextSpan(
+                                style: Theme.of(context).textTheme.bodyLarge,
+                                children: [
+                                  TextSpan(
+                                    text: AppLocalizations.alreadyHaveAccount,
+                                    style: TextStyle(
+                                      color: AppColors.textSecondary,
+                                    ),
+                                  ),
+                                  WidgetSpan(
+                                    child: GestureDetector(
+                                      onTap: () => NavigationHelper.off(
+                                        path: '/login',
+                                        context: context,
+                                      ),
+                                      child: Text(
+                                        AppLocalizations.login,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.copyWith(
+                                              color: AppColors.primary,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 40),
+                  ],
+                ),
+              ),
             ),
           ),
         ),
