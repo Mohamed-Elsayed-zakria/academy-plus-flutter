@@ -23,13 +23,10 @@ import '../features/onboarding/presentation/views/screens/onboarding_screen.dart
 import '../features/cart/presentation/screens/cart_screen.dart';
 
 GoRouter createAppRouter({required bool isOnboardingCompleted}) => GoRouter(
-  initialLocation: isOnboardingCompleted ? '/main' : '/onboarding',
+  initialLocation: isOnboardingCompleted ? '/welcome' : '/onboarding',
   routes: [
     // Splash Screen
-    GoRoute(
-      path: '/',
-      builder: (context, state) => const SplashScreen(),
-    ),
+    GoRoute(path: '/', builder: (context, state) => const SplashScreen()),
 
     // Welcome Screen
     GoRoute(
@@ -44,10 +41,7 @@ GoRouter createAppRouter({required bool isOnboardingCompleted}) => GoRouter(
     ),
 
     // Authentication Routes
-    GoRoute(
-      path: '/login',
-      builder: (context, state) => const LoginScreen(),
-    ),
+    GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
     GoRoute(
       path: '/register',
       builder: (context, state) => const RegisterScreen(),
@@ -58,7 +52,8 @@ GoRouter createAppRouter({required bool isOnboardingCompleted}) => GoRouter(
     ),
     GoRoute(
       path: '/otp',
-      builder: (context, state) => OtpScreen(extra: state.extra as Map<String, dynamic>?),
+      builder: (context, state) =>
+          OtpScreen(extra: state.extra as Map<String, dynamic>?),
     ),
     GoRoute(
       path: '/forgot-password',
@@ -66,7 +61,8 @@ GoRouter createAppRouter({required bool isOnboardingCompleted}) => GoRouter(
     ),
     GoRoute(
       path: '/reset-password-otp',
-      builder: (context, state) => OtpScreen(extra: state.extra as Map<String, dynamic>?),
+      builder: (context, state) =>
+          OtpScreen(extra: state.extra as Map<String, dynamic>?),
     ),
     GoRoute(
       path: '/reset-password',
@@ -78,10 +74,7 @@ GoRouter createAppRouter({required bool isOnboardingCompleted}) => GoRouter(
     ),
 
     // Main Screen (with bottom navigation)
-    GoRoute(
-      path: '/main',
-      builder: (context, state) => const MainScreen(),
-    ),
+    GoRoute(path: '/main', builder: (context, state) => const MainScreen()),
 
     // Department Screen (shows sub-departments)
     GoRoute(
@@ -170,9 +163,6 @@ GoRouter createAppRouter({required bool isOnboardingCompleted}) => GoRouter(
     ),
 
     // Cart Route
-    GoRoute(
-      path: '/cart',
-      builder: (context, state) => const CartScreen(),
-    ),
+    GoRoute(path: '/cart', builder: (context, state) => const CartScreen()),
   ],
 );
