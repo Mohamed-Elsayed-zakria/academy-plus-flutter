@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
-import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/localization/app_localizations.dart';
-import '../../../../../core/widgets/custom_text_field.dart';
-import '../../../../../core/widgets/date_picker_widget.dart';
 import '../../../../../core/widgets/custom_button.dart';
-import '../../../../../core/widgets/subject_selector_widget.dart';
+import '../../../../../core/widgets/custom_text_field.dart';
+import '../../../../../core/widgets/multi_subject_selector_widget.dart';
+import '../../../../../core/widgets/assignment_type_selector_widget.dart';
 
 class AddAssignmentScreen extends StatefulWidget {
   const AddAssignmentScreen({super.key});
@@ -19,24 +18,11 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
-  
-  String? _selectedSubject;
-  DateTime? _selectedDate;
+
+  List<String> _selectedSubjects = [];
+  AssignmentType? _selectedAssignmentType;
   bool _showSubjectError = false;
-  
-  // Mock subjects list - in real app this would come from a service
-  final List<String> _subjects = [
-    'البرمجة المتقدمة',
-    'قواعد البيانات',
-    'تطوير الويب',
-    'هياكل البيانات',
-    'تطوير التطبيقات المحمولة',
-    'الذكاء الاصطناعي',
-    'أمن المعلومات',
-    'الرياضيات',
-    'الفيزياء',
-    'الكيمياء',
-  ];
+  bool _showTypeError = false;
 
   @override
   void dispose() {
@@ -45,76 +31,54 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
     super.dispose();
   }
 
-  void _selectSubject() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: Colors.white,
-        title: Text(AppLocalizations.selectSubject),
-        content: SizedBox(
-          width: double.maxFinite,
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: _subjects.length,
-            itemBuilder: (context, index) {
-              final subject = _subjects[index];
-              return ListTile(
-                title: Text(subject),
-                onTap: () {
-                  setState(() {
-                    _selectedSubject = subject;
-                    _showSubjectError = false; // Hide error when subject is selected
-                  });
-                  Navigator.of(context).pop();
-                },
-              );
-            },
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(AppLocalizations.cancel),
-          ),
-        ],
-      ),
-    );
-  }
+  void _addToCart() {
+    setState(() {
+      _showSubjectError = _selectedSubjects.isEmpty;
+      _showTypeError = _selectedAssignmentType == null;
+    });
 
-  void _selectDate() async {
-    final date = await DatePickerWidget.showCustomDatePicker(
-      context: context,
-      initialDate: DateTime.now().add(const Duration(days: 1)),
-      firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(const Duration(days: 365)),
-    );
-    
-    if (date != null) {
-      setState(() {
-        _selectedDate = date;
-      });
+    if (_formKey.currentState!.validate()) {
+      if (_selectedSubjects.isEmpty) {
+        return; // Error already shown via _showSubjectError
+      }
+
+      if (_selectedAssignmentType == null) {
+        return; // Error already shown via _showTypeError
+      }
+
+      // Here you would add the assignment to cart
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('تم إضافة الواجب إلى العربة'),
+          backgroundColor: Colors.green,
+        ),
+      );
+      context.pop();
     }
   }
 
   void _saveAssignment() {
     setState(() {
-      _showSubjectError = _selectedSubject == null;
+      _showSubjectError = _selectedSubjects.isEmpty;
+      _showTypeError = _selectedAssignmentType == null;
     });
-    
+
     if (_formKey.currentState!.validate()) {
-      if (_selectedSubject == null) {
+      if (_selectedSubjects.isEmpty) {
         return; // Error already shown via _showSubjectError
       }
-      
-      if (_selectedDate == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.pleaseSelectDate)),
-        );
-        return;
+
+      if (_selectedAssignmentType == null) {
+        return; // Error already shown via _showTypeError
       }
 
-      // Here you would save the assignment to your backend
-      // For now, we'll just go back
+      // Here you would process payment for the assignment
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('تم الدفع بنجاح! سيتم إنشاء الواجب قريباً'),
+          backgroundColor: Colors.green,
+        ),
+      );
       context.pop();
     }
   }
@@ -123,37 +87,48 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: Text(AppLocalizations.addAssignment),
-        actions: [
-          TextButton(
-            onPressed: _saveAssignment,
-            child: Text(
-              AppLocalizations.save,
-              style: TextStyle(
-                color: AppColors.primary,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ],
-      ),
+      appBar: AppBar(title: Text(AppLocalizations.addAssignment)),
       body: Form(
         key: _formKey,
         child: ListView(
+          physics: const BouncingScrollPhysics(),
           padding: const EdgeInsets.all(16),
           children: [
             // Subject Selection
-            SubjectSelectorWidget(
-              selectedSubject: _selectedSubject,
-              onTap: _selectSubject,
+            MultiSubjectSelectorWidget(
+              selectedSubjects: _selectedSubjects,
+              onSubjectsChanged: (subjects) {
+                setState(() {
+                  _selectedSubjects = subjects;
+                  _showSubjectError =
+                      false; // Hide error when subjects are selected
+                });
+              },
               label: AppLocalizations.subject,
               hasError: _showSubjectError,
-              errorText: _showSubjectError ? AppLocalizations.pleaseSelectSubject : null,
+              errorText: _showSubjectError
+                  ? AppLocalizations.pleaseSelectSubject
+                  : null,
             ),
-            
+
             const SizedBox(height: 24),
-            
+
+            // Assignment Type Selection
+            AssignmentTypeSelectorWidget(
+              selectedType: _selectedAssignmentType,
+              onTypeChanged: (type) {
+                setState(() {
+                  _selectedAssignmentType = type;
+                  _showTypeError = false; // Hide error when type is selected
+                });
+              },
+              label: 'نوع الواجب',
+              hasError: _showTypeError,
+              errorText: _showTypeError ? 'يرجى اختيار نوع الواجب' : null,
+            ),
+
+            const SizedBox(height: 24),
+
             // Assignment Title
             CustomTextField(
               controller: _titleController,
@@ -167,9 +142,9 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
                 return null;
               },
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             // Description (Optional)
             CustomTextField(
               controller: _descriptionController,
@@ -178,86 +153,43 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
               prefixIcon: const Icon(Ionicons.text_outline),
               // No validator - description is optional
             ),
-            
-            const SizedBox(height: 24),
-            
-            // Due Date (Required)
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+
+            const SizedBox(height: 32),
+
+            // Payment Buttons Row
+            Row(
               children: [
-                Text(
-                  AppLocalizations.dueDate,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
+                // Add to Cart Button
+                Expanded(
+                  child: SizedBox(
+                    height: 58,
+                    child: CustomButton(
+                      isOutlined: true,
+                      text: 'أضف إلى العربة',
+                      onPressed: _addToCart,
+                      icon: const Icon(Ionicons.cart_outline),
+                    ),
                   ),
                 ),
-                const SizedBox(height: 8),
-                InkWell(
-                  onTap: _selectDate,
-                  borderRadius: BorderRadius.circular(12),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                    decoration: BoxDecoration(
-                      color: AppColors.surface,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppColors.textTertiary),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.02),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Ionicons.calendar_outline,
-                          color: AppColors.textSecondary,
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            _selectedDate != null
-                                ? '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}'
-                                : AppLocalizations.dueDate,
-                            style: TextStyle(
-                              color: _selectedDate != null 
-                                  ? AppColors.textPrimary 
-                                  : AppColors.textSecondary,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ),
-                        Icon(
-                          Ionicons.chevron_down_outline,
-                          color: AppColors.textSecondary,
-                        ),
-                      ],
+                const SizedBox(width: 12),
+                // Pay Now Button
+                Expanded(
+                  child: SizedBox(
+                    height: 58,
+                    child: CustomButton(
+                      isGradient: true,
+                      text: 'ادفع الآن',
+                      onPressed: _saveAssignment,
+                      icon: const Icon(Ionicons.card_outline),
                     ),
                   ),
                 ),
               ],
             ),
-            
             const SizedBox(height: 32),
-            
-            // Save Button
-            CustomButton(
-              text: AppLocalizations.save,
-              onPressed: _saveAssignment,
-              width: double.infinity,
-              icon: const Icon(
-                Ionicons.save_outline,
-                size: 20,
-                color: Colors.white,
-              ),
-            ),
           ],
         ),
       ),
     );
   }
-
 }

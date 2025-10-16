@@ -1,15 +1,53 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/widgets/custom_text_field.dart';
 
-class SubDepartmentsScreen extends StatelessWidget {
+class SubDepartmentsScreen extends StatefulWidget {
   final Map<String, dynamic> department;
 
   const SubDepartmentsScreen({
     super.key,
     required this.department,
   });
+
+  @override
+  State<SubDepartmentsScreen> createState() => _SubDepartmentsScreenState();
+}
+
+class _SubDepartmentsScreenState extends State<SubDepartmentsScreen> {
+  final TextEditingController _searchController = TextEditingController();
+  List<String> _filteredSubDepartments = [];
+  List<String> _allSubDepartments = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _allSubDepartments = List<String>.from(widget.department['subDepartments'] as List);
+    _filteredSubDepartments = _allSubDepartments;
+    _searchController.addListener(_onSearchChanged);
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _onSearchChanged() {
+    setState(() {
+      final query = _searchController.text.toLowerCase();
+      if (query.isEmpty) {
+        _filteredSubDepartments = _allSubDepartments;
+      } else {
+        _filteredSubDepartments = _allSubDepartments
+            .where((subDept) => subDept.toLowerCase().contains(query))
+            .toList();
+      }
+    });
+  }
 
   String _getSubDepartmentImage(String subDeptName) {
     // Return different images based on sub-department name
@@ -69,38 +107,108 @@ class SubDepartmentsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final subDepartments = department['subDepartments'] as List;
-    
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: Text(department['name'] as String),
+        title: Text(widget.department['name'] as String),
       ),
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
-          SliverPadding(
-            padding: const EdgeInsets.all(16),
-            sliver: SliverGrid(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
-                childAspectRatio: 0.85,
+          // Search Bar
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: CustomTextField(
+                controller: _searchController,
+                hintText: 'البحث في الأقسام الفرعية...',
+                prefixIcon: const Icon(
+                  Ionicons.search_outline,
+                  color: AppColors.textSecondary,
+                  size: 20,
+                ),
               ),
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  final subDept = subDepartments[index];
+            ),
+          ),
+          
+          // Results count
+          if (_searchController.text.isNotEmpty)
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  'تم العثور على ${_filteredSubDepartments.length} قسم فرعي',
+                  style: TextStyle(
+                    color: AppColors.textSecondary,
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+            ),
+          
+          // Grid or Empty State
+          if (_filteredSubDepartments.isEmpty)
+            SliverToBoxAdapter(
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(32),
+                  child: Column(
+                    children: [
+                      SvgPicture.asset(
+                        'assets/images/undraw_no-data_ig65.svg',
+                        width: 200,
+                        height: 200,
+                        fit: BoxFit.contain,
+                      ),
+                      const SizedBox(height: 24),
+                      Text(
+                        _searchController.text.isNotEmpty 
+                            ? 'لا توجد نتائج للبحث'
+                            : 'لا توجد أقسام فرعية',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        _searchController.text.isNotEmpty 
+                            ? 'جرب البحث بكلمات مختلفة'
+                            : 'سيتم إضافة الأقسام الفرعية قريباً',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            )
+          else
+            SliverPadding(
+              padding: const EdgeInsets.all(16),
+              sliver: SliverGrid(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                  childAspectRatio: 0.85,
+                ),
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    final subDept = _filteredSubDepartments[index];
                   
                   return InkWell(
                     onTap: () {
                       context.push(
-                        '/subdepartment/${department['id']}/$index/courses',
+                        '/subdepartment/${widget.department['id']}/${_allSubDepartments.indexOf(subDept)}/courses',
                         extra: {
                           'subDepartmentName': subDept,
-                          'subDepartmentId': index,
-                          'departmentId': department['id'],
-                          'departmentName': department['name'],
+                          'subDepartmentId': _allSubDepartments.indexOf(subDept),
+                          'departmentId': widget.department['id'],
+                          'departmentName': widget.department['name'],
                         },
                       );
                     },
@@ -110,12 +218,12 @@ class SubDepartmentsScreen extends StatelessWidget {
                         color: AppColors.surface,
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: AppColors.primary.withOpacity(0.2),
+                          color: AppColors.primary.withValues(alpha: 0.2),
                           width: 1,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
+                            color: Colors.black.withValues(alpha: 0.05),
                             blurRadius: 10,
                             offset: const Offset(0, 4),
                           ),
@@ -145,8 +253,8 @@ class SubDepartmentsScreen extends StatelessWidget {
                                             begin: Alignment.topLeft,
                                             end: Alignment.bottomRight,
                                             colors: [
-                                              AppColors.primary.withOpacity(0.7),
-                                              AppColors.primary.withOpacity(0.5),
+                                              AppColors.primary.withValues(alpha: 0.7),
+                                              AppColors.primary.withValues(alpha: 0.5),
                                             ],
                                           ),
                                         ),
@@ -185,7 +293,7 @@ class SubDepartmentsScreen extends StatelessWidget {
                                         end: Alignment.bottomCenter,
                                         colors: [
                                           Colors.transparent,
-                                          Colors.black.withOpacity(0.3),
+                                          Colors.black.withValues(alpha: 0.3),
                                         ],
                                       ),
                                     ),
@@ -205,7 +313,7 @@ class SubDepartmentsScreen extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    subDept as String,
+                                    subDept,
                                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                       fontWeight: FontWeight.bold,
                                       color: AppColors.textPrimary,
@@ -240,7 +348,7 @@ class SubDepartmentsScreen extends StatelessWidget {
                     ),
                   );
                 },
-                childCount: subDepartments.length,
+                childCount: _filteredSubDepartments.length,
               ),
             ),
           ),

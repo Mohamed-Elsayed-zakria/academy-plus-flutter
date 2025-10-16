@@ -3,10 +3,10 @@ import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/localization/app_localizations.dart';
+import '../../../../../core/widgets/custom_button.dart';
 import '../../../../../core/widgets/custom_text_field.dart';
 import '../../../../../core/widgets/date_picker_widget.dart';
-import '../../../../../core/widgets/custom_button.dart';
-import '../../../../../core/widgets/subject_selector_widget.dart';
+import '../../../../../core/widgets/multi_subject_selector_widget.dart';
 
 class AddQuizScreen extends StatefulWidget {
   const AddQuizScreen({super.key});
@@ -17,72 +17,18 @@ class AddQuizScreen extends StatefulWidget {
 
 class _AddQuizScreenState extends State<AddQuizScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _titleController = TextEditingController();
-  final _descriptionController = TextEditingController();
-  final _adminUsernameController = TextEditingController();
-  final _adminPasswordController = TextEditingController();
-  
-  String? _selectedSubject;
+  final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
+
+  List<String> _selectedSubjects = [];
   DateTime? _selectedDate;
   bool _showSubjectError = false;
-  
-  // Mock subjects list - in real app this would come from a service
-  final List<String> _subjects = [
-    'البرمجة المتقدمة',
-    'قواعد البيانات',
-    'تطوير الويب',
-    'هياكل البيانات',
-    'تطوير التطبيقات المحمولة',
-    'الذكاء الاصطناعي',
-    'أمن المعلومات',
-    'الرياضيات',
-    'الفيزياء',
-    'الكيمياء',
-  ];
 
   @override
   void dispose() {
-    _titleController.dispose();
-    _descriptionController.dispose();
-    _adminUsernameController.dispose();
-    _adminPasswordController.dispose();
+    _usernameController.dispose();
+    _passwordController.dispose();
     super.dispose();
-  }
-
-  void _selectSubject() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: Colors.white,
-        title: Text(AppLocalizations.selectSubject),
-        content: SizedBox(
-          width: double.maxFinite,
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: _subjects.length,
-            itemBuilder: (context, index) {
-              final subject = _subjects[index];
-              return ListTile(
-                title: Text(subject),
-                onTap: () {
-                  setState(() {
-                    _selectedSubject = subject;
-                    _showSubjectError = false; // Hide error when subject is selected
-                  });
-                  Navigator.of(context).pop();
-                },
-              );
-            },
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(AppLocalizations.cancel),
-          ),
-        ],
-      ),
-    );
   }
 
   void _selectDate() async {
@@ -92,7 +38,7 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 365)),
     );
-    
+
     if (date != null) {
       setState(() {
         _selectedDate = date;
@@ -100,16 +46,16 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
     }
   }
 
-  void _saveQuiz() {
+  void _addToCart() {
     setState(() {
-      _showSubjectError = _selectedSubject == null;
+      _showSubjectError = _selectedSubjects.isEmpty;
     });
-    
+
     if (_formKey.currentState!.validate()) {
-      if (_selectedSubject == null) {
+      if (_selectedSubjects.isEmpty) {
         return; // Error already shown via _showSubjectError
       }
-      
+
       if (_selectedDate == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(AppLocalizations.pleaseSelectDate)),
@@ -117,8 +63,41 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
         return;
       }
 
-      // Here you would save the quiz to your backend
-      // For now, we'll just go back
+      // Here you would add the quiz to cart
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('تم إضافة الاختبار إلى العربة'),
+          backgroundColor: Colors.green,
+        ),
+      );
+      context.pop();
+    }
+  }
+
+  void _saveQuiz() {
+    setState(() {
+      _showSubjectError = _selectedSubjects.isEmpty;
+    });
+
+    if (_formKey.currentState!.validate()) {
+      if (_selectedSubjects.isEmpty) {
+        return; // Error already shown via _showSubjectError
+      }
+
+      if (_selectedDate == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.pleaseSelectDate)),
+        );
+        return;
+      }
+
+      // Here you would process payment for the quiz
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('تم الدفع بنجاح! سيتم إنشاء الاختبار قريباً'),
+          backgroundColor: Colors.green,
+        ),
+      );
       context.pop();
     }
   }
@@ -127,64 +106,32 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: Text(AppLocalizations.addQuiz),
-        actions: [
-          TextButton(
-            onPressed: _saveQuiz,
-            child: Text(
-              AppLocalizations.save,
-              style: TextStyle(
-                color: AppColors.primary,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ],
-      ),
+      appBar: AppBar(title: Text(AppLocalizations.addQuiz)),
       body: Form(
         key: _formKey,
         child: ListView(
+          physics: const BouncingScrollPhysics(),
           padding: const EdgeInsets.all(16),
           children: [
             // Subject Selection
-            SubjectSelectorWidget(
-              selectedSubject: _selectedSubject,
-              onTap: _selectSubject,
+            MultiSubjectSelectorWidget(
+              selectedSubjects: _selectedSubjects,
+              onSubjectsChanged: (subjects) {
+                setState(() {
+                  _selectedSubjects = subjects;
+                  _showSubjectError =
+                      false; // Hide error when subjects are selected
+                });
+              },
               label: AppLocalizations.subject,
               hasError: _showSubjectError,
-              errorText: _showSubjectError ? AppLocalizations.pleaseSelectSubject : null,
+              errorText: _showSubjectError
+                  ? AppLocalizations.pleaseSelectSubject
+                  : null,
             ),
-            
+
             const SizedBox(height: 24),
-            
-            // Quiz Title
-            CustomTextField(
-              controller: _titleController,
-              label: AppLocalizations.quizTitle,
-              hintText: AppLocalizations.quizTitle,
-              prefixIcon: const Icon(Ionicons.document_text_outline),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return AppLocalizations.pleaseEnterTitle;
-                }
-                return null;
-              },
-            ),
-            
-            const SizedBox(height: 24),
-            
-            // Description (Optional)
-            CustomTextField(
-              controller: _descriptionController,
-              label: AppLocalizations.description,
-              hintText: AppLocalizations.description,
-              prefixIcon: const Icon(Ionicons.text_outline),
-              // No validator - description is optional
-            ),
-            
-            const SizedBox(height: 24),
-            
+
             // Quiz Date (Required)
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -201,7 +148,10 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
                   onTap: _selectDate,
                   borderRadius: BorderRadius.circular(12),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 16,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.surface,
                       borderRadius: BorderRadius.circular(12),
@@ -227,8 +177,8 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
                                 ? '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}'
                                 : AppLocalizations.quizDate,
                             style: TextStyle(
-                              color: _selectedDate != null 
-                                  ? AppColors.textPrimary 
+                              color: _selectedDate != null
+                                  ? AppColors.textPrimary
                                   : AppColors.textSecondary,
                               fontSize: 14,
                             ),
@@ -244,10 +194,10 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
                 ),
               ],
             ),
-            
+
             const SizedBox(height: 24),
-            
-            // Admin Credentials Section
+
+            // User Credentials Section
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -263,55 +213,56 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
                   Row(
                     children: [
                       Icon(
-                        Ionicons.shield_checkmark_outline,
+                        Ionicons.person_circle_outline,
                         color: AppColors.accent,
                         size: 20,
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        'بيانات الأدمن',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.accent,
-                        ),
+                        'بيانات المستخدم',
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.accent,
+                            ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'أدخل بيانات حسابك في المنصة لربط الاختبار',
+                    'أدخل بيانات حسابك لربط الاختبار',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: AppColors.textSecondary,
                     ),
                   ),
                   const SizedBox(height: 16),
-                  
-                  // Admin Username
+
+                  // Username
                   CustomTextField(
-                    controller: _adminUsernameController,
-                    label: AppLocalizations.adminUsername,
-                    hintText: AppLocalizations.adminUsername,
+                    controller: _usernameController,
+                    label: 'اسم المستخدم',
+                    hintText: 'اسم المستخدم',
                     prefixIcon: const Icon(Ionicons.person_outline),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return AppLocalizations.pleaseEnterAdminUsername;
+                        return 'يرجى إدخال اسم المستخدم';
                       }
                       return null;
                     },
                   ),
-                  
+
                   const SizedBox(height: 16),
-                  
-                  // Admin Password
+
+                  // Password
                   CustomTextField(
-                    controller: _adminPasswordController,
-                    label: AppLocalizations.adminPassword,
-                    hintText: AppLocalizations.adminPassword,
+                    controller: _passwordController,
+                    label: 'كلمة المرور',
+                    hintText: 'كلمة المرور',
                     prefixIcon: const Icon(Ionicons.lock_closed_outline),
                     isPassword: true,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return AppLocalizations.pleaseEnterAdminPassword;
+                        return 'يرجى إدخال كلمة المرور';
                       }
                       return null;
                     },
@@ -319,24 +270,41 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
                 ],
               ),
             ),
-            
             const SizedBox(height: 32),
-            
-            // Save Button
-            CustomButton(
-              text: AppLocalizations.save,
-              onPressed: _saveQuiz,
-              width: double.infinity,
-              icon: const Icon(
-                Ionicons.save_outline,
-                size: 20,
-                color: Colors.white,
-              ),
+            // Payment Buttons Row
+            Row(
+              children: [
+                // Add to Cart Button
+                Expanded(
+                  child: SizedBox(
+                    height: 58,
+                    child: CustomButton(
+                      isOutlined: true,
+                      text: 'أضف إلى العربة',
+                      onPressed: _addToCart,
+                      icon: const Icon(Ionicons.cart_outline),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                // Pay Now Button
+                Expanded(
+                  child: SizedBox(
+                    height: 58,
+                    child: CustomButton(
+                      isGradient: true,
+                      text: 'ادفع الآن',
+                      onPressed: _saveQuiz,
+                      icon: const Icon(Ionicons.card_outline),
+                    ),
+                  ),
+                ),
+              ],
             ),
+            const SizedBox(height: 32),
           ],
         ),
       ),
     );
   }
-
 }

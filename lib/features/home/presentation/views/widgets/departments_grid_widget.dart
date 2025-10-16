@@ -40,12 +40,12 @@ class DepartmentsGridWidget extends StatelessWidget {
                 color: AppColors.surface,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: AppColors.primary.withOpacity(0.2),
+                  color: AppColors.primary.withValues(alpha: 0.2),
                   width: 1,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -75,8 +75,8 @@ class DepartmentsGridWidget extends StatelessWidget {
                                     begin: Alignment.topLeft,
                                     end: Alignment.bottomRight,
                                     colors: [
-                                      AppColors.primary.withOpacity(0.7),
-                                      AppColors.primary.withOpacity(0.5),
+                                      AppColors.primary.withValues(alpha: 0.7),
+                                      AppColors.primary.withValues(alpha: 0.5),
                                     ],
                                   ),
                                 ),
@@ -115,7 +115,7 @@ class DepartmentsGridWidget extends StatelessWidget {
                                 end: Alignment.bottomCenter,
                                 colors: [
                                   Colors.transparent,
-                                  Colors.black.withOpacity(0.3),
+                                  Colors.black.withValues(alpha: 0.3),
                                 ],
                               ),
                             ),
