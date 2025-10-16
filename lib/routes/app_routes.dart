@@ -127,6 +127,13 @@ GoRouter createAppRouter({required bool isOnboardingCompleted}) => GoRouter(
         return AssignmentDetailsScreen(assignment: assignment);
       },
     ),
+    GoRoute(
+      path: '/assignment/new',
+      builder: (context, state) {
+        final assignment = state.extra as Map<String, dynamic>;
+        return AssignmentDetailsScreen(assignment: assignment);
+      },
+    ),
 
     // Quizzes Routes
     GoRoute(
@@ -139,6 +146,13 @@ GoRouter createAppRouter({required bool isOnboardingCompleted}) => GoRouter(
     ),
     GoRoute(
       path: '/quiz/:id',
+      builder: (context, state) {
+        final quiz = state.extra as Map<String, dynamic>;
+        return QuizDetailsScreen(quiz: quiz);
+      },
+    ),
+    GoRoute(
+      path: '/quiz/new',
       builder: (context, state) {
         final quiz = state.extra as Map<String, dynamic>;
         return QuizDetailsScreen(quiz: quiz);

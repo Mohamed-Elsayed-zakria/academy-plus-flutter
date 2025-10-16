@@ -14,7 +14,56 @@ class QuizzesScreen extends StatefulWidget {
 
 class _QuizzesScreenState extends State<QuizzesScreen> {
   // Mock quizzes data - in real app this would come from a service
-  List<Map<String, dynamic>> quizzes = [];
+  List<Map<String, dynamic>> quizzes = [
+    {
+      'id': '1',
+      'title': 'اختبار البرمجة المتقدمة',
+      'description': 'اختبار شامل في البرمجة المتقدمة وتطوير الويب',
+      'subjects': ['البرمجة المتقدمة', 'تطوير الويب'],
+      'status': 'Available',
+      'questions': 15,
+      'duration': 45,
+      'attempts': 0,
+      'bestScore': null,
+      'deadline': '24/12/2024',
+      'quizDate': '25/12/2024',
+      'totalPrice': 478.0,
+      'username': 'student123',
+      'createdDate': '2024-12-18T10:00:00Z',
+    },
+    {
+      'id': '2',
+      'title': 'اختبار قواعد البيانات',
+      'description': 'اختبار في تصميم وإدارة قواعد البيانات',
+      'subjects': ['قواعد البيانات', 'هياكل البيانات'],
+      'status': 'Available',
+      'questions': 12,
+      'duration': 30,
+      'attempts': 1,
+      'bestScore': 85,
+      'deadline': '29/12/2024',
+      'quizDate': '30/12/2024',
+      'totalPrice': 428.0,
+      'username': 'student456',
+      'createdDate': '2024-12-15T14:30:00Z',
+    },
+    {
+      'id': '3',
+      'title': 'اختبار الذكاء الاصطناعي',
+      'description': 'اختبار في مفاهيم الذكاء الاصطناعي والتعلم الآلي',
+      'subjects': ['الذكاء الاصطناعي', 'الرياضيات'],
+      'status': 'Completed',
+      'questions': 20,
+      'duration': 60,
+      'attempts': 2,
+      'bestScore': 92,
+      'deadline': '19/12/2024',
+      'quizDate': '20/12/2024',
+      'totalPrice': 498.0,
+      'username': 'student789',
+      'createdDate': '2024-12-10T09:15:00Z',
+    },
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -107,6 +156,9 @@ class _QuizCard extends StatelessWidget {
     final duration = quiz['duration'] as int;
     final attempts = quiz['attempts'] as int;
     final bestScore = quiz['bestScore'] as int?;
+    final subjects = quiz['subjects'] as List<String>? ?? [];
+    final totalPrice = quiz['totalPrice'] as double? ?? 0.0;
+    final quizDate = quiz['quizDate'] as String?;
 
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
@@ -120,7 +172,7 @@ class _QuizCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header: Status Badge
+                // Header: Status Badge & Price
                 Row(
                   children: [
                     Container(
@@ -153,6 +205,38 @@ class _QuizCard extends StatelessWidget {
                       ),
                     ),
                     const Spacer(),
+                    if (totalPrice > 0) ...[
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.accent.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Ionicons.card_outline,
+                              size: 14,
+                              color: AppColors.accent,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              '${totalPrice.toStringAsFixed(0)} \$',
+                              style: TextStyle(
+                                color: AppColors.accent,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                    ],
                     if (bestScore != null)
                       Container(
                         padding: const EdgeInsets.all(8),
@@ -184,45 +268,51 @@ class _QuizCard extends StatelessWidget {
 
                 const SizedBox(height: 8),
 
-                // Course Name
-                Row(
-                  children: [
-                    Icon(
-                      Ionicons.book_outline,
-                      size: 16,
-                      color: AppColors.textSecondary,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      quiz['course'] as String,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: AppColors.textSecondary,
-                          ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 16),
+                // Subjects
+                if (subjects.isNotEmpty) ...[
+                  Row(
+                    children: [
+                      Icon(
+                        Ionicons.book_outline,
+                        size: 16,
+                        color: AppColors.textSecondary,
+                      ),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          subjects.take(2).join('، ') + 
+                          (subjects.length > 2 ? '...' : ''),
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                color: AppColors.textSecondary,
+                              ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                ],
 
                 // Quiz Info Row
                 Row(
                   children: [
                     _InfoChip(
                       icon: Ionicons.help_circle_outline,
-                      label: '$questions questions',
+                      label: '$questions أسئلة',
                       color: AppColors.primary,
                     ),
                     const SizedBox(width: 12),
                     _InfoChip(
                       icon: Ionicons.time_outline,
-                      label: '$duration min',
+                      label: '$duration دقيقة',
                       color: AppColors.accentOrange,
                     ),
                     if (attempts > 0) ...[
                       const SizedBox(width: 12),
                       _InfoChip(
                         icon: Ionicons.refresh_outline,
-                        label: '$attempts ${attempts == 1 ? 'attempt' : 'attempts'}',
+                        label: '$attempts محاولة',
                         color: AppColors.accentPurple,
                       ),
                     ],
@@ -231,7 +321,7 @@ class _QuizCard extends StatelessWidget {
 
                 const SizedBox(height: 12),
 
-                // Deadline
+                // Quiz Date & Deadline
                 Row(
                   children: [
                     Icon(
@@ -241,7 +331,7 @@ class _QuizCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      'Deadline: ${quiz['deadline']}',
+                      quizDate != null ? 'تاريخ الاختبار: $quizDate' : 'الموعد النهائي: ${quiz['deadline']}',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: AppColors.textSecondary,
                           ),

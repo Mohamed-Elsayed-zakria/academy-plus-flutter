@@ -31,6 +31,61 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
     super.dispose();
   }
 
+  Map<String, dynamic> _createAssignmentData() {
+    // Calculate total price based on selected subjects
+    final totalPrice = _calculateTotalPrice();
+    
+    // Generate assignment ID
+    final assignmentId = DateTime.now().millisecondsSinceEpoch.toString();
+    
+    // Calculate due date (7 days from now)
+    final dueDate = DateTime.now().add(const Duration(days: 7));
+    final dueDateString = '${dueDate.day}/${dueDate.month}/${dueDate.year}';
+    
+    return {
+      'id': assignmentId,
+      'title': _titleController.text.isNotEmpty ? _titleController.text : 'واجب جديد',
+      'description': _descriptionController.text.isNotEmpty 
+          ? _descriptionController.text 
+          : 'لا يوجد وصف متاح',
+      'subjects': _selectedSubjects,
+      'type': _selectedAssignmentType,
+      'status': 'In Progress',
+      'dueDate': dueDateString,
+      'totalPrice': totalPrice,
+      'createdDate': DateTime.now().toIso8601String(),
+      'grade': null,
+      'submittedDate': null,
+    };
+  }
+
+  double _calculateTotalPrice() {
+    // Mock courses data with prices - same as in MultiSubjectSelectorWidget
+    final courses = [
+      {'name': 'البرمجة المتقدمة', 'price': 299, 'discount': 20},
+      {'name': 'قواعد البيانات', 'price': 249, 'discount': 15},
+      {'name': 'تطوير الويب', 'price': 199, 'discount': 25},
+      {'name': 'هياكل البيانات', 'price': 179, 'discount': 10},
+      {'name': 'تطوير التطبيقات المحمولة', 'price': 399, 'discount': 30},
+      {'name': 'الذكاء الاصطناعي', 'price': 349, 'discount': 20},
+      {'name': 'أمن المعلومات', 'price': 279, 'discount': 15},
+      {'name': 'الرياضيات', 'price': 149, 'discount': 10},
+      {'name': 'الفيزياء', 'price': 159, 'discount': 12},
+      {'name': 'الكيمياء', 'price': 169, 'discount': 8},
+    ];
+
+    double total = 0.0;
+    for (final subject in _selectedSubjects) {
+      final course = courses.firstWhere((c) => c['name'] == subject);
+      final originalPrice = course['price'] as int;
+      final discount = course['discount'] as int;
+      final discountedPrice = originalPrice - (originalPrice * discount / 100);
+      total += discountedPrice;
+    }
+    
+    return total;
+  }
+
   void _addToCart() {
     setState(() {
       _showSubjectError = _selectedSubjects.isEmpty;
@@ -46,6 +101,9 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
         return; // Error already shown via _showTypeError
       }
 
+      // Create assignment data
+      final assignmentData = _createAssignmentData();
+      
       // Here you would add the assignment to cart
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -53,7 +111,13 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
           backgroundColor: Colors.green,
         ),
       );
-      NavigationHelper.back(context);
+      
+      // Navigate to assignment details
+      NavigationHelper.to(
+        path: '/assignment/new',
+        context: context,
+        data: assignmentData,
+      );
     }
   }
 
@@ -72,6 +136,9 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
         return; // Error already shown via _showTypeError
       }
 
+      // Create assignment data
+      final assignmentData = _createAssignmentData();
+      
       // Here you would process payment for the assignment
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -79,7 +146,13 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
           backgroundColor: Colors.green,
         ),
       );
-      NavigationHelper.back(context);
+      
+      // Navigate to assignment details
+      NavigationHelper.to(
+        path: '/assignment/new',
+        context: context,
+        data: assignmentData,
+      );
     }
   }
 

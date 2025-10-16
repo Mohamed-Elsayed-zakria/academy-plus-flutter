@@ -13,13 +13,59 @@ class QuizDetailsScreen extends StatelessWidget {
     required this.quiz,
   });
 
+  Color _getStatusColor(String status) {
+    switch (status) {
+      case 'Available':
+        return AppColors.success;
+      case 'Completed':
+        return AppColors.info;
+      case 'Unavailable':
+        return AppColors.textTertiary;
+      default:
+        return AppColors.textSecondary;
+    }
+  }
+
+  IconData _getStatusIcon(String status) {
+    switch (status) {
+      case 'Available':
+        return Ionicons.play_circle_outline;
+      case 'Completed':
+        return Ionicons.checkmark_circle_outline;
+      case 'Unavailable':
+        return Ionicons.lock_closed_outline;
+      default:
+        return Ionicons.help_circle_outline;
+    }
+  }
+
+  String _getStatusText(String status) {
+    switch (status) {
+      case 'Available':
+        return 'متاح';
+      case 'Completed':
+        return 'مكتمل';
+      case 'Unavailable':
+        return 'غير متاح';
+      default:
+        return status;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final status = quiz['status'] as String;
-    final questions = quiz['questions'] as int;
-    final duration = quiz['duration'] as int;
-    final attempts = quiz['attempts'] as int;
+    final status = quiz['status'] as String? ?? 'Available';
+    final questions = quiz['questions'] as int? ?? 10;
+    final duration = quiz['duration'] as int? ?? 30;
+    final attempts = quiz['attempts'] as int? ?? 0;
     final bestScore = quiz['bestScore'] as int?;
+    final subjects = quiz['subjects'] as List<String>? ?? [];
+    final title = quiz['title'] as String? ?? 'اختبار جديد';
+    final description = quiz['description'] as String? ?? 'لا يوجد وصف متاح';
+    final deadline = quiz['deadline'] as String? ?? 'غير محدد';
+    final totalPrice = quiz['totalPrice'] as double? ?? 0.0;
+    final username = quiz['username'] as String?;
+    final quizDate = quiz['quizDate'] as String?;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -33,46 +79,112 @@ class QuizDetailsScreen extends StatelessWidget {
             // Header with Quiz Icon
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(32),
+              padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                gradient: AppColors.primaryGradient,
+                color: Colors.white,
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(24),
+                  bottomRight: Radius.circular(24),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 20,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
               child: Column(
                 children: [
+                  // Status Badge
                   Container(
-                    padding: const EdgeInsets.all(24),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
                     decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.1),
-                          blurRadius: 20,
+                      color: _getStatusColor(status).withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: _getStatusColor(status).withValues(alpha: 0.3),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          _getStatusIcon(status),
+                          size: 16,
+                          color: _getStatusColor(status),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          _getStatusText(status),
+                          style: TextStyle(
+                            color: _getStatusColor(status),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ],
                     ),
+                  ),
+                  const SizedBox(height: 20),
+                  
+                  // Quiz Icon
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withValues(alpha: 0.1),
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: AppColors.primary.withValues(alpha: 0.2),
+                        width: 2,
+                      ),
+                    ),
                     child: Icon(
                       Ionicons.help_circle_outline,
-                      size: 64,
+                      size: 48,
                       color: AppColors.primary,
                     ),
                   ),
                   const SizedBox(height: 20),
+                  
+                  // Quiz Title
                   Text(
-                    quiz['title'] as String,
+                    title,
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          color: Colors.white,
+                          color: AppColors.textPrimary,
                           fontWeight: FontWeight.bold,
                         ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    quiz['course'] as String,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: Colors.white.withValues(alpha: 0.9),
+                  
+                  // Subjects
+                  if (subjects.isNotEmpty)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.surface,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: AppColors.textTertiary.withValues(alpha: 0.3),
                         ),
-                  ),
+                      ),
+                      child: Text(
+                        subjects.take(2).join('، ') + 
+                        (subjects.length > 2 ? '...' : ''),
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: AppColors.textSecondary,
+                              fontWeight: FontWeight.w500,
+                            ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -83,13 +195,77 @@ class QuizDetailsScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Subjects Section
+                  if (subjects.isNotEmpty) ...[
+                    Text(
+                      'المواد المختارة',
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textPrimary,
+                          ),
+                    ),
+                    const SizedBox(height: 16),
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: AppColors.primary.withValues(alpha: 0.2),
+                          width: 1.5,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.03),
+                            blurRadius: 10,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        children: subjects.map((subject) {
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primary.withValues(alpha: 0.1),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Icon(
+                                    Ionicons.book_outline,
+                                    size: 16,
+                                    color: AppColors.primary,
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Text(
+                                    subject,
+                                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                          color: AppColors.textPrimary,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+                  ],
+
                   // Info Grid
                   Row(
                     children: [
                       Expanded(
                         child: _InfoCard(
                           icon: Ionicons.help_circle_outline,
-                          label: AppLocalizations.questions,
+                          label: 'الأسئلة',
                           value: '$questions',
                           color: AppColors.primary,
                         ),
@@ -98,8 +274,8 @@ class QuizDetailsScreen extends StatelessWidget {
                       Expanded(
                         child: _InfoCard(
                           icon: Ionicons.time_outline,
-                          label: AppLocalizations.duration,
-                          value: '$duration min',
+                          label: 'المدة',
+                          value: '$duration دقيقة',
                           color: AppColors.accentOrange,
                         ),
                       ),
@@ -111,7 +287,7 @@ class QuizDetailsScreen extends StatelessWidget {
                       Expanded(
                         child: _InfoCard(
                           icon: Ionicons.refresh_outline,
-                          label: AppLocalizations.attempts,
+                          label: 'المحاولات',
                           value: '$attempts',
                           color: AppColors.accentPurple,
                         ),
@@ -120,79 +296,167 @@ class QuizDetailsScreen extends StatelessWidget {
                       Expanded(
                         child: _InfoCard(
                           icon: Ionicons.star_outline,
-                          label: AppLocalizations.bestScore,
-                          value: bestScore != null ? '$bestScore%' : 'N/A',
+                          label: 'أفضل نتيجة',
+                          value: bestScore != null ? '$bestScore%' : 'غير متاح',
                           color: AppColors.accent,
                         ),
                       ),
                     ],
                   ),
 
+                  if (totalPrice > 0) ...[
+                    const SizedBox(height: 16),
+                    _InfoCard(
+                      icon: Ionicons.card_outline,
+                      label: 'السعر الإجمالي',
+                      value: '${totalPrice.toStringAsFixed(0)} \$',
+                      color: AppColors.accent,
+                    ),
+                  ],
+
+                  if (quizDate != null) ...[
+                    const SizedBox(height: 16),
+                    _InfoCard(
+                      icon: Ionicons.calendar_outline,
+                      label: 'تاريخ الاختبار',
+                      value: quizDate,
+                      color: AppColors.info,
+                    ),
+                  ],
+
+                  if (username != null) ...[
+                    const SizedBox(height: 16),
+                    _InfoCard(
+                      icon: Ionicons.person_outline,
+                      label: 'اسم المستخدم',
+                      value: username,
+                      color: AppColors.primary,
+                    ),
+                  ],
+
                   const SizedBox(height: 32),
+
+                  // Description
+                  if (description.isNotEmpty) ...[
+                    Text(
+                      'الوصف',
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textPrimary,
+                          ),
+                    ),
+                    const SizedBox(height: 16),
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: AppColors.textTertiary.withValues(alpha: 0.2),
+                          width: 1.5,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.03),
+                            blurRadius: 10,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Text(
+                        description,
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                              color: AppColors.textPrimary,
+                              height: 1.6,
+                              fontWeight: FontWeight.w500,
+                            ),
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+                  ],
 
                   // Instructions
                   Text(
-                    AppLocalizations.instructions,
+                    'التعليمات',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
+                          color: AppColors.textPrimary,
                         ),
                   ),
                   const SizedBox(height: 16),
 
                   _InstructionItem(
                     icon: Ionicons.time_outline,
-                    text: AppLocalizations.youHaveMinutesQuiz.replaceAll('{duration}', '$duration'),
+                    text: 'لديك $duration دقيقة لإكمال الاختبار',
                   ),
                   const SizedBox(height: 12),
                   _InstructionItem(
                     icon: Ionicons.help_circle_outline,
-                    text: AppLocalizations.quizContainsQuestionsCount.replaceAll('{questions}', '$questions'),
+                    text: 'يحتوي الاختبار على $questions سؤال',
                   ),
                   const SizedBox(height: 12),
                   _InstructionItem(
                     icon: Ionicons.lock_closed_outline,
-                    text: AppLocalizations.timerCannotBePaused,
+                    text: 'لا يمكن إيقاف المؤقت',
                   ),
                   const SizedBox(height: 12),
                   _InstructionItem(
                     icon: Ionicons.checkmark_circle_outline,
-                    text: AppLocalizations.reviewAnswersBeforeSubmitting,
+                    text: 'راجع إجاباتك قبل التسليم',
                   ),
 
                   const SizedBox(height: 32),
 
                   // Deadline Warning
                   Container(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: AppColors.warning.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(16),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
                       border: Border.all(
                         color: AppColors.warning.withValues(alpha: 0.3),
+                        width: 1.5,
                       ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.03),
+                          blurRadius: 10,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
                     child: Row(
                       children: [
-                        Icon(
-                          Ionicons.calendar_outline,
-                          color: AppColors.warning,
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: AppColors.warning.withValues(alpha: 0.1),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Ionicons.calendar_outline,
+                            color: AppColors.warning,
+                            size: 24,
+                          ),
                         ),
-                        const SizedBox(width: 12),
+                        const SizedBox(width: 16),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                AppLocalizations.deadline,
-                                style: TextStyle(
-                                  color: AppColors.warning,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                'الموعد النهائي',
+                                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                      color: AppColors.warning,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                               ),
+                              const SizedBox(height: 4),
                               Text(
-                                quiz['deadline'] as String,
-                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                      color: AppColors.textSecondary,
+                                deadline,
+                                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                      color: AppColors.textPrimary,
+                                      fontWeight: FontWeight.w500,
                                     ),
                               ),
                             ],
@@ -207,7 +471,7 @@ class QuizDetailsScreen extends StatelessWidget {
                   // Action Buttons
                   if (status == 'Available') ...[
                     CustomButton(
-                      text: attempts > 0 ? AppLocalizations.retakeQuiz : AppLocalizations.startQuiz,
+                      text: attempts > 0 ? 'إعادة الاختبار' : 'بدء الاختبار',
                       onPressed: () {
                         _showStartConfirmation(context);
                       },
@@ -221,7 +485,7 @@ class QuizDetailsScreen extends StatelessWidget {
                     if (bestScore != null) ...[
                       const SizedBox(height: 12),
                       CustomButton(
-                        text: AppLocalizations.viewPreviousAttempt,
+                        text: 'عرض المحاولة السابقة',
                         onPressed: () {
                           // View previous attempt
                         },
@@ -232,7 +496,7 @@ class QuizDetailsScreen extends StatelessWidget {
                     ],
                   ] else if (status == 'Completed') ...[
                     CustomButton(
-                      text: AppLocalizations.viewResults,
+                      text: 'عرض النتائج',
                       onPressed: () {
                         // View results
                       },
@@ -256,7 +520,7 @@ class QuizDetailsScreen extends StatelessWidget {
                           const SizedBox(width: 12),
                           Expanded(
                             child: Text(
-                              AppLocalizations.quizNotAvailable,
+                              'الاختبار غير متاح حالياً',
                               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                                     color: AppColors.textSecondary,
                                   ),
@@ -334,18 +598,36 @@ class _InfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(16),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: color.withValues(alpha: 0.2),
+          width: 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         children: [
-          Icon(icon, color: color, size: 32),
-          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: color, size: 24),
+          ),
+          const SizedBox(height: 12),
           Text(
             value,
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: color,
                 ),
@@ -353,9 +635,11 @@ class _InfoCard extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             label,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: AppColors.textSecondary,
+                  fontWeight: FontWeight.w500,
                 ),
+            textAlign: TextAlign.center,
           ),
         ],
       ),
@@ -374,30 +658,48 @@ class _InstructionItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: AppColors.primary.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Icon(
-            icon,
-            size: 20,
-            color: AppColors.primary,
-          ),
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: AppColors.textTertiary.withValues(alpha: 0.2),
         ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Text(
-            text,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: AppColors.textSecondary,
-                ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
-        ),
-      ],
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: AppColors.primary.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(
+              icon,
+              size: 20,
+              color: AppColors.primary,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Text(
+              text,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: AppColors.textPrimary,
+                    fontWeight: FontWeight.w500,
+                  ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

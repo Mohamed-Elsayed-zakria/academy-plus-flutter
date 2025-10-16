@@ -31,6 +31,65 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
     super.dispose();
   }
 
+  Map<String, dynamic> _createQuizData() {
+    // Calculate total price based on selected subjects
+    final totalPrice = _calculateTotalPrice();
+    
+    // Generate quiz ID
+    final quizId = DateTime.now().millisecondsSinceEpoch.toString();
+    
+    // Calculate deadline (1 day before quiz date)
+    final deadline = _selectedDate!.subtract(const Duration(days: 1));
+    final deadlineString = '${deadline.day}/${deadline.month}/${deadline.year}';
+    
+    // Format quiz date
+    final quizDateString = '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}';
+    
+    return {
+      'id': quizId,
+      'title': 'اختبار جديد',
+      'description': 'لا يوجد وصف متاح',
+      'subjects': _selectedSubjects,
+      'status': 'Available',
+      'questions': 10, // Default number of questions
+      'duration': 30, // Default duration in minutes
+      'attempts': 0,
+      'bestScore': null,
+      'deadline': deadlineString,
+      'quizDate': quizDateString,
+      'totalPrice': totalPrice,
+      'username': _usernameController.text,
+      'createdDate': DateTime.now().toIso8601String(),
+    };
+  }
+
+  double _calculateTotalPrice() {
+    // Mock courses data with prices - same as in MultiSubjectSelectorWidget
+    final courses = [
+      {'name': 'البرمجة المتقدمة', 'price': 299, 'discount': 20},
+      {'name': 'قواعد البيانات', 'price': 249, 'discount': 15},
+      {'name': 'تطوير الويب', 'price': 199, 'discount': 25},
+      {'name': 'هياكل البيانات', 'price': 179, 'discount': 10},
+      {'name': 'تطوير التطبيقات المحمولة', 'price': 399, 'discount': 30},
+      {'name': 'الذكاء الاصطناعي', 'price': 349, 'discount': 20},
+      {'name': 'أمن المعلومات', 'price': 279, 'discount': 15},
+      {'name': 'الرياضيات', 'price': 149, 'discount': 10},
+      {'name': 'الفيزياء', 'price': 159, 'discount': 12},
+      {'name': 'الكيمياء', 'price': 169, 'discount': 8},
+    ];
+
+    double total = 0.0;
+    for (final subject in _selectedSubjects) {
+      final course = courses.firstWhere((c) => c['name'] == subject);
+      final originalPrice = course['price'] as int;
+      final discount = course['discount'] as int;
+      final discountedPrice = originalPrice - (originalPrice * discount / 100);
+      total += discountedPrice;
+    }
+    
+    return total;
+  }
+
   void _selectDate() async {
     final date = await DatePickerWidget.showCustomDatePicker(
       context: context,
@@ -63,6 +122,9 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
         return;
       }
 
+      // Create quiz data
+      final quizData = _createQuizData();
+      
       // Here you would add the quiz to cart
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -70,7 +132,13 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
           backgroundColor: Colors.green,
         ),
       );
-      NavigationHelper.back(context);
+      
+      // Navigate to quiz details
+      NavigationHelper.to(
+        path: '/quiz/new',
+        context: context,
+        data: quizData,
+      );
     }
   }
 
@@ -91,6 +159,9 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
         return;
       }
 
+      // Create quiz data
+      final quizData = _createQuizData();
+      
       // Here you would process payment for the quiz
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -98,7 +169,13 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
           backgroundColor: Colors.green,
         ),
       );
-      NavigationHelper.back(context);
+      
+      // Navigate to quiz details
+      NavigationHelper.to(
+        path: '/quiz/new',
+        context: context,
+        data: quizData,
+      );
     }
   }
 

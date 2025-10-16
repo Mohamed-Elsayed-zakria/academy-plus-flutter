@@ -3,6 +3,7 @@ import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/localization/app_localizations.dart';
 import '../../../../../core/widgets/empty_state_widget.dart';
+import '../../../../../core/widgets/assignment_type_selector_widget.dart';
 import '../../../../../core/utils/navigation_helper.dart';
 
 class AssignmentsScreen extends StatefulWidget {
@@ -14,7 +15,47 @@ class AssignmentsScreen extends StatefulWidget {
 
 class _AssignmentsScreenState extends State<AssignmentsScreen> {
   // Mock assignments data - in real app this would come from a service
-  List<Map<String, dynamic>> assignments = [];
+  List<Map<String, dynamic>> assignments = [
+    {
+      'id': '1',
+      'title': 'واجب البرمجة المتقدمة',
+      'description': 'إنشاء تطبيق ويب باستخدام Flutter و Firebase',
+      'subjects': ['البرمجة المتقدمة', 'تطوير الويب'],
+      'type': AssignmentType.individual,
+      'status': 'In Progress',
+      'dueDate': '25/12/2024',
+      'totalPrice': 478.0,
+      'createdDate': '2024-12-18T10:00:00Z',
+      'grade': null,
+      'submittedDate': null,
+    },
+    {
+      'id': '2',
+      'title': 'واجب قواعد البيانات',
+      'description': 'تصميم قاعدة بيانات لمتجر إلكتروني',
+      'subjects': ['قواعد البيانات', 'هياكل البيانات'],
+      'type': AssignmentType.team,
+      'status': 'Pending',
+      'dueDate': '30/12/2024',
+      'totalPrice': 428.0,
+      'createdDate': '2024-12-15T14:30:00Z',
+      'grade': null,
+      'submittedDate': null,
+    },
+    {
+      'id': '3',
+      'title': 'واجب الذكاء الاصطناعي',
+      'description': 'تطوير نموذج تعلم آلة للتعرف على الصور',
+      'subjects': ['الذكاء الاصطناعي', 'الرياضيات'],
+      'type': AssignmentType.individual,
+      'status': 'Submitted',
+      'dueDate': '20/12/2024',
+      'totalPrice': 498.0,
+      'createdDate': '2024-12-10T09:15:00Z',
+      'grade': null,
+      'submittedDate': '2024-12-19T16:45:00Z',
+    },
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -102,6 +143,9 @@ class _AssignmentCard extends StatelessWidget {
     final statusColor = _getStatusColor(status);
     final dueDate = assignment['dueDate'] as String;
     final grade = assignment['grade'] as int?;
+    final subjects = assignment['subjects'] as List<String>? ?? [];
+    final assignmentType = assignment['type'] as AssignmentType?;
+    final totalPrice = assignment['totalPrice'] as double? ?? 0.0;
 
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
@@ -113,7 +157,7 @@ class _AssignmentCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header: Status Badge & Course
+              // Header: Status Badge & Assignment Type
               Row(
                 children: [
                   Container(
@@ -145,6 +189,41 @@ class _AssignmentCard extends StatelessWidget {
                       ],
                     ),
                   ),
+                  const SizedBox(width: 8),
+                  if (assignmentType != null)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            assignmentType == AssignmentType.individual
+                                ? Ionicons.person_outline
+                                : Ionicons.people_outline,
+                            size: 14,
+                            color: AppColors.primary,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            assignmentType == AssignmentType.individual
+                                ? 'فردي'
+                                : 'فريق',
+                            style: TextStyle(
+                              color: AppColors.primary,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   const SizedBox(width: 8),
                   if (grade != null)
                     Container(
@@ -191,33 +270,39 @@ class _AssignmentCard extends StatelessWidget {
 
               const SizedBox(height: 8),
 
-              // Course Name
-              Row(
-                children: [
-                  Icon(
-                    Ionicons.book_outline,
-                    size: 16,
-                    color: AppColors.textSecondary,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    assignment['course'] as String,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              // Subjects
+              if (subjects.isNotEmpty) ...[
+                Row(
+                  children: [
+                    Icon(
+                      Ionicons.book_outline,
+                      size: 16,
                       color: AppColors.textSecondary,
                     ),
-                  ),
-                ],
-              ),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: Text(
+                        subjects.take(2).join('، ') + 
+                        (subjects.length > 2 ? '...' : ''),
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: AppColors.textSecondary,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+              ],
 
-              const SizedBox(height: 12),
-
-              // Due Date & Arrow
+              // Due Date & Price
               Row(
                 children: [
                   Icon(
                     Ionicons.calendar_outline,
                     size: 16,
-                    color: status == 'Pending'
+                    color: status == 'Pending' || status == 'In Progress'
                         ? AppColors.error
                         : AppColors.textSecondary,
                   ),
@@ -225,15 +310,31 @@ class _AssignmentCard extends StatelessWidget {
                   Text(
                     'Due: $dueDate',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: status == 'Pending'
+                      color: status == 'Pending' || status == 'In Progress'
                           ? AppColors.error
                           : AppColors.textSecondary,
-                      fontWeight: status == 'Pending'
+                      fontWeight: status == 'Pending' || status == 'In Progress'
                           ? FontWeight.w600
                           : FontWeight.normal,
                     ),
                   ),
                   const Spacer(),
+                  if (totalPrice > 0) ...[
+                    Icon(
+                      Ionicons.card_outline,
+                      size: 16,
+                      color: AppColors.accent,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      '${totalPrice.toStringAsFixed(0)} \$',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: AppColors.accent,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                  ],
                   Icon(
                     Ionicons.chevron_forward_outline,
                     size: 16,

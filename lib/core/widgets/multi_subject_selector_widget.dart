@@ -460,7 +460,7 @@ class _MultiSubjectSelectorWidgetState extends State<MultiSubjectSelectorWidget>
                       ],
                     ),
                   );
-                }).toList(),
+                }),
                 const SizedBox(height: 8),
                 Divider(
                   color: AppColors.primary.withValues(alpha: 0.2),
