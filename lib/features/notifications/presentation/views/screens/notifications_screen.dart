@@ -3,6 +3,7 @@ import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/localization/app_localizations.dart';
 import '../../../../../core/widgets/empty_state_widget.dart';
+import '../../../../../core/widgets/custom_toast.dart';
 
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
@@ -51,12 +52,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       }
     });
     
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(AppLocalizations.markAllRead),
-        backgroundColor: AppColors.primary,
-        duration: const Duration(seconds: 2),
-      ),
+    CustomToast.showSuccess(
+      context,
+      message: AppLocalizations.markAllRead,
+      duration: const Duration(seconds: 2),
     );
   }
 

@@ -5,6 +5,7 @@ import '../../../../../core/widgets/custom_button.dart';
 import '../../../../../core/widgets/custom_text_field.dart';
 import '../../../../../core/widgets/multi_subject_selector_widget.dart';
 import '../../../../../core/widgets/assignment_type_selector_widget.dart';
+import '../../../../../core/widgets/custom_toast.dart';
 import '../../../../../core/utils/navigation_helper.dart';
 
 class AddAssignmentScreen extends StatefulWidget {
@@ -105,11 +106,9 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
       final assignmentData = _createAssignmentData();
       
       // Here you would add the assignment to cart
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('تم إضافة الواجب إلى العربة'),
-          backgroundColor: Colors.green,
-        ),
+      CustomToast.showSuccess(
+        context,
+        message: 'تم إضافة الواجب إلى العربة',
       );
       
       // Navigate to assignment details
@@ -140,11 +139,9 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
       final assignmentData = _createAssignmentData();
       
       // Here you would process payment for the assignment
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('تم الدفع بنجاح! سيتم إنشاء الواجب قريباً'),
-          backgroundColor: Colors.green,
-        ),
+      CustomToast.showSuccess(
+        context,
+        message: 'تم الدفع بنجاح! سيتم إنشاء الواجب قريباً',
       );
       
       // Navigate to assignment details

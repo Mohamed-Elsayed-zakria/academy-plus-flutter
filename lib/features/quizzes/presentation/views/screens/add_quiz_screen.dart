@@ -6,6 +6,7 @@ import '../../../../../core/widgets/custom_button.dart';
 import '../../../../../core/widgets/custom_text_field.dart';
 import '../../../../../core/widgets/date_picker_widget.dart';
 import '../../../../../core/widgets/multi_subject_selector_widget.dart';
+import '../../../../../core/widgets/custom_toast.dart';
 import '../../../../../core/utils/navigation_helper.dart';
 
 class AddQuizScreen extends StatefulWidget {
@@ -116,8 +117,9 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
       }
 
       if (_selectedDate == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.pleaseSelectDate)),
+        CustomToast.showError(
+          context,
+          message: AppLocalizations.pleaseSelectDate,
         );
         return;
       }
@@ -126,11 +128,9 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
       final quizData = _createQuizData();
       
       // Here you would add the quiz to cart
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('تم إضافة الاختبار إلى العربة'),
-          backgroundColor: Colors.green,
-        ),
+      CustomToast.showSuccess(
+        context,
+        message: 'تم إضافة الاختبار إلى العربة',
       );
       
       // Navigate to quiz details
@@ -153,8 +153,9 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
       }
 
       if (_selectedDate == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.pleaseSelectDate)),
+        CustomToast.showError(
+          context,
+          message: AppLocalizations.pleaseSelectDate,
         );
         return;
       }
@@ -163,11 +164,9 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
       final quizData = _createQuizData();
       
       // Here you would process payment for the quiz
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('تم الدفع بنجاح! سيتم إنشاء الاختبار قريباً'),
-          backgroundColor: Colors.green,
-        ),
+      CustomToast.showSuccess(
+        context,
+        message: 'تم الدفع بنجاح! سيتم إنشاء الاختبار قريباً',
       );
       
       // Navigate to quiz details
