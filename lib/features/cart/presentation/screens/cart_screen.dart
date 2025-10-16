@@ -3,7 +3,9 @@ import 'package:flutter/services.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/localization/app_localizations.dart';
 import '../../../../core/widgets/custom_button.dart';
+import '../../../../core/widgets/custom_text_field.dart';
 import '../../../../core/utils/navigation_helper.dart';
+import '../../../../core/widgets/custom_toast.dart';
 import '../widgets/empty_cart_illustration.dart';
 
 class CartScreen extends StatefulWidget {
@@ -23,7 +25,7 @@ class _CartScreenState extends State<CartScreen> {
       'instructor': 'Dr. Sarah Johnson',
       'price': 299.99,
       'discount': 20,
-      'image': 'assets/images/course1.jpg',
+      'image': 'https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=500&h=300&fit=crop',
       'quantity': 1,
     },
     {
@@ -33,10 +35,91 @@ class _CartScreenState extends State<CartScreen> {
       'instructor': 'Prof. Ahmed Ali',
       'price': 199.99,
       'discount': 15,
-      'image': 'assets/images/course2.jpg',
+      'image': 'https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=500&h=300&fit=crop',
       'quantity': 1,
     },
   ];
+
+  // Coupon code state
+  final TextEditingController _couponController = TextEditingController();
+  String? _appliedCouponCode;
+  Map<String, dynamic>? _appliedCouponData;
+  bool _isCouponApplied = false;
+
+  @override
+  void dispose() {
+    _couponController.dispose();
+    super.dispose();
+  }
+
+  // Mock coupon codes - replace with actual API call
+  final Map<String, Map<String, dynamic>> _validCoupons = {
+    'WELCOME10': {
+      'name': 'كوبون الترحيب',
+      'type': 'percentage',
+      'value': 10.0,
+    },
+    'STUDENT20': {
+      'name': 'خصم الطلاب',
+      'type': 'percentage',
+      'value': 20.0,
+    },
+    'SAVE50': {
+      'name': 'وفر 50 دولار',
+      'type': 'fixed',
+      'value': 50.0,
+    },
+    'FIRST15': {
+      'name': 'خصم أول طلب',
+      'type': 'percentage',
+      'value': 15.0,
+    },
+    'NEWUSER': {
+      'name': 'مستخدم جديد',
+      'type': 'fixed',
+      'value': 25.0,
+    },
+  };
+
+  void _applyCoupon() {
+    final couponCode = _couponController.text.trim().toUpperCase();
+    
+    if (couponCode.isEmpty) {
+      CustomToast.showError(
+        context,
+        message: 'يرجى إدخال كود الكوبون',
+      );
+      return;
+    }
+
+    if (_validCoupons.containsKey(couponCode)) {
+      final couponData = _validCoupons[couponCode]!;
+      setState(() {
+        _appliedCouponCode = couponCode;
+        _appliedCouponData = couponData;
+        _isCouponApplied = true;
+      });
+      
+      CustomToast.showSuccess(
+        context,
+        message: 'تم تطبيق الكوبون "${couponData['name']}" بنجاح! (${couponData['type'] == 'percentage' ? '${couponData['value']}%' : '\$${couponData['value']}'})',
+      );
+    } else {
+      CustomToast.showError(
+        context,
+        message: 'كود الكوبون غير صحيح أو منتهي الصلاحية',
+      );
+    }
+  }
+
+  void _removeCoupon() {
+    setState(() {
+      _appliedCouponCode = null;
+      _appliedCouponData = null;
+      _isCouponApplied = false;
+      _couponController.clear();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -152,6 +235,9 @@ class _CartScreenState extends State<CartScreen> {
           ),
         ),
         
+        // Coupon section
+        _buildCouponSection(),
+        
         // Total and checkout section
         _buildCheckoutSection(),
       ],
@@ -178,18 +264,61 @@ class _CartScreenState extends State<CartScreen> {
         padding: const EdgeInsets.all(16),
         child: Row(
           children: [
-            // Course image placeholder
+            // Course image
             Container(
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                gradient: AppColors.primaryGradient,
                 borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.1),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
-              child: Icon(
-                Icons.play_circle_outline,
-                color: Colors.white,
-                size: 32,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.network(
+                  item['image'],
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      decoration: BoxDecoration(
+                        gradient: AppColors.primaryGradient,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Icon(
+                        Icons.book,
+                        color: Colors.white,
+                        size: 32,
+                      ),
+                    );
+                  },
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: AppColors.surfaceGrey,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Center(
+                        child: SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded /
+                                    loadingProgress.expectedTotalBytes!
+                                : null,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
             const SizedBox(width: 16),
@@ -279,6 +408,104 @@ class _CartScreenState extends State<CartScreen> {
     );
   }
 
+  Widget _buildCouponSection() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: AppColors.border,
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.local_offer_outlined,
+                color: AppColors.accent,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'كوبون الخصم',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          
+          if (!_isCouponApplied) ...[
+            Row(
+              children: [
+                Expanded(
+                  child: CustomTextField(
+                    controller: _couponController,
+                    hintText: 'أدخل كود الكوبون',
+                    textDirection: TextDirection.ltr,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                CustomButton(
+                  text: 'تطبيق',
+                  onPressed: _applyCoupon,
+                  width: 100,
+                ),
+              ],
+            ),
+          ] else ...[
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: AppColors.accent,
+                  width: 1,
+                ),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.check_circle,
+                    color: AppColors.accent,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'تم تطبيق الكوبون: ${_appliedCouponData?['name'] ?? _appliedCouponCode}',
+                      style: TextStyle(
+                        color: AppColors.accent,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: _removeCoupon,
+                    child: Text(
+                      'إزالة',
+                      style: TextStyle(
+                        color: AppColors.error,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
   Widget _buildCheckoutSection() {
     final originalTotal = cartItems.fold<double>(
       0,
@@ -289,8 +516,23 @@ class _CartScreenState extends State<CartScreen> {
       (sum, item) => sum + (item['price'] * item['discount'] / 100),
     );
     final subtotal = originalTotal - discountAmount;
-    // Tax removed - no tax calculation
-    final total = subtotal; // Total equals subtotal without tax
+    
+    // Calculate coupon discount
+    double couponDiscountAmount = 0.0;
+    if (_isCouponApplied && _appliedCouponData != null) {
+      final couponType = _appliedCouponData!['type'] as String;
+      final couponValue = _appliedCouponData!['value'] as double;
+      
+      if (couponType == 'percentage') {
+        // Percentage discount
+        couponDiscountAmount = subtotal * (couponValue / 100);
+      } else if (couponType == 'fixed') {
+        // Fixed amount discount
+        couponDiscountAmount = couponValue;
+      }
+    }
+    
+    final total = subtotal - couponDiscountAmount;
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -363,7 +605,30 @@ class _CartScreenState extends State<CartScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
+          
+          // Coupon discount row (only show if coupon is applied)
+          if (_isCouponApplied) ...[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'خصم الكوبون (${_appliedCouponData?['name'] ?? _appliedCouponCode})',
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: AppColors.accent,
+                  ),
+                ),
+                Text(
+                  '-\$${couponDiscountAmount.toStringAsFixed(2)}',
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.accent,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+          ],
           
           Divider(color: AppColors.border),
           const SizedBox(height: 12),
