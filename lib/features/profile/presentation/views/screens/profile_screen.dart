@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/localization/app_localizations.dart';
 import '../../../../../core/utils/navigation_helper.dart';
+import '../../../data/models/user_profile_model.dart';
+import '../../../data/repository/profile_implement.dart';
+import '../../manager/cubit/profile_cubit.dart';
+import '../../manager/cubit/profile_state.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -23,18 +28,70 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Mock user data
-    final user = {
-      'name': 'John Doe',
-      'phone': '+1 234 567 8900',
-      'university': 'Cairo University',
-      'email': 'john.doe@example.com',
-      'studentId': 'ST2024001',
-    };
+    return BlocProvider(
+      create: (context) => ProfileCubit(ProfileImplement())..getUserProfile(),
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: BlocBuilder<ProfileCubit, ProfileState>(
+          builder: (context, state) {
+            if (state is ProfileLoading) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            
+            if (state is ProfileError) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Ionicons.warning_outline,
+                      size: 64,
+                      color: AppColors.error,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'خطأ في تحميل البيانات',
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      state.error,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 24),
+                    ElevatedButton(
+                      onPressed: () {
+                        context.read<ProfileCubit>().getUserProfile();
+                      },
+                      child: const Text('إعادة المحاولة'),
+                    ),
+                  ],
+                ),
+              );
+            }
+            
+            if (state is ProfileLoaded) {
+              return _buildProfileContent(context, state.profile);
+            }
+            
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          },
+        ),
+      ),
+    );
+  }
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: CustomScrollView(
+  Widget _buildProfileContent(BuildContext context, UserProfileModel user) {
+    return CustomScrollView(
         slivers: [
           // Simple App Bar
           SliverAppBar(
@@ -53,7 +110,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       children: [
                         const SizedBox(height: 20),
                         
-                        // Simple Profile Picture
+                        // Profile Picture
                         Container(
                           width: 100,
                           height: 100,
@@ -65,18 +122,51 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             color: AppColors.surface,
                           ),
-                          child: Icon(
-                            Ionicons.person_outline,
-                            size: 50,
-                            color: AppColors.primary,
-                          ),
+                          child: user.profileImageUrl != null && user.profileImageUrl!.isNotEmpty
+                              ? ClipOval(
+                                  child: Image.network(
+                                    user.profileImageUrl!,
+                                    width: 100,
+                                    height: 100,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Icon(
+                                        Ionicons.person_outline,
+                                        size: 50,
+                                        color: AppColors.primary,
+                                      );
+                                    },
+                                    loadingBuilder: (context, child, loadingProgress) {
+                                      if (loadingProgress == null) return child;
+                                      return Container(
+                                        width: 100,
+                                        height: 100,
+                                        decoration: BoxDecoration(
+                                          color: AppColors.surface,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Center(
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            color: AppColors.primary,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                )
+                              : Icon(
+                                  Ionicons.person_outline,
+                                  size: 50,
+                                  color: AppColors.primary,
+                                ),
                         ),
                         
                         const SizedBox(height: 16),
                         
                         // Simple Name
                         Text(
-                          user['name'] as String,
+                          user.name,
                           style: TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.bold,
@@ -88,7 +178,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         
                         // Simple Student ID
                         Text(
-                          user['studentId'] as String,
+                          user.studentId,
                           style: TextStyle(
                             fontSize: 14,
                             color: AppColors.textSecondary,
@@ -122,7 +212,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _buildInfoCard(
                     icon: Ionicons.mail_outline,
                     label: AppLocalizations.email,
-                    value: user['email'] as String,
+                    value: user.email,
                     color: AppColors.primary,
                   ),
                   const SizedBox(height: 12),
@@ -130,7 +220,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _buildInfoCard(
                     icon: Ionicons.call_outline,
                     label: AppLocalizations.phone,
-                    value: user['phone'] as String,
+                    value: user.phone,
                     color: AppColors.primary,
                   ),
                   const SizedBox(height: 12),
@@ -138,7 +228,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _buildInfoCard(
                     icon: Ionicons.school_outline,
                     label: AppLocalizations.university,
-                    value: user['university'] as String,
+                    value: user.university,
+                    color: AppColors.primary,
+                  ),
+                  const SizedBox(height: 12),
+
+                  _buildInfoCard(
+                    icon: Ionicons.card_outline,
+                    label: 'رقم الطالب',
+                    value: user.studentId.isNotEmpty ? user.studentId : 'غير متوفر',
                     color: AppColors.primary,
                   ),
 
@@ -244,8 +342,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
         ],
-      ),
-    );
+      );
   }
 
   Widget _buildInfoCard({

@@ -22,8 +22,15 @@ import '../features/profile/presentation/views/screens/change_password_screen.da
 import '../features/onboarding/presentation/views/screens/onboarding_screen.dart';
 import '../features/cart/presentation/screens/cart_screen.dart';
 
-GoRouter createAppRouter({required bool isOnboardingCompleted}) => GoRouter(
-  initialLocation: isOnboardingCompleted ? '/welcome' : '/onboarding',
+GoRouter createAppRouter({
+  required bool isOnboardingCompleted,
+  required bool isLoggedIn,
+}) => GoRouter(
+  initialLocation: isLoggedIn
+      ? '/main'
+      : isOnboardingCompleted
+      ? '/welcome'
+      : '/onboarding',
   routes: [
     // Splash Screen
     GoRoute(path: '/', builder: (context, state) => const SplashScreen()),

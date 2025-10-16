@@ -67,7 +67,7 @@ class DepartmentsGridWidget extends StatelessWidget {
                         fit: StackFit.expand,
                         children: [
                           Image.network(
-                            department['image'] as String? ?? 'https://ans.edu.jo/uploads/2024/09/66eaa687e6465.jpg',
+                            department['image'],
                             fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) {
                               return Container(
