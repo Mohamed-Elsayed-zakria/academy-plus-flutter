@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/widgets/custom_text_field.dart';
+import '../../../../../core/utils/navigation_helper.dart';
 
 class CoursesScreen extends StatefulWidget {
   final Map<String, dynamic> data;
@@ -208,9 +208,10 @@ class _CoursesScreenState extends State<CoursesScreen> {
                   
                   return InkWell(
                     onTap: () {
-                      context.push(
-                        '/course/$index/content',
-                        extra: {
+                      NavigationHelper.to(
+                        path: '/course/$index/content',
+                        context: context,
+                        data: {
                           'nameAr': course['name'],
                           'nameEn': course['name'],
                           'instructor': course['instructor'],

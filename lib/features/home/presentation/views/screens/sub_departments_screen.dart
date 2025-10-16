@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/widgets/custom_text_field.dart';
+import '../../../../../core/utils/navigation_helper.dart';
 
 class SubDepartmentsScreen extends StatefulWidget {
   final Map<String, dynamic> department;
@@ -202,9 +202,10 @@ class _SubDepartmentsScreenState extends State<SubDepartmentsScreen> {
                   
                   return InkWell(
                     onTap: () {
-                      context.push(
-                        '/subdepartment/${widget.department['id']}/${_allSubDepartments.indexOf(subDept)}/courses',
-                        extra: {
+                      NavigationHelper.to(
+                        path: '/subdepartment/${widget.department['id']}/${_allSubDepartments.indexOf(subDept)}/courses',
+                        context: context,
+                        data: {
                           'subDepartmentName': subDept,
                           'subDepartmentId': _allSubDepartments.indexOf(subDept),
                           'departmentId': widget.department['id'],

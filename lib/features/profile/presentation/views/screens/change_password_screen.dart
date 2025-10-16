@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/widgets/custom_text_field.dart';
 import '../../../../../core/widgets/custom_button.dart';
+import '../../../../../core/utils/navigation_helper.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({super.key});
@@ -129,8 +129,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () {
-                Navigator.pop(context);
-                context.pop();
+                NavigationHelper.back(context);
+                NavigationHelper.back(context);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.success,

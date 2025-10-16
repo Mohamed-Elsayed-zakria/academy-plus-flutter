@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:go_router/go_router.dart';
 import '../../../data/data_sources/onboarding_data.dart';
 import '../../../data/services/onboarding_service.dart';
 import '../../../data/models/onboarding_page.dart';
 import '../../../../../core/localization/app_localizations.dart';
+import '../../../../../core/utils/navigation_helper.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -63,7 +63,10 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   Future<void> _completeOnboarding() async {
     await OnboardingService.completeOnboarding();
     if (mounted) {
-      context.go('/welcome');
+      NavigationHelper.offAll(
+        path: '/welcome',
+        context: context,
+      );
     }
   }
 

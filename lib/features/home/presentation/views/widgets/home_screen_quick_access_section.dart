@@ -1,8 +1,8 @@
 import '../../../../../core/localization/app_localizations.dart';
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/utils/navigation_helper.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 class HomeScreenQuickAccessSection extends StatelessWidget {
   const HomeScreenQuickAccessSection({super.key});
@@ -26,7 +26,10 @@ class HomeScreenQuickAccessSection extends StatelessWidget {
                   color: AppColors.primary,
                   gradient: AppColors.primaryGradient,
                   onTap: () {
-                    context.push('/assignments');
+                    NavigationHelper.to(
+                      path: '/assignments',
+                      context: context,
+                    );
                   },
                 ),
               ),
@@ -47,7 +50,10 @@ class HomeScreenQuickAccessSection extends StatelessWidget {
                     end: Alignment.bottomRight,
                   ),
                   onTap: () {
-                    context.push('/quizzes');
+                    NavigationHelper.to(
+                      path: '/quizzes',
+                      context: context,
+                    );
                   },
                 ),
               ),

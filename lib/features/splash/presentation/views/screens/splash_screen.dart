@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/localization/app_localizations.dart';
 import '../../../../../features/onboarding/data/services/onboarding_service.dart';
+import '../../../../../core/utils/navigation_helper.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -42,9 +42,15 @@ class _SplashScreenState extends State<SplashScreen>
         if (!mounted) return;
         
         if (isOnboardingCompleted) {
-          context.go('/welcome');
+          NavigationHelper.offAll(
+            path: '/welcome',
+            context: context,
+          );
         } else {
-          context.go('/onboarding');
+          NavigationHelper.offAll(
+            path: '/onboarding',
+            context: context,
+          );
         }
       }
     });

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/localization/app_localizations.dart';
 import '../../../../../core/widgets/empty_state_widget.dart';
+import '../../../../../core/utils/navigation_helper.dart';
 
 class QuizzesScreen extends StatefulWidget {
   const QuizzesScreen({super.key});
@@ -41,14 +41,21 @@ class _QuizzesScreenState extends State<QuizzesScreen> {
                 return _QuizCard(
                   quiz: quiz,
                   onTap: () {
-                    context.push('/quiz/${quiz['id']}', extra: quiz);
+                    NavigationHelper.to(
+                      path: '/quiz/${quiz['id']}',
+                      context: context,
+                      data: quiz,
+                    );
                   },
                 );
               },
             ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          context.push('/add-quiz');
+          NavigationHelper.to(
+            path: '/add-quiz',
+            context: context,
+          );
         },
         backgroundColor: AppColors.primary,
         child: const Icon(Ionicons.add, color: Colors.white),

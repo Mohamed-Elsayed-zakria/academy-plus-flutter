@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/utils/navigation_helper.dart';
 
 class DepartmentsGridWidget extends StatelessWidget {
   final List<Map<String, dynamic>> departments;
@@ -29,9 +29,10 @@ class DepartmentsGridWidget extends StatelessWidget {
           
           return InkWell(
             onTap: () {
-              context.push(
-                '/department/${department['id']}/subdepartments',
-                extra: department,
+              NavigationHelper.to(
+                path: '/department/${department['id']}/subdepartments',
+                context: context,
+                data: department,
               );
             },
             borderRadius: BorderRadius.circular(16),

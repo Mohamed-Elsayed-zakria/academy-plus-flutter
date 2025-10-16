@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/utils/navigation_helper.dart';
 
 class CoursesScreen extends StatelessWidget {
   final Map<String, dynamic> subDepartmentData;
@@ -59,7 +59,11 @@ class CoursesScreen extends StatelessWidget {
 
           return GestureDetector(
             onTap: () {
-              context.push('/course/${course['id']}/content', extra: course);
+              NavigationHelper.to(
+                path: '/course/${course['id']}/content',
+                context: context,
+                data: course,
+              );
             },
             child: Card(
               elevation: 4,

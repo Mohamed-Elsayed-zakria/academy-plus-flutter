@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/utils/navigation_helper.dart';
 
 class DepartmentScreen extends StatelessWidget {
   final String departmentName;
@@ -40,7 +40,10 @@ class DepartmentScreen extends StatelessWidget {
 
           return GestureDetector(
             onTap: () {
-              context.push('/course/${course['id']}');
+              NavigationHelper.to(
+                path: '/course/${course['id']}',
+                context: context,
+              );
             },
             child: Card(
               margin: const EdgeInsets.only(bottom: 16),

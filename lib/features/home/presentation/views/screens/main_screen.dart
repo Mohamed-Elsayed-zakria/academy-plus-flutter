@@ -3,10 +3,10 @@ import '../../../../subscriptions/presentation/views/screens/subscriptions_scree
 import '../../../../profile/presentation/views/screens/profile_screen.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/localization/app_localizations.dart';
+import '../../../../../core/utils/navigation_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:go_router/go_router.dart';
 import 'home_screen.dart';
 
 class MainScreen extends StatefulWidget {
@@ -212,7 +212,7 @@ class _MainScreenState extends State<MainScreen> {
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => NavigationHelper.back(context),
               child: Text(
                 AppLocalizations.continueShopping,
                 style: TextStyle(
@@ -223,9 +223,12 @@ class _MainScreenState extends State<MainScreen> {
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.pop(context);
+                NavigationHelper.back(context);
                 // Navigate to cart screen
-                context.push('/cart');
+                NavigationHelper.to(
+                  path: '/cart',
+                  context: context,
+                );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,

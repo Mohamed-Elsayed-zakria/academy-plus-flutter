@@ -176,53 +176,6 @@ class AssignmentTypeSelectorWidget extends StatelessWidget {
             ),
           ),
         ],
-        
-        // Additional info based on selection
-        if (selectedType != null) ...[
-          const SizedBox(height: 16),
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: selectedType == AssignmentType.individual
-                  ? AppColors.accent.withValues(alpha: 0.1)
-                  : AppColors.primary.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(
-                color: selectedType == AssignmentType.individual
-                    ? AppColors.accent.withValues(alpha: 0.3)
-                    : AppColors.primary.withValues(alpha: 0.3),
-              ),
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  selectedType == AssignmentType.individual
-                      ? Ionicons.information_circle_outline
-                      : Ionicons.people_outline,
-                  color: selectedType == AssignmentType.individual
-                      ? AppColors.accent
-                      : AppColors.primary,
-                  size: 20,
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    selectedType == AssignmentType.individual
-                        ? 'الواجب الفردي يتطلب من كل طالب إنجاز المهمة بمفرده وتقديم حلول شخصية'
-                        : 'الواجب الجماعي يتطلب من الطلاب العمل معاً في فريق وتقديم حلول مشتركة',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: selectedType == AssignmentType.individual
-                          ? AppColors.accent
-                          : AppColors.primary,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ],
     );
   }

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../../core/localization/app_localizations.dart';
 import '../../../../../core/widgets/custom_button.dart';
 import '../../../../../core/widgets/custom_text_field.dart';
 import '../../../../../core/widgets/multi_subject_selector_widget.dart';
 import '../../../../../core/widgets/assignment_type_selector_widget.dart';
+import '../../../../../core/utils/navigation_helper.dart';
 
 class AddAssignmentScreen extends StatefulWidget {
   const AddAssignmentScreen({super.key});
@@ -53,7 +53,7 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
           backgroundColor: Colors.green,
         ),
       );
-      context.pop();
+      NavigationHelper.back(context);
     }
   }
 
@@ -79,7 +79,7 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
           backgroundColor: Colors.green,
         ),
       );
-      context.pop();
+      NavigationHelper.back(context);
     }
   }
 
@@ -129,29 +129,13 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
 
             const SizedBox(height: 24),
 
-            // Assignment Title
+            // Assignment Title (Optional)
             CustomTextField(
               controller: _titleController,
-              label: AppLocalizations.assignmentTitle,
-              hintText: AppLocalizations.assignmentTitle,
+              label: 'عنوان الواجب',
+              hintText: 'هل لديك عنوان للواجب ؟',
               prefixIcon: const Icon(Ionicons.document_text_outline),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return AppLocalizations.pleaseEnterTitle;
-                }
-                return null;
-              },
-            ),
-
-            const SizedBox(height: 24),
-
-            // Description (Optional)
-            CustomTextField(
-              controller: _descriptionController,
-              label: AppLocalizations.description,
-              hintText: AppLocalizations.description,
-              prefixIcon: const Icon(Ionicons.text_outline),
-              // No validator - description is optional
+              // No validator - title is optional
             ),
 
             const SizedBox(height: 32),

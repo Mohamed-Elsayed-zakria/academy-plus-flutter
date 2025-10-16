@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/localization/app_localizations.dart';
 import '../../../../../core/widgets/empty_state_widget.dart';
+import '../../../../../core/utils/navigation_helper.dart';
 
 class AssignmentsScreen extends StatefulWidget {
   const AssignmentsScreen({super.key});
@@ -41,9 +41,10 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
                 return _AssignmentCard(
                   assignment: assignment,
                   onTap: () {
-                    context.push(
-                      '/assignment/${assignment['id']}',
-                      extra: assignment,
+                    NavigationHelper.to(
+                      path: '/assignment/${assignment['id']}',
+                      context: context,
+                      data: assignment,
                     );
                   },
                 );
@@ -51,7 +52,10 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
             ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          context.push('/add-assignment');
+          NavigationHelper.to(
+            path: '/add-assignment',
+            context: context,
+          );
         },
         backgroundColor: AppColors.primary,
         child: const Icon(Ionicons.add, color: Colors.white),

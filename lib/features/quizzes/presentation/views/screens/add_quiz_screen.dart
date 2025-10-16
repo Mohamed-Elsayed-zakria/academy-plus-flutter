@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/localization/app_localizations.dart';
@@ -7,6 +6,7 @@ import '../../../../../core/widgets/custom_button.dart';
 import '../../../../../core/widgets/custom_text_field.dart';
 import '../../../../../core/widgets/date_picker_widget.dart';
 import '../../../../../core/widgets/multi_subject_selector_widget.dart';
+import '../../../../../core/utils/navigation_helper.dart';
 
 class AddQuizScreen extends StatefulWidget {
   const AddQuizScreen({super.key});
@@ -70,7 +70,7 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
           backgroundColor: Colors.green,
         ),
       );
-      context.pop();
+      NavigationHelper.back(context);
     }
   }
 
@@ -98,7 +98,7 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
           backgroundColor: Colors.green,
         ),
       );
-      context.pop();
+      NavigationHelper.back(context);
     }
   }
 

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ionicons/ionicons.dart';
 import 'dart:io';
@@ -8,6 +7,7 @@ import '../../../../../core/localization/app_localizations.dart';
 import '../../../../../core/widgets/custom_button.dart';
 import '../../../../../core/widgets/custom_text_field.dart';
 import '../../../../../core/widgets/university_selector_widget.dart';
+import '../../../../../core/utils/navigation_helper.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -183,7 +183,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     // Save profile changes
-                    context.pop();
+                    NavigationHelper.back(context);
                   }
                 },
                 isOutlined: true,

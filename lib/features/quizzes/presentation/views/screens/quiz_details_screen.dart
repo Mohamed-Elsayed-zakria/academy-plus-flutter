@@ -3,6 +3,7 @@ import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/localization/app_localizations.dart';
 import '../../../../../core/widgets/custom_button.dart';
+import '../../../../../core/utils/navigation_helper.dart';
 
 class QuizDetailsScreen extends StatelessWidget {
   final Map<String, dynamic> quiz;
@@ -294,12 +295,12 @@ class QuizDetailsScreen extends StatelessWidget {
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => NavigationHelper.back(context),
               child: Text(AppLocalizations.cancel),
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.pop(context);
+                NavigationHelper.back(context);
                 // Start quiz
               },
               style: ElevatedButton.styleFrom(

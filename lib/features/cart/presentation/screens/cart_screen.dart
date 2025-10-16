@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/localization/app_localizations.dart';
 import '../../../../core/widgets/custom_button.dart';
+import '../../../../core/utils/navigation_helper.dart';
 import '../widgets/empty_cart_illustration.dart';
 
 class CartScreen extends StatefulWidget {
@@ -124,7 +125,7 @@ class _CartScreenState extends State<CartScreen> {
             CustomButton(
               text: AppLocalizations.browseCourses,
               onPressed: () {
-                Navigator.pop(context);
+                NavigationHelper.back(context);
               },
               isGradient: true,
               width: double.infinity,
@@ -407,12 +408,12 @@ class _CartScreenState extends State<CartScreen> {
         content: Text(AppLocalizations.clearCartMessage),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => NavigationHelper.back(context),
             child: Text(AppLocalizations.cancel),
           ),
           TextButton(
             onPressed: () {
-              Navigator.pop(context);
+              NavigationHelper.back(context);
               setState(() {
                 cartItems.clear();
               });

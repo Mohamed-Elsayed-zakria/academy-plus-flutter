@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import '../constants/app_colors.dart';
 import '../localization/app_localizations.dart';
+import '../utils/navigation_helper.dart';
 import 'custom_text_field.dart';
 
 class Country {
@@ -88,7 +89,7 @@ class _CustomPhoneInputState extends State<CustomPhoneInput> {
             _selectedCountry = country;
           });
           widget.onCountryChanged?.call(country.code, country.dialCode);
-          Navigator.pop(context);
+          NavigationHelper.back(context);
         },
       ),
     );
@@ -259,7 +260,7 @@ class _CountryPickerBottomSheetState extends State<_CountryPickerBottomSheet> {
                 ),
                 const Spacer(),
                 GestureDetector(
-                  onTap: () => Navigator.pop(context),
+                  onTap: () => NavigationHelper.back(context),
                   child: Container(
                     padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(

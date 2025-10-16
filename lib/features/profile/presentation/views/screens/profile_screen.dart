@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/localization/app_localizations.dart';
+import '../../../../../core/utils/navigation_helper.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -187,7 +187,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     title: AppLocalizations.editProfile,
                     color: AppColors.primary,
                     onTap: () {
-                      context.push('/profile/edit');
+                      NavigationHelper.to(
+                        path: '/profile/edit',
+                        context: context,
+                      );
                     },
                   ),
                   const SizedBox(height: 12),
@@ -197,7 +200,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     title: AppLocalizations.changePassword,
                     color: AppColors.primary,
                     onTap: () {
-                      context.push('/profile/change-password');
+                      NavigationHelper.to(
+                        path: '/profile/change-password',
+                        context: context,
+                      );
                     },
                   ),
                   const SizedBox(height: 12),
@@ -394,7 +400,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 icon: Ionicons.globe_outline,
                 isSelected: _selectedLanguage == 'English',
                 onTap: () {
-                  Navigator.pop(context);
+                  NavigationHelper.back(context);
                   setState(() {
                     _selectedLanguage = 'English';
                   });
@@ -408,7 +414,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 icon: Ionicons.language_outline,
                 isSelected: _selectedLanguage == 'العربية',
                 onTap: () {
-                  Navigator.pop(context);
+                  NavigationHelper.back(context);
                   setState(() {
                     _selectedLanguage = 'العربية';
                   });
@@ -533,7 +539,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 icon: Ionicons.sunny_outline,
                 isSelected: !_isDarkMode,
                 onTap: () {
-                  Navigator.pop(context);
+                  NavigationHelper.back(context);
                   setState(() {
                     _isDarkMode = false;
                   });
@@ -547,7 +553,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 icon: Ionicons.moon_outline,
                 isSelected: _isDarkMode,
                 onTap: () {
-                  Navigator.pop(context);
+                  NavigationHelper.back(context);
                   setState(() {
                     _isDarkMode = true;
                   });
@@ -740,8 +746,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
         width: double.infinity,
         child: ElevatedButton(
           onPressed: () {
-            Navigator.pop(context);
-            context.go('/welcome');
+            NavigationHelper.back(context);
+            NavigationHelper.offAll(
+              path: '/welcome',
+              context: context,
+            );
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.error,
