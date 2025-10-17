@@ -30,7 +30,7 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: _screens[_currentIndex],
+      body: IndexedStack(index: _currentIndex, children: _screens),
       floatingActionButton: _buildShoppingCartFAB(),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       bottomNavigationBar: Container(
@@ -83,7 +83,7 @@ class _MainScreenState extends State<MainScreen> {
       onPressed: () {
         // Add haptic feedback
         HapticFeedback.lightImpact();
-        
+
         // Show shopping cart dialog
         _showShoppingCartDialog();
       },
@@ -225,10 +225,7 @@ class _MainScreenState extends State<MainScreen> {
               onPressed: () {
                 NavigationHelper.back(context);
                 // Navigate to cart screen
-                NavigationHelper.to(
-                  path: '/cart',
-                  context: context,
-                );
+                NavigationHelper.to(path: '/cart', context: context);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,

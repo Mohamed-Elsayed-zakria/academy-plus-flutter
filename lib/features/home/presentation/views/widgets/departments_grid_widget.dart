@@ -1,35 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../data/models/department_model.dart';
 
 class DepartmentsGridWidget extends StatelessWidget {
   final List<DepartmentModel> departments;
 
-  const DepartmentsGridWidget({
-    super.key,
-    required this.departments,
-  });
+  const DepartmentsGridWidget({super.key, required this.departments});
 
   @override
   Widget build(BuildContext context) {
     if (departments.isEmpty) {
       return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 25),
         child: Center(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.school_outlined,
-                size: 64,
-                color: AppColors.textSecondary.withValues(alpha: 0.5),
+              SvgPicture.asset(
+                'assets/images/undraw_no-data_ig65.svg',
+                width: 160,
+                height: 160,
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
               Text(
                 'لا توجد أقسام متاحة',
                 style: TextStyle(
                   color: AppColors.textSecondary,
-                  fontSize: 16,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
                 ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'سيتم إضافة الأقسام قريباً',
+                style: TextStyle(
+                  color: AppColors.textSecondary.withValues(alpha: 0.7),
+                  fontSize: 14,
+                ),
+                textAlign: TextAlign.center,
               ),
             ],
           ),
@@ -51,7 +61,7 @@ class DepartmentsGridWidget extends StatelessWidget {
         itemCount: departments.length,
         itemBuilder: (context, index) {
           final department = departments[index];
-          
+
           return InkWell(
             onTap: () {
               // NavigationHelper.to(
@@ -123,9 +133,13 @@ class DepartmentsGridWidget extends StatelessWidget {
                                     height: 30,
                                     child: CircularProgressIndicator(
                                       strokeWidth: 2,
-                                      value: loadingProgress.expectedTotalBytes != null
-                                          ? loadingProgress.cumulativeBytesLoaded /
-                                              loadingProgress.expectedTotalBytes!
+                                      value:
+                                          loadingProgress.expectedTotalBytes !=
+                                              null
+                                          ? loadingProgress
+                                                    .cumulativeBytesLoaded /
+                                                loadingProgress
+                                                    .expectedTotalBytes!
                                           : null,
                                     ),
                                   ),
@@ -150,7 +164,7 @@ class DepartmentsGridWidget extends StatelessWidget {
                       ),
                     ),
                   ),
-                  
+
                   // Text section
                   Expanded(
                     flex: 2,
@@ -162,10 +176,11 @@ class DepartmentsGridWidget extends StatelessWidget {
                         children: [
                           Text(
                             department.nameAr,
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.textPrimary,
-                            ),
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.textPrimary,
+                                ),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -200,4 +215,3 @@ class DepartmentsGridWidget extends StatelessWidget {
     );
   }
 }
-
