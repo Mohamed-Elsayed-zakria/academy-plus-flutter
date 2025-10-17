@@ -4,6 +4,8 @@ import 'package:ionicons/ionicons.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/widgets/custom_text_field.dart';
+import '../../../../../core/widgets/skeleton_loader.dart';
+import '../../../../../core/widgets/skeleton_sub_department_grid.dart';
 import '../../../../../core/utils/navigation_helper.dart';
 import '../../../data/models/department_model.dart';
 import '../../../data/models/sub_department_model.dart';
@@ -44,6 +46,30 @@ class _SubDepartmentsScreenState extends State<SubDepartmentsScreen> {
     });
   }
 
+  Widget _buildLoadingState() {
+    return CustomScrollView(
+      physics: const BouncingScrollPhysics(),
+      slivers: [
+        // Search Bar Skeleton
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: SkeletonLoader(
+              height: 50,
+              width: double.infinity,
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        ),
+        
+        // Grid Skeleton
+        SliverToBoxAdapter(
+          child: SkeletonSubDepartmentGrid(itemCount: 6),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -61,17 +87,11 @@ class _SubDepartmentsScreenState extends State<SubDepartmentsScreen> {
           ),
           backgroundColor: AppColors.background,
           elevation: 0,
-          leading: IconButton(
-            icon: const Icon(Ionicons.arrow_back, color: AppColors.textPrimary),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
         ),
         body: BlocBuilder<SubDepartmentCubit, SubDepartmentState>(
           builder: (context, state) {
             if (state is SubDepartmentLoading) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
+              return _buildLoadingState();
             } else if (state is SubDepartmentError) {
               return Center(
                 child: Column(

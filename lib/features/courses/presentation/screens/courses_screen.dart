@@ -4,6 +4,8 @@ import 'package:ionicons/ionicons.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/widgets/custom_text_field.dart';
+import '../../../../../core/widgets/skeleton_loader.dart';
+import '../../../../../core/widgets/skeleton_course_grid.dart';
 import '../../../../../core/utils/navigation_helper.dart';
 import '../../../home/data/models/sub_department_model.dart';
 import '../../data/models/course_model.dart';
@@ -44,6 +46,30 @@ class _CoursesScreenState extends State<CoursesScreen> {
     });
   }
 
+  Widget _buildLoadingState() {
+    return CustomScrollView(
+      physics: const BouncingScrollPhysics(),
+      slivers: [
+        // Search Bar Skeleton
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: SkeletonLoader(
+              height: 50,
+              width: double.infinity,
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        ),
+        
+        // Grid Skeleton
+        SliverToBoxAdapter(
+          child: SkeletonCourseGrid(itemCount: 6),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -65,9 +91,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
         body: BlocBuilder<CourseCubit, CourseState>(
           builder: (context, state) {
             if (state is CourseLoading) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
+              return _buildLoadingState();
             } else if (state is CourseError) {
               return Center(
                 child: Column(
