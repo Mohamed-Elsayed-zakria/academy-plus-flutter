@@ -81,4 +81,7 @@ class AuthManager {
 
   // Get user ID
   static String? get userId => _currentUser?.id;
+
+  // Get university ID
+  static String? get universityId => _currentUser?.universityId;
 }

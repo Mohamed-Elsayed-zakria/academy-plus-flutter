@@ -38,6 +38,7 @@ class UserModel {
   final String phoneNumber;
   final bool phoneVerified;
   final String role;
+  final String? universityId;
 
   UserModel({
     required this.id,
@@ -45,6 +46,7 @@ class UserModel {
     required this.phoneNumber,
     required this.phoneVerified,
     required this.role,
+    this.universityId,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -54,6 +56,7 @@ class UserModel {
       phoneNumber: json['phone_number'],
       phoneVerified: json['phone_verified'] ?? false,
       role: json['role'] ?? 'Student',
+      universityId: json['university_id'],
     );
   }
 }

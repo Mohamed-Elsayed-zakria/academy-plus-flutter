@@ -1,11 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:university/features/home/presentation/views/widgets/home_screen_banner_slider.dart';
 import 'package:university/features/home/presentation/views/widgets/home_screen_quick_access_section.dart';
 import 'package:university/features/home/presentation/views/widgets/home_screen_search_bar.dart';
 import 'package:university/features/home/presentation/views/widgets/departments_grid_widget.dart';
+import 'package:university/features/home/presentation/views/widgets/ad_skeleton_loader.dart';
+import 'package:university/features/home/presentation/views/widgets/department_skeleton_loader.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/localization/app_localizations.dart';
+import '../../../../../core/services/auth_manager.dart';
+import '../../../data/repository/ad_implement.dart';
+import '../../../data/repository/department_implement.dart';
+import '../../manager/cubit/ad_cubit.dart';
+import '../../manager/cubit/ad_state.dart';
+import '../../manager/cubit/department_cubit.dart';
+import '../../manager/cubit/department_state.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -15,130 +25,136 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  // Main Departments
-  final List<Map<String, dynamic>> _departments = [
-    {
-      'id': 1,
-      'name': 'الأعمال',
-      'icon': Ionicons.briefcase_outline,
-      'image':
-          'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&h=300&fit=crop',
-      'subDepartments': ['المحاسبة', 'التسويق', 'التمويل', 'الموارد البشرية'],
-    },
-    {
-      'id': 2,
-      'name': 'الهندسة',
-      'icon': Ionicons.construct_outline,
-      'image':
-          'https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=500&h=300&fit=crop',
-      'subDepartments': [
-        'علوم الحاسوب',
-        'الهندسة الكهربائية',
-        'الهندسة الميكانيكية',
-        'الهندسة المدنية',
-      ],
-    },
-    {
-      'id': 3,
-      'name': 'الطب',
-      'icon': Ionicons.medical_outline,
-      'image':
-          'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=500&h=300&fit=crop',
-      'subDepartments': ['الطب العام', 'الجراحة', 'طب الأطفال', 'أمراض القلب'],
-    },
-    {
-      'id': 4,
-      'name': 'الفنون',
-      'icon': Ionicons.color_palette_outline,
-      'image':
-          'https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=500&h=300&fit=crop',
-      'subDepartments': ['الفنون الجميلة', 'الموسيقى', 'المسرح', 'الأدب'],
-    },
-    {
-      'id': 5,
-      'name': 'العلوم',
-      'icon': Ionicons.flask_outline,
-      'image':
-          'https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=500&h=300&fit=crop',
-      'subDepartments': ['الفيزياء', 'الكيمياء', 'الأحياء', 'الرياضيات'],
-    },
-    {
-      'id': 6,
-      'name': 'القانون',
-      'icon': Ionicons.scale_outline,
-      'image':
-          'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=500&h=300&fit=crop',
-      'subDepartments': [
-        'القانون الجنائي',
-        'القانون المدني',
-        'القانون الدولي',
-        'قانون الشركات',
-      ],
-    },
-  ];
-
-  final List<String> _bannersUrls = [
-    'https://talaeaalghad.edu.sa/wp-content/uploads/2023/06/66bbfa3d80600cd36191c46fa7983b7e-scaled.jpg',
-    'https://ia-bc.com/wp-content/uploads/2024/01/School-Science-Laboratory.jpg',
-    'https://ans.edu.jo/uploads/2024/09/66eaa687e6465.jpg',
-    'https://ans.edu.jo/uploads/2023/09/64f6c5a88eba4.jpg',
-    'https://ans.edu.jo/uploads/2023/08/64e709d3c69fe.jpg',
-    'https://ans.edu.jo/uploads/2019/09/5d7f60e877963.jpg',
-  ];
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: Text(AppLocalizations.appName),
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Ionicons.heart_outline),
-            tooltip: 'Favorites',
-          ),
-          const SizedBox(width: 8),
-        ],
-      ),
-      body: CustomScrollView(
-        physics: const BouncingScrollPhysics(),
-        slivers: [
-          // Search Bar
-          SliverToBoxAdapter(child: HomeScreenSearchBar()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => AdCubit(AdImplement())..getAllAds()),
+        BlocProvider(create: (context) => DepartmentCubit(DepartmentImplement())),
+      ],
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppBar(
+          title: Text(AppLocalizations.appName),
+          actions: [
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(Ionicons.heart_outline),
+              tooltip: 'Favorites',
+            ),
+            const SizedBox(width: 8),
+          ],
+        ),
+        body: CustomScrollView(
+          physics: const BouncingScrollPhysics(),
+          slivers: [
+            // Search Bar
+            SliverToBoxAdapter(child: HomeScreenSearchBar()),
+            // Ads Section
+            BlocBuilder<AdCubit, AdState>(
+              builder: (context, state) {
+                if (state is AdLoading) {
+                  return SliverToBoxAdapter(
+                    child: AdSkeletonLoader(),
+                  );
+                } else if (state is AdLoaded && state.ads.isNotEmpty) {
+                  return SliverToBoxAdapter(
+                    child: HomeScreenBannerSlider(
+                      bannersUrls: state.ads.map((ad) => ad.imageUrl).toList(),
+                    ),
+                  );
+                }
+                return const SliverToBoxAdapter(child: SizedBox.shrink());
+              },
+            ),
 
-          // Banner Slider
-          SliverToBoxAdapter(
-            child: HomeScreenBannerSlider(bannersUrls: _bannersUrls),
-          ),
+            // Quick Access Section
+            SliverToBoxAdapter(child: HomeScreenQuickAccessSection()),
 
-          SliverToBoxAdapter(child: const SizedBox(height: 24)),
+            SliverToBoxAdapter(child: const SizedBox(height: 24)),
 
-          // Quick Access Section
-          SliverToBoxAdapter(child: HomeScreenQuickAccessSection()),
-
-          SliverToBoxAdapter(child: const SizedBox(height: 24)),
-
-          // Departments Section
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Text(
-                AppLocalizations.departments,
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
+            // Departments Section
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  AppLocalizations.departments,
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
                 ),
               ),
             ),
-          ),
-          SliverToBoxAdapter(child: const SizedBox(height: 16)),
-          // Departments Grid
-          SliverToBoxAdapter(
-            child: DepartmentsGridWidget(departments: _departments),
-          ),
-          SliverToBoxAdapter(child: const SizedBox(height: 24)),
-        ],
+            SliverToBoxAdapter(child: const SizedBox(height: 16)),
+            // Departments Grid
+            BlocBuilder<DepartmentCubit, DepartmentState>(
+              builder: (context, state) {
+                if (state is DepartmentLoading) {
+                  return const SliverToBoxAdapter(
+                    child: DepartmentSkeletonGrid(itemCount: 4),
+                  );
+                } else if (state is DepartmentError) {
+                  return SliverToBoxAdapter(
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(32.0),
+                        child: Column(
+                          children: [
+                            Icon(
+                              Ionicons.alert_circle_outline,
+                              size: 48,
+                              color: AppColors.textSecondary,
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              state.error,
+                              style: TextStyle(
+                                color: AppColors.textSecondary,
+                                fontSize: 16,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 16),
+                            ElevatedButton(
+                              onPressed: () {
+                                final universityId = AuthManager.universityId;
+                                if (universityId != null) {
+                                  context.read<DepartmentCubit>().getDepartmentsByUniversity(universityId);
+                                } else {
+                                  context.read<DepartmentCubit>().getAllDepartments();
+                                }
+                              },
+                              child: const Text('إعادة المحاولة'),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                } else if (state is DepartmentLoaded) {
+                  return SliverToBoxAdapter(
+                    child: DepartmentsGridWidget(departments: state.departments),
+                  );
+                } else {
+                  // Initial state - load departments
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    final universityId = AuthManager.universityId;
+                    if (universityId != null) {
+                      context.read<DepartmentCubit>().getDepartmentsByUniversity(universityId);
+                    } else {
+                      context.read<DepartmentCubit>().getAllDepartments();
+                    }
+                  });
+                  return const SliverToBoxAdapter(
+                    child: DepartmentSkeletonGrid(itemCount: 4),
+                  );
+                }
+              },
+            ),
+            SliverToBoxAdapter(child: const SizedBox(height: 24)),
+          ],
+        ),
       ),
     );
   }

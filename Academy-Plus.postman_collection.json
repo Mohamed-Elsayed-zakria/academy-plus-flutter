@@ -433,7 +433,81 @@
 							"host": ["{{base_url}}"],
 							"path": ["api", "departments"]
 						},
-						"description": "Get all main departments"
+						"description": "Get all main departments with sub_departments_count by default"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Main Departments with Sub Departments",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.length > 0) {",
+									"        pm.environment.set('department_id', response.data[0].id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/departments?withObjects=true",
+							"host": ["{{base_url}}"],
+							"path": ["api", "departments"],
+							"query": [
+								{
+									"key": "withObjects",
+									"value": "true",
+									"description": "Include full sub_departments objects instead of just count"
+								}
+							]
+						},
+						"description": "Get all main departments with full sub_departments objects included"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Main Departments Count Only",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.length > 0) {",
+									"        pm.environment.set('department_id', response.data[0].id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/departments?withObjects=false",
+							"host": ["{{base_url}}"],
+							"path": ["api", "departments"],
+							"query": [
+								{
+									"key": "withObjects",
+									"value": "false",
+									"description": "Only include sub_departments_count (default behavior)"
+								}
+							]
+						},
+						"description": "Get all main departments with only sub_departments_count (explicit)"
 					},
 					"response": []
 				},
@@ -443,7 +517,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/api/main-departments?university_id={{university_id}}",
+							"raw": "{{base_url}}/api/departments?university_id={{university_id}}",
 							"host": ["{{base_url}}"],
 							"path": ["api", "departments"],
 							"query": [
@@ -453,7 +527,32 @@
 								}
 							]
 						},
-						"description": "Get main departments filtered by university"
+						"description": "Get main departments filtered by university (with sub_departments_count by default)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Main Departments by University with Sub Departments",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/departments?university_id={{university_id}}&withObjects=true",
+							"host": ["{{base_url}}"],
+							"path": ["api", "departments"],
+							"query": [
+								{
+									"key": "university_id",
+									"value": "{{university_id}}"
+								},
+								{
+									"key": "withObjects",
+									"value": "true",
+									"description": "Include full sub_departments objects"
+								}
+							]
+						},
+						"description": "Get main departments filtered by university with full sub_departments objects"
 					},
 					"response": []
 				},
@@ -597,7 +696,7 @@
 					"response": []
 				}
 			],
-			"description": "Main Department management endpoints"
+			"description": "Main Department management endpoints. Use withObjects=true to get full sub_departments objects, or withObjects=false (default) to get only sub_departments_count."
 		},
 		{
 			"name": "Sub Departments",

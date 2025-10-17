@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/utils/navigation_helper.dart';
+import '../../../data/models/department_model.dart';
 
 class DepartmentsGridWidget extends StatelessWidget {
-  final List<Map<String, dynamic>> departments;
+  final List<DepartmentModel> departments;
 
   const DepartmentsGridWidget({
     super.key,
@@ -12,6 +12,31 @@ class DepartmentsGridWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (departments.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Center(
+          child: Column(
+            children: [
+              Icon(
+                Icons.school_outlined,
+                size: 64,
+                color: AppColors.textSecondary.withValues(alpha: 0.5),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'لا توجد أقسام متاحة',
+                style: TextStyle(
+                  color: AppColors.textSecondary,
+                  fontSize: 16,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: GridView.builder(
@@ -29,11 +54,11 @@ class DepartmentsGridWidget extends StatelessWidget {
           
           return InkWell(
             onTap: () {
-              NavigationHelper.to(
-                path: '/department/${department['id']}/subdepartments',
-                context: context,
-                data: department,
-              );
+              // NavigationHelper.to(
+              //   path: '/department/${department.id}/subdepartments',
+              //   context: context,
+              //   data: department,
+              // );
             },
             borderRadius: BorderRadius.circular(16),
             child: Container(
@@ -67,7 +92,7 @@ class DepartmentsGridWidget extends StatelessWidget {
                         fit: StackFit.expand,
                         children: [
                           Image.network(
-                            department['image'],
+                            department.logo,
                             fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) {
                               return Container(
@@ -81,8 +106,8 @@ class DepartmentsGridWidget extends StatelessWidget {
                                     ],
                                   ),
                                 ),
-                                child: Icon(
-                                  department['icon'] as IconData,
+                                child: const Icon(
+                                  Icons.school,
                                   color: Colors.white,
                                   size: 40,
                                 ),
@@ -136,7 +161,7 @@ class DepartmentsGridWidget extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            department['name'] as String,
+                            department.nameAr,
                             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.bold,
                               color: AppColors.textPrimary,
@@ -147,14 +172,14 @@ class DepartmentsGridWidget extends StatelessWidget {
                           const SizedBox(height: 4),
                           Row(
                             children: [
-                              Icon(
-                                department['icon'] as IconData,
+                              const Icon(
+                                Icons.school,
                                 size: 14,
                                 color: AppColors.textSecondary,
                               ),
                               const SizedBox(width: 4),
                               Text(
-                                '${(department['subDepartments'] as List).length} أقسام',
+                                '${department.subDepartmentsCount} أقسام',
                                 style: const TextStyle(
                                   fontSize: 12,
                                   color: AppColors.textSecondary,

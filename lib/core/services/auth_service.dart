@@ -17,6 +17,7 @@ class AuthService {
     print('Login data saved successfully');
     print('Token: ${loginResponse.token}');
     print('User: ${loginResponse.user.fullName}');
+    print('University ID: ${loginResponse.user.universityId}');
   }
 
   // Get auth token
@@ -67,7 +68,7 @@ class AuthService {
 
   // Helper method to convert UserModel to JSON string
   static String _userToJson(UserModel user) {
-    return '{"id":"${user.id}","full_name":"${user.fullName}","phone_number":"${user.phoneNumber}","phone_verified":${user.phoneVerified},"role":"${user.role}"}';
+    return '{"id":"${user.id}","full_name":"${user.fullName}","phone_number":"${user.phoneNumber}","phone_verified":${user.phoneVerified},"role":"${user.role}","university_id":"${user.universityId ?? ''}"}';
   }
 
   // Helper method to convert JSON string to UserModel
@@ -79,6 +80,7 @@ class AuthService {
       'phone_number': userJson.split('"phone_number":"')[1].split('"')[0],
       'phone_verified': userJson.split('"phone_verified":')[1].split(',')[0] == 'true',
       'role': userJson.split('"role":"')[1].split('"')[0],
+      'university_id': userJson.contains('"university_id":"') ? userJson.split('"university_id":"')[1].split('"')[0] : null,
     };
     
     return UserModel.fromJson(userMap);
