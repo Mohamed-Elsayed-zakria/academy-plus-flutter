@@ -22,17 +22,29 @@ void main() async {
   // Check if onboarding is completed
   final isOnboardingCompleted = await OnboardingService.isOnboardingCompleted();
 
+  // Check if user is logged in (with proper verification)
+  final isLoggedIn = await AuthManager.isLoggedInAsync();
+  print('🔍 main.dart - Final isLoggedIn result: $isLoggedIn');
+
   runApp(
     AppLocalizationConfig.getLocalizationWidget(
-      child: MyApp(isOnboardingCompleted: isOnboardingCompleted),
+      child: MyApp(
+        isOnboardingCompleted: isOnboardingCompleted,
+        isLoggedIn: isLoggedIn,
+      ),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
   final bool isOnboardingCompleted;
+  final bool isLoggedIn;
 
-  const MyApp({super.key, required this.isOnboardingCompleted});
+  const MyApp({
+    super.key, 
+    required this.isOnboardingCompleted,
+    required this.isLoggedIn,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -48,17 +60,8 @@ class MyApp extends StatelessWidget {
       locale: const Locale('ar'), // Force Arabic as default
       routerConfig: createAppRouter(
         isOnboardingCompleted: isOnboardingCompleted,
-        isLoggedIn: _checkUserIsLogin(),
+        isLoggedIn: isLoggedIn,
       ),
     );
-  }
-
-  bool _checkUserIsLogin() {
-    try {
-      final isLoggedIn = AuthManager.isLoggedIn;
-      return isLoggedIn;
-    } catch (e) {
-      return false;
-    }
   }
 }

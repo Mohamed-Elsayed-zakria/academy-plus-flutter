@@ -2,6 +2,8 @@ import '../../../../core/constants/api_end_point.dart';
 import '../../../../core/errors/server_failures.dart';
 import '../models/user_profile_model.dart';
 import 'package:dartz/dartz.dart';
+import 'package:dio/dio.dart';
+import 'dart:io';
 import 'profile_repo.dart';
 
 class ProfileImplement extends ProfileRepo {
@@ -36,21 +38,32 @@ class ProfileImplement extends ProfileRepo {
   ) async {
     try {
       const url = "${APIEndPoint.url}${APIEndPoint.userProfile}";
-      final requestData = profile.toJson();
-
+      
       print('Update Profile Request:');
       print('URL: $url');
-      print('Data: $requestData');
+      print('Profile Name: ${profile.name}');
 
-      final response = await dio.put(url, data: requestData);
+      // Create FormData for the request
+      final formData = FormData.fromMap({
+        'full_name': profile.name,
+        // Note: profile_image will be handled separately if needed
+      });
+
+      final response = await dio.put(url, data: formData);
 
       print('Update Profile Response:');
       print('Status Code: ${response.statusCode}');
       print('Response Data: ${response.data}');
 
       if (response.statusCode == 200) {
-        final updatedProfile = UserProfileModel.fromJson(response.data);
-        return right(updatedProfile);
+        // Extract data from the nested structure
+        final responseData = response.data;
+        if (responseData['success'] == true && responseData['data'] != null) {
+          final updatedProfile = UserProfileModel.fromJson(responseData['data']);
+          return right(updatedProfile);
+        } else {
+          return left(ServerFailures(errMessage: 'Invalid response format'));
+        }
       } else {
         return left(
           ServerFailures(errMessage: 'Failed to update user profile'),
@@ -58,6 +71,91 @@ class ProfileImplement extends ProfileRepo {
       }
     } catch (e) {
       print('Update Profile Error: $e');
+      return left(returnDioException(e));
+    }
+  }
+
+  @override
+  Future<Either<Failures, UserProfileModel>> updateUserProfileWithImage(
+    String name,
+    File? profileImage,
+  ) async {
+    try {
+      const url = "${APIEndPoint.url}${APIEndPoint.userProfile}";
+      
+      print('Update Profile with Image Request:');
+      print('URL: $url');
+      print('Profile Name: $name');
+      print('Has Image: ${profileImage != null}');
+
+      // Create FormData for the request
+      final Map<String, dynamic> formDataMap = {
+        'full_name': name,
+      };
+
+      // Add image if provided
+      if (profileImage != null) {
+        formDataMap['profile_image'] = await MultipartFile.fromFile(
+          profileImage.path,
+          filename: 'profile_${DateTime.now().millisecondsSinceEpoch}.jpg',
+        );
+      }
+
+      final formData = FormData.fromMap(formDataMap);
+
+      final response = await dio.put(url, data: formData);
+
+      print('Update Profile with Image Response:');
+      print('Status Code: ${response.statusCode}');
+      print('Response Data: ${response.data}');
+
+      if (response.statusCode == 200) {
+        // Extract data from the nested structure
+        final responseData = response.data;
+        if (responseData['success'] == true && responseData['data'] != null) {
+          final updatedProfile = UserProfileModel.fromJson(responseData['data']);
+          return right(updatedProfile);
+        } else {
+          return left(ServerFailures(errMessage: 'Invalid response format'));
+        }
+      } else {
+        return left(
+          ServerFailures(errMessage: 'Failed to update user profile'),
+        );
+      }
+    } catch (e) {
+      print('Update Profile with Image Error: $e');
+      return left(returnDioException(e));
+    }
+  }
+
+  @override
+  Future<Either<Failures, bool>> logout() async {
+    try {
+      const url = "${APIEndPoint.url}${APIEndPoint.logout}";
+      
+      print('Logout Request:');
+      print('URL: $url');
+
+      final response = await dio.post(url);
+
+      print('Logout Response:');
+      print('Status Code: ${response.statusCode}');
+      print('Response Data: ${response.data}');
+
+      if (response.statusCode == 200) {
+        // Check if logout was successful
+        final responseData = response.data;
+        if (responseData['success'] == true) {
+          return right(true);
+        } else {
+          return left(ServerFailures(errMessage: 'Logout failed'));
+        }
+      } else {
+        return left(ServerFailures(errMessage: 'Failed to logout'));
+      }
+    } catch (e) {
+      print('Logout Error: $e');
       return left(returnDioException(e));
     }
   }

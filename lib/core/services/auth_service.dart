@@ -46,11 +46,23 @@ class AuthService {
   static Future<void> logout() async {
     final prefs = await SharedPreferences.getInstance();
     
+    print('🔄 AuthService.logout() - Starting logout process...');
+    
+    // Check current state before clearing
+    final currentToken = prefs.getString(_tokenKey);
+    final currentIsLoggedIn = prefs.getBool(_isLoggedInKey);
+    print('🔍 Before logout - Token exists: ${currentToken != null}, isLoggedIn: $currentIsLoggedIn');
+    
     await prefs.remove(_tokenKey);
     await prefs.remove(_userKey);
     await prefs.setBool(_isLoggedInKey, false);
     
-    print('User logged out successfully');
+    // Verify after clearing
+    final tokenAfter = prefs.getString(_tokenKey);
+    final isLoggedInAfter = prefs.getBool(_isLoggedInKey);
+    print('🔍 After logout - Token exists: ${tokenAfter != null}, isLoggedIn: $isLoggedInAfter');
+    
+    print('✅ AuthService.logout() - User logged out successfully');
   }
 
   // Helper method to convert UserModel to JSON string

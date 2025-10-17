@@ -32,7 +32,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
       create: (context) => ProfileCubit(ProfileImplement())..getUserProfile(),
       child: Scaffold(
         backgroundColor: Colors.white,
-        body: BlocBuilder<ProfileCubit, ProfileState>(
+        body: BlocListener<ProfileCubit, ProfileState>(
+          listener: (context, state) {
+            if (state is ProfileLogoutSuccess) {
+              // Logout successful, navigate to welcome screen
+              NavigationHelper.offAll(
+                path: '/welcome',
+                context: context,
+              );
+            } else if (state is ProfileError) {
+              // Show error message for logout
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('خطأ في تسجيل الخروج: ${state.error}'),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            }
+          },
+          child: BlocBuilder<ProfileCubit, ProfileState>(
           builder: (context, state) {
             if (state is ProfileLoading) {
               return const Center(
@@ -84,10 +102,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
             return const Center(
               child: CircularProgressIndicator(),
             );
-          },
-        ),
+            },
+          ),
       ),
-    );
+    ));
   }
 
   Widget _buildProfileContent(BuildContext context, UserProfileModel user) {
@@ -173,17 +191,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             color: AppColors.textPrimary,
                           ),
                         ),
-                        
-                        const SizedBox(height: 4),
-                        
-                        // Simple Student ID
-                        Text(
-                          user.studentId,
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: AppColors.textSecondary,
-                          ),
-                        ),
                       ],
                     ),
                   ),
@@ -229,14 +236,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     icon: Ionicons.school_outline,
                     label: AppLocalizations.university,
                     value: user.university,
-                    color: AppColors.primary,
-                  ),
-                  const SizedBox(height: 12),
-
-                  _buildInfoCard(
-                    icon: Ionicons.card_outline,
-                    label: 'رقم الطالب',
-                    value: user.studentId.isNotEmpty ? user.studentId : 'غير متوفر',
                     color: AppColors.primary,
                   ),
 
@@ -333,7 +332,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     color: AppColors.error,
                     isDestructive: true,
                     onTap: () {
-                      _showLogoutDialog(context);
+                      _showLogoutDialog(context, context.read<ProfileCubit>());
                     },
                   ),
                   const SizedBox(height: 30),
@@ -740,7 +739,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  void _showLogoutDialog(BuildContext context) {
+  void _showLogoutDialog(BuildContext context, ProfileCubit profileCubit) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -754,7 +753,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           actionsPadding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
           title: _buildDialogTitle(context),
           content: _buildDialogContent(context),
-          actions: _buildDialogActions(context),
+          actions: _buildDialogActions(context, profileCubit),
         );
       },
     );
@@ -836,7 +835,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  List<Widget> _buildDialogActions(BuildContext context) {
+  List<Widget> _buildDialogActions(BuildContext context, ProfileCubit profileCubit) {
     return [
       // Logout Button Only
       SizedBox(
@@ -844,10 +843,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         child: ElevatedButton(
           onPressed: () {
             NavigationHelper.back(context);
-            NavigationHelper.offAll(
-              path: '/welcome',
-              context: context,
-            );
+            // Call logout function from ProfileCubit
+            profileCubit.logout();
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.error,

@@ -32,6 +32,33 @@ class AuthManager {
   // Check if user is logged in
   static bool get isLoggedIn => _currentUser != null && _currentToken != null;
 
+  // Check if user is logged in (with SharedPreferences verification)
+  static Future<bool> isLoggedInAsync() async {
+    print('🔄 AuthManager.isLoggedInAsync() - Starting verification...');
+    
+    // First check local variables
+    print('🔍 Local check - _currentUser: ${_currentUser != null}, _currentToken: ${_currentToken != null}');
+    
+    if (_currentUser != null && _currentToken != null) {
+      // Double-check with SharedPreferences
+      final isLoggedInPrefs = await AuthService.isLoggedIn();
+      print('🔍 SharedPreferences check - isLoggedIn: $isLoggedInPrefs');
+      
+      if (!isLoggedInPrefs) {
+        // Clear local data if SharedPreferences says user is not logged in
+        print('⚠️ SharedPreferences says user is not logged in, clearing local data...');
+        clearUserData();
+        print('🔍 After clearing - isLoggedIn: false');
+        return false;
+      }
+      print('✅ User is logged in (verified with SharedPreferences)');
+      return true;
+    }
+    
+    print('🔍 User is not logged in (no local data)');
+    return false;
+  }
+
   // Update user data after login
   static void updateUserData(LoginResponseModel loginResponse) {
     _currentUser = loginResponse.user;
