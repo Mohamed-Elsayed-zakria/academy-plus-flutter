@@ -3,10 +3,16 @@ import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/localization/app_localizations.dart';
 import '../../../../../core/widgets/premium_content_overlay.dart';
+import '../../../data/models/course_model.dart';
 import 'course_content_section_header.dart';
 
 class CourseContentContentTab extends StatefulWidget {
-  const CourseContentContentTab({super.key});
+  final CourseModel course;
+  
+  const CourseContentContentTab({
+    super.key,
+    required this.course,
+  });
 
   @override
   State<CourseContentContentTab> createState() => _CourseContentContentTabState();

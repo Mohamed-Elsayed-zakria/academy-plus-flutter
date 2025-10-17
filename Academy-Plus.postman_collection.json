@@ -1026,6 +1026,36 @@
 					"response": []
 				},
 				{
+					"name": "Get Courses by Sub Department",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.length > 0) {",
+									"        pm.environment.set('course_id', response.data[0].id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/courses/sub-department/{{sub_department_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "courses", "sub-department", "{{sub_department_id}}"]
+						},
+						"description": "Get all courses for a specific sub department"
+					},
+					"response": []
+				},
+				{
 					"name": "Search Courses",
 					"request": {
 						"method": "GET",

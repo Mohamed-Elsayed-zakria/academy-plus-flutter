@@ -3,16 +3,13 @@ import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/localization/app_localizations.dart';
 import '../../../../../core/widgets/custom_button.dart';
+import '../../../data/models/course_model.dart';
 
 class CourseContentDetailsTab extends StatelessWidget {
-  final Map<String, dynamic> course;
-  final double originalPrice;
-  final double discountedPrice;
+  final CourseModel course;
   const CourseContentDetailsTab({
     super.key,
     required this.course,
-    required this.originalPrice,
-    required this.discountedPrice,
   });
 
   @override
@@ -28,19 +25,17 @@ class CourseContentDetailsTab extends StatelessWidget {
               children: [
                 // Course Title (Bilingual)
                 Text(
-                  course['nameAr'] as String? ?? course['title'] as String? ?? 'عنوان غير محدد',
+                  course.titleAr,
                   style: Theme.of(context).textTheme.displaySmall,
                   textDirection: TextDirection.rtl,
                 ),
-                if (course['nameEn'] != null) ...[
-                  const SizedBox(height: 8),
-                  Text(
-                    course['nameEn'] as String,
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
+                const SizedBox(height: 8),
+                Text(
+                  course.titleEn,
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    color: AppColors.textSecondary,
                   ),
-                ],
+                ),
                 const SizedBox(height: 12),
 
                 // Instructor
@@ -59,7 +54,7 @@ class CourseContentDetailsTab extends StatelessWidget {
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
                         Text(
-                          course['instructor'] as String,
+                          course.instructorName,
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
                       ],
@@ -97,7 +92,7 @@ class CourseContentDetailsTab extends StatelessWidget {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              course['duration'] as String? ?? '16 weeks',
+                              '16 weeks', // Default duration
                               style: Theme.of(context).textTheme.titleMedium
                                   ?.copyWith(
                                     color: AppColors.primary,
@@ -135,7 +130,7 @@ class CourseContentDetailsTab extends StatelessWidget {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              '${course['studentsCount'] as int? ?? 1250}',
+                              '1250', // Default students count
                               style: Theme.of(context).textTheme.titleMedium
                                   ?.copyWith(
                                     color: AppColors.accent,
@@ -189,8 +184,7 @@ class CourseContentDetailsTab extends StatelessWidget {
                             children: [
                               // Stars
                               ...List.generate(5, (index) {
-                                final rating =
-                                    course['rating'] as double? ?? 4.8;
+                                final rating = 4.8; // Default rating
                                 return Container(
                                   margin: const EdgeInsets.only(right: 1),
                                   child: Icon(
@@ -210,7 +204,7 @@ class CourseContentDetailsTab extends StatelessWidget {
                               }),
                               const SizedBox(width: 8),
                               Text(
-                                '${course['rating'] as double? ?? 4.8}',
+                                '4.8', // Default rating
                                 style: Theme.of(context).textTheme.titleMedium
                                     ?.copyWith(
                                       color: AppColors.accentPurple,
@@ -246,9 +240,9 @@ class CourseContentDetailsTab extends StatelessWidget {
                           const SizedBox(height: 4),
                           Row(
                             children: [
-                              if (course['discount'] as int > 0) ...[
+                              if (course.discountPrice > 0 && course.discountPrice < course.price) ...[
                                 Text(
-                                  '${originalPrice.toStringAsFixed(0)} \$',
+                                  '${course.price.toStringAsFixed(0)} ج.م',
                                   style: Theme.of(context).textTheme.bodyMedium
                                       ?.copyWith(
                                         decoration: TextDecoration.lineThrough,
@@ -258,7 +252,7 @@ class CourseContentDetailsTab extends StatelessWidget {
                                 const SizedBox(width: 8),
                               ],
                               Text(
-                                '${discountedPrice.toStringAsFixed(0)} \$',
+                                '${course.discountPrice > 0 ? course.discountPrice : course.price} ج.م',
                                 style: Theme.of(context)
                                     .textTheme
                                     .headlineMedium
@@ -271,7 +265,7 @@ class CourseContentDetailsTab extends StatelessWidget {
                           ),
                         ],
                       ),
-                      if (course['discount'] as int > 0)
+                      if (course.discountPrice > 0 && course.discountPrice < course.price)
                         Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 12,
@@ -282,7 +276,7 @@ class CourseContentDetailsTab extends StatelessWidget {
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
-                            '${course['discount']}% OFF',
+                            '${((course.price - course.discountPrice) / course.price * 100).round()}% OFF',
                             style: Theme.of(context).textTheme.titleSmall
                                 ?.copyWith(
                                   color: Colors.white,
@@ -296,14 +290,14 @@ class CourseContentDetailsTab extends StatelessWidget {
                 const SizedBox(height: 20),
 
                 // Description
-                if (course['description'] != null) ...[
+                if (course.description != null && course.description!.isNotEmpty) ...[
                   Text(
                     AppLocalizations.aboutCourse,
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    course['description'] as String,
+                    course.description!,
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       color: AppColors.textSecondary,
                       height: 1.6,
@@ -314,14 +308,13 @@ class CourseContentDetailsTab extends StatelessWidget {
                   const SizedBox(height: 32),
 
                 // Subscription Button
-                if (course['hasPaymentGateway'] == true)
-                  CustomButton(
-                    text: AppLocalizations.subscribe,
-                    onPressed: () {},
-                    isGradient: true,
-                    width: double.infinity,
-                    icon: Icon(Ionicons.star, color: Colors.white),
-                  ),
+                CustomButton(
+                  text: AppLocalizations.subscribe,
+                  onPressed: () {},
+                  isGradient: true,
+                  width: double.infinity,
+                  icon: Icon(Ionicons.star, color: Colors.white),
+                ),
               ],
             ),
           ),

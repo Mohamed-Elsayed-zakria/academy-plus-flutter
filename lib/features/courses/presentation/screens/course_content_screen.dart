@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
-import '../../../../core/localization/app_localizations.dart';
+import '../../data/models/course_model.dart';
 import 'widgets/course_content_attachments_tab.dart';
 import 'widgets/course_content_content_tab.dart';
 import 'widgets/course_content_details_tab.dart';
 import 'widgets/course_content_video_section.dart';
 
 class CourseContentScreen extends StatefulWidget {
-  final String courseId;
-  final Map<String, dynamic>? courseData;
+  final CourseModel course;
 
   const CourseContentScreen({
     super.key,
-    required this.courseId,
-    this.courseData,
+    required this.course,
   });
 
   @override
@@ -38,38 +36,25 @@ class _CourseContentScreenState extends State<CourseContentScreen>
 
   @override
   Widget build(BuildContext context) {
-    // Use passed course data or mock data
-    final course =
-        widget.courseData ??
-        {
-          'nameAr': 'البرمجة المتقدمة',
-          'nameEn': 'Advanced Programming',
-          'instructor': 'Dr. Sarah Johnson',
-          'description': 'Learn advanced programming concepts and techniques.',
-          'price': 299,
-          'discount': 20,
-          'isSubscribed': false,
-          'hasWhatsApp': true,
-          'hasPaymentGateway': true,
-        };
-
-    final price = (course['price'] as int?) ?? 0;
-    final discount = (course['discount'] as int?) ?? 0;
-    final discountedPrice = price.toDouble() - (price.toDouble() * discount / 100);
-
     return DefaultTabController(
       length: 3,
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          title: Text(AppLocalizations.courseContent),
+          title: Text(widget.course.titleAr),
           backgroundColor: AppColors.surface,
           elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
         ),
         body: Column(
           children: [
             // Course Video Section
-            CourseContentVideoSection(),
+            CourseContentVideoSection(
+              course: widget.course,
+            ),
 
             // TabBar
             Container(
@@ -93,12 +78,14 @@ class _CourseContentScreenState extends State<CourseContentScreen>
                 controller: _tabController,
                 children: [
                   CourseContentDetailsTab(
-                    course: course,
-                    originalPrice: price.toDouble(),
-                    discountedPrice: discountedPrice,
+                    course: widget.course,
                   ),
-                  CourseContentContentTab(),
-                  CourseContentAttachmentsTab(),
+                  CourseContentContentTab(
+                    course: widget.course,
+                  ),
+                  CourseContentAttachmentsTab(
+                    course: widget.course,
+                  ),
                 ],
               ),
             ),

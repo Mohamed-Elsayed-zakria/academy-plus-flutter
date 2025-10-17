@@ -6,6 +6,7 @@ abstract class APIEndPoint {
   static const universities = "/api/universities";
   static const departments = "/api/departments";
   static const subDepartments = "/api/sub-departments";
+  static const courses = "/api/courses";
   static const otpRequest = "/api/auth/otp/request";
   static const otpVerify = "/api/auth/otp/verify";
   static const userProfile = "/api/users/profile";

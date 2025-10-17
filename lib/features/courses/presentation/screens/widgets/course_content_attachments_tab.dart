@@ -2,10 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/widgets/premium_content_overlay.dart';
+import '../../../data/models/course_model.dart';
 import 'course_content_section_header.dart';
 
 class CourseContentAttachmentsTab extends StatefulWidget {
-  const CourseContentAttachmentsTab({super.key});
+  final CourseModel course;
+  
+  const CourseContentAttachmentsTab({
+    super.key,
+    required this.course,
+  });
 
   @override
   State<CourseContentAttachmentsTab> createState() => _CourseContentAttachmentsTabState();
