@@ -217,14 +217,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(height: 16),
 
                   _buildInfoCard(
-                    icon: Ionicons.mail_outline,
-                    label: AppLocalizations.email,
-                    value: user.email,
-                    color: AppColors.primary,
-                  ),
-                  const SizedBox(height: 12),
-
-                  _buildInfoCard(
                     icon: Ionicons.call_outline,
                     label: AppLocalizations.phone,
                     value: user.phone,

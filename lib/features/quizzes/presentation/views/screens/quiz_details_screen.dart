@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/localization/app_localizations.dart';
-import '../../../../../core/widgets/custom_button.dart';
 import '../../../../../core/utils/navigation_helper.dart';
 
 class QuizDetailsScreen extends StatelessWidget {
@@ -55,16 +54,11 @@ class QuizDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final status = quiz['status'] as String? ?? 'Available';
-    final questions = quiz['questions'] as int? ?? 10;
-    final duration = quiz['duration'] as int? ?? 30;
-    final attempts = quiz['attempts'] as int? ?? 0;
     final bestScore = quiz['bestScore'] as int?;
     final subjects = quiz['subjects'] as List<String>? ?? [];
     final title = quiz['title'] as String? ?? 'اختبار جديد';
-    final description = quiz['description'] as String? ?? 'لا يوجد وصف متاح';
     final deadline = quiz['deadline'] as String? ?? 'غير محدد';
     final totalPrice = quiz['totalPrice'] as double? ?? 0.0;
-    final username = quiz['username'] as String?;
     final quizDate = quiz['quizDate'] as String?;
 
     return Scaffold(
@@ -76,462 +70,460 @@ class QuizDetailsScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header with Quiz Icon
+            // Modern Header with Gradient
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(24),
-                  bottomRight: Radius.circular(24),
+                  bottomLeft: Radius.circular(32),
+                  bottomRight: Radius.circular(32),
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
-                    blurRadius: 20,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
               ),
-              child: Column(
-                children: [
-                  // Status Badge
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
-                    ),
-                    decoration: BoxDecoration(
-                      color: _getStatusColor(status).withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: _getStatusColor(status).withValues(alpha: 0.3),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          _getStatusIcon(status),
-                          size: 16,
+              child: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    children: [
+                      // Status Badge
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 10,
+                        ),
+                        decoration: BoxDecoration(
                           color: _getStatusColor(status),
+                          borderRadius: BorderRadius.circular(25),
+                          boxShadow: [
+                            BoxShadow(
+                              color: _getStatusColor(status).withValues(alpha: 0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
                         ),
-                        const SizedBox(width: 8),
-                        Text(
-                          _getStatusText(status),
-                          style: TextStyle(
-                            color: _getStatusColor(status),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              _getStatusIcon(status),
+                              size: 18,
+                              color: Colors.white,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              _getStatusText(status),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      
+                      // Modern Quiz Icon with Glass Effect
+                      Container(
+                        padding: const EdgeInsets.all(24),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.9),
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: AppColors.primary.withValues(alpha: 0.2),
+                            width: 3,
                           ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.primary.withValues(alpha: 0.2),
+                              blurRadius: 20,
+                              offset: const Offset(0, 8),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  
-                  // Quiz Icon
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: AppColors.primary.withValues(alpha: 0.1),
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: AppColors.primary.withValues(alpha: 0.2),
-                        width: 2,
-                      ),
-                    ),
-                    child: Icon(
-                      Ionicons.help_circle_outline,
-                      size: 48,
-                      color: AppColors.primary,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  
-                  // Quiz Title
-                  Text(
-                    title,
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          color: AppColors.textPrimary,
-                          fontWeight: FontWeight.bold,
-                        ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 8),
-                  
-                  // Subjects
-                  if (subjects.isNotEmpty)
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.surface,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: AppColors.textTertiary.withValues(alpha: 0.3),
+                        child: Icon(
+                          Ionicons.document_text_outline,
+                          size: 56,
+                          color: AppColors.primary,
                         ),
                       ),
-                      child: Text(
-                        subjects.take(2).join('، ') + 
-                        (subjects.length > 2 ? '...' : ''),
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: AppColors.textSecondary,
-                              fontWeight: FontWeight.w500,
+                      const SizedBox(height: 24),
+                      
+                      // Quiz Title with Better Typography
+                      Text(
+                        title,
+                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                              color: AppColors.textPrimary,
+                              fontWeight: FontWeight.bold,
+                              height: 1.2,
                             ),
                         textAlign: TextAlign.center,
                       ),
-                    ),
-                ],
+                      const SizedBox(height: 12),
+                      
+                      // Modern Subjects Tags
+                      if (subjects.isNotEmpty)
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          alignment: WrapAlignment.center,
+                          children: subjects.take(3).map((subject) {
+                            return Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 8,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppColors.primary.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: AppColors.primary.withValues(alpha: 0.3),
+                                ),
+                              ),
+                              child: Text(
+                                subject,
+                                style: TextStyle(
+                                  color: AppColors.primary,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                    ],
+                  ),
+                ),
               ),
             ),
 
-            // Quiz Info Cards
-            Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Subjects Section
-                  if (subjects.isNotEmpty) ...[
-                    Text(
-                      'المواد المختارة',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary,
-                          ),
-                    ),
-                    const SizedBox(height: 16),
-                    Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: AppColors.primary.withValues(alpha: 0.2),
-                          width: 1.5,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.03),
-                            blurRadius: 10,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
+            // Modern Content Section
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Modern Info Cards Grid
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.05),
+                        blurRadius: 20,
+                        offset: const Offset(0, 4),
                       ),
-                      child: Column(
-                        children: subjects.map((subject) {
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 12),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      // Deadline Card
+                      _ModernInfoCard(
+                        icon: Ionicons.calendar_outline,
+                        label: 'الموعد النهائي',
+                        value: deadline,
+                        color: AppColors.error,
+                        isHighlighted: true,
+                      ),
+                      const SizedBox(height: 16),
+                      
+                      // Enhanced Price and Date Column
+                      Column(
+                        children: [
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: AppColors.accent.withValues(alpha: 0.3),
+                                width: 1,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.05),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
                             child: Row(
                               children: [
                                 Container(
-                                  padding: const EdgeInsets.all(8),
+                                  padding: const EdgeInsets.all(10),
                                   decoration: BoxDecoration(
-                                    color: AppColors.primary.withValues(alpha: 0.1),
-                                    borderRadius: BorderRadius.circular(8),
+                                    color: AppColors.accent.withValues(alpha: 0.2),
+                                    borderRadius: BorderRadius.circular(10),
                                   ),
                                   child: Icon(
-                                    Ionicons.book_outline,
-                                    size: 16,
-                                    color: AppColors.primary,
+                                    Ionicons.card_outline,
+                                    color: AppColors.accent,
+                                    size: 20,
                                   ),
                                 ),
                                 const SizedBox(width: 12),
                                 Expanded(
-                                  child: Text(
-                                    subject,
-                                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                          color: AppColors.textPrimary,
-                                          fontWeight: FontWeight.w500,
-                                        ),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'السعر الإجمالي',
+                                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                              color: AppColors.textSecondary,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                      ),
+                                      const SizedBox(height: 2),
+                                      Text(
+                                        '${totalPrice.toStringAsFixed(0)} \$',
+                                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                              fontWeight: FontWeight.bold,
+                                              color: AppColors.accent,
+                                            ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
                             ),
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                    const SizedBox(height: 32),
-                  ],
-
-                  // Info Grid
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _InfoCard(
-                          icon: Ionicons.help_circle_outline,
-                          label: 'الأسئلة',
-                          value: '$questions',
-                          color: AppColors.primary,
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: _InfoCard(
-                          icon: Ionicons.time_outline,
-                          label: 'المدة',
-                          value: '$duration دقيقة',
-                          color: AppColors.accentOrange,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _InfoCard(
-                          icon: Ionicons.refresh_outline,
-                          label: 'المحاولات',
-                          value: '$attempts',
-                          color: AppColors.accentPurple,
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: _InfoCard(
-                          icon: Ionicons.star_outline,
-                          label: 'أفضل نتيجة',
-                          value: bestScore != null ? '$bestScore%' : 'غير متاح',
-                          color: AppColors.accent,
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  if (totalPrice > 0) ...[
-                    const SizedBox(height: 16),
-                    _InfoCard(
-                      icon: Ionicons.card_outline,
-                      label: 'السعر الإجمالي',
-                      value: '${totalPrice.toStringAsFixed(0)} \$',
-                      color: AppColors.accent,
-                    ),
-                  ],
-
-                  if (quizDate != null) ...[
-                    const SizedBox(height: 16),
-                    _InfoCard(
-                      icon: Ionicons.calendar_outline,
-                      label: 'تاريخ الاختبار',
-                      value: quizDate,
-                      color: AppColors.info,
-                    ),
-                  ],
-
-                  if (username != null) ...[
-                    const SizedBox(height: 16),
-                    _InfoCard(
-                      icon: Ionicons.person_outline,
-                      label: 'اسم المستخدم',
-                      value: username,
-                      color: AppColors.primary,
-                    ),
-                  ],
-
-                  const SizedBox(height: 32),
-
-                  // Description
-                  if (description.isNotEmpty) ...[
-                    Text(
-                      'الوصف',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary,
                           ),
-                    ),
-                    const SizedBox(height: 16),
-                    Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: AppColors.textTertiary.withValues(alpha: 0.2),
-                          width: 1.5,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.03),
-                            blurRadius: 10,
-                            offset: const Offset(0, 2),
+                          const SizedBox(height: 16),
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: AppColors.info.withValues(alpha: 0.3),
+                                width: 1,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.05),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.info.withValues(alpha: 0.2),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Icon(
+                                    Ionicons.calendar_outline,
+                                    color: AppColors.info,
+                                    size: 20,
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'تاريخ الاختبار',
+                                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                              color: AppColors.textSecondary,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                      ),
+                                      const SizedBox(height: 2),
+                                      Text(
+                                        quizDate ?? 'غير محدد',
+                                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                              fontWeight: FontWeight.bold,
+                                              color: AppColors.info,
+                                            ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
-                      child: Text(
-                        description,
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              color: AppColors.textPrimary,
-                              height: 1.6,
-                              fontWeight: FontWeight.w500,
+                    ],
+                  ),
+                ),
+            
+            
+            
+                const SizedBox(height: 24),
+            
+                // Modern Instructions Section
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.05),
+                        blurRadius: 20,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: AppColors.primary.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(12),
                             ),
+                            child: Icon(
+                              Ionicons.information_circle_outline,
+                              color: AppColors.primary,
+                              size: 20,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Text(
+                            'التعليمات',
+                            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.textPrimary,
+                                ),
+                          ),
+                        ],
                       ),
-                    ),
-                    const SizedBox(height: 32),
-                  ],
-
-                  // Instructions
-                  Text(
-                    'التعليمات',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.textPrimary,
-                        ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  _InstructionItem(
-                    icon: Ionicons.time_outline,
-                    text: 'لديك $duration دقيقة لإكمال الاختبار',
-                  ),
-                  const SizedBox(height: 12),
-                  _InstructionItem(
-                    icon: Ionicons.help_circle_outline,
-                    text: 'يحتوي الاختبار على $questions سؤال',
-                  ),
-                  const SizedBox(height: 12),
-                  _InstructionItem(
-                    icon: Ionicons.lock_closed_outline,
-                    text: 'لا يمكن إيقاف المؤقت',
-                  ),
-                  const SizedBox(height: 12),
-                  _InstructionItem(
-                    icon: Ionicons.checkmark_circle_outline,
-                    text: 'راجع إجاباتك قبل التسليم',
-                  ),
-
-                  const SizedBox(height: 32),
-
-                  // Deadline Warning
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: AppColors.warning.withValues(alpha: 0.3),
-                        width: 1.5,
+                      const SizedBox(height: 20),
+            
+                      _ModernInstructionItem(
+                        icon: Ionicons.document_outline,
+                        text: 'قم برفع ملف يحتوي على إجاباتك (PDF, Word, أو صور)',
+                        color: AppColors.primary,
                       ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.03),
-                          blurRadius: 10,
-                          offset: const Offset(0, 2),
+                      const SizedBox(height: 16),
+                      _ModernInstructionItem(
+                        icon: Ionicons.calendar_outline,
+                        text: 'تأكد من التسليم قبل الموعد النهائي',
+                        color: AppColors.error,
+                      ),
+                      const SizedBox(height: 16),
+                      _ModernInstructionItem(
+                        icon: Ionicons.checkmark_circle_outline,
+                        text: 'راجع الملف قبل الرفع',
+                        color: AppColors.success,
+                      ),
+                      const SizedBox(height: 16),
+                      _ModernInstructionItem(
+                        icon: Ionicons.time_outline,
+                        text: 'يمكنك رفع الملف في أي وقت قبل الموعد النهائي',
+                        color: AppColors.info,
+                      ),
+                    ],
+                  ),
+                ),
+            
+            
+                const SizedBox(height: 32),
+            
+                // Modern Action Buttons
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.05),
+                        blurRadius: 20,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      if (status == 'Available') ...[
+                        _ModernActionButton(
+                          text: 'رفع الإجابة',
+                          onPressed: () {
+                            _showUploadConfirmation(context);
+                          },
+                          icon: Ionicons.cloud_upload_outline,
+                          isPrimary: true,
                         ),
-                      ],
-                    ),
-                    child: Row(
-                      children: [
+                        if (bestScore != null) ...[
+                          const SizedBox(height: 12),
+                          _ModernActionButton(
+                            text: 'عرض التسليم السابق',
+                            onPressed: () {
+                              // View previous submission
+                            },
+                            icon: Ionicons.eye_outline,
+                            isPrimary: false,
+                          ),
+                        ],
+                        const SizedBox(height: 12),
+                        _ModernActionButton(
+                          text: 'تحميل المواد المرجعية',
+                          onPressed: () {
+                            // Download materials
+                          },
+                          icon: Ionicons.download_outline,
+                          isPrimary: false,
+                        ),
+                      ] else if (status == 'Completed') ...[
+                        _ModernActionButton(
+                          text: 'عرض النتائج',
+                          onPressed: () {
+                            // View results
+                          },
+                          icon: Ionicons.bar_chart_outline,
+                          isPrimary: true,
+                        ),
+                        const SizedBox(height: 12),
+                        _ModernActionButton(
+                          text: 'تحميل الشهادة',
+                          onPressed: () {
+                            // Download certificate
+                          },
+                          icon: Ionicons.trophy_outline,
+                          isPrimary: false,
+                        ),
+                      ] else if (status == 'Unavailable') ...[
                         Container(
-                          padding: const EdgeInsets.all(12),
+                          padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: AppColors.warning.withValues(alpha: 0.1),
-                            shape: BoxShape.circle,
+                            color: AppColors.textTertiary.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(16),
                           ),
-                          child: Icon(
-                            Ionicons.calendar_outline,
-                            color: AppColors.warning,
-                            size: 24,
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          child: Row(
                             children: [
-                              Text(
-                                'الموعد النهائي',
-                                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                      color: AppColors.warning,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                              Icon(
+                                Ionicons.lock_closed_outline,
+                                color: AppColors.textTertiary,
                               ),
-                              const SizedBox(height: 4),
-                              Text(
-                                deadline,
-                                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                      color: AppColors.textPrimary,
-                                      fontWeight: FontWeight.w500,
-                                    ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                  'الاختبار غير متاح حالياً',
+                                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                        color: AppColors.textSecondary,
+                                      ),
+                                ),
                               ),
                             ],
                           ),
                         ),
                       ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 32),
-
-                  // Action Buttons
-                  if (status == 'Available') ...[
-                    CustomButton(
-                      text: attempts > 0 ? 'إعادة الاختبار' : 'بدء الاختبار',
-                      onPressed: () {
-                        _showStartConfirmation(context);
-                      },
-                      isGradient: true,
-                      width: double.infinity,
-                      icon: Icon(
-                        attempts > 0 ? Ionicons.refresh_outline : Ionicons.play_outline,
-                        color: Colors.white,
-                      ),
-                    ),
-                    if (bestScore != null) ...[
-                      const SizedBox(height: 12),
-                      CustomButton(
-                        text: 'عرض المحاولة السابقة',
-                        onPressed: () {
-                          // View previous attempt
-                        },
-                        isOutlined: true,
-                        width: double.infinity,
-                        icon: Icon(Ionicons.eye_outline, color: AppColors.primary),
-                      ),
                     ],
-                  ] else if (status == 'Completed') ...[
-                    CustomButton(
-                      text: 'عرض النتائج',
-                      onPressed: () {
-                        // View results
-                      },
-                      isGradient: true,
-                      width: double.infinity,
-                      icon: const Icon(Ionicons.bar_chart_outline, color: Colors.white),
-                    ),
-                  ] else if (status == 'Unavailable') ...[
-                    Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: AppColors.textTertiary.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Ionicons.lock_closed_outline,
-                            color: AppColors.textTertiary,
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Text(
-                              'الاختبار غير متاح حالياً',
-                              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                    color: AppColors.textSecondary,
-                                  ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ],
-              ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -539,7 +531,7 @@ class QuizDetailsScreen extends StatelessWidget {
     );
   }
 
-  void _showStartConfirmation(BuildContext context) {
+  void _showUploadConfirmation(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -549,23 +541,24 @@ class QuizDetailsScreen extends StatelessWidget {
           ),
           title: Row(
             children: [
-              Icon(Ionicons.information_circle_outline, color: AppColors.primary),
+              Icon(Ionicons.cloud_upload_outline, color: AppColors.primary),
               const SizedBox(width: 12),
-              Text(AppLocalizations.startQuiz),
+              const Text('رفع الإجابة'),
             ],
           ),
-          content: Text(
-            AppLocalizations.areYouReadyStart,
+          content: const Text(
+            'هل أنت مستعد لرفع ملف الإجابة؟ تأكد من أن الملف يحتوي على جميع الإجابات المطلوبة.',
           ),
           actions: [
             TextButton(
               onPressed: () => NavigationHelper.back(context),
-              child: Text(AppLocalizations.cancel),
+              child: const Text('إلغاء'),
             ),
             ElevatedButton(
               onPressed: () {
                 NavigationHelper.back(context);
-                // Start quiz
+                // Open file picker and upload
+                _openFilePicker(context);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
@@ -573,87 +566,38 @@ class QuizDetailsScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: Text(AppLocalizations.start),
+              child: const Text('رفع الملف'),
             ),
           ],
         );
       },
     );
   }
-}
 
-class _InfoCard extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String value;
-  final Color color;
-
-  const _InfoCard({
-    required this.icon,
-    required this.label,
-    required this.value,
-    required this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: color.withValues(alpha: 0.2),
-          width: 1.5,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon, color: color, size: 24),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            value,
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: color,
-                ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: AppColors.textSecondary,
-                  fontWeight: FontWeight.w500,
-                ),
-            textAlign: TextAlign.center,
-          ),
-        ],
+  void _openFilePicker(BuildContext context) {
+    // TODO: Implement file picker
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('سيتم فتح منتقي الملفات قريباً'),
+        backgroundColor: AppColors.primary,
       ),
     );
   }
 }
 
-class _InstructionItem extends StatelessWidget {
+class _ModernInfoCard extends StatelessWidget {
   final IconData icon;
-  final String text;
+  final String label;
+  final String value;
+  final Color color;
+  final bool isHighlighted;
 
-  const _InstructionItem({
+  const _ModernInfoCard({
     required this.icon,
-    required this.text,
+    required this.label,
+    required this.value,
+    required this.color,
+    this.isHighlighted = false,
   });
 
   @override
@@ -663,13 +607,13 @@ class _InstructionItem extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AppColors.textTertiary.withValues(alpha: 0.2),
-        ),
+        border: isHighlighted 
+            ? Border.all(color: color.withValues(alpha: 0.3), width: 1)
+            : Border.all(color: color.withValues(alpha: 0.2), width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 8,
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
             offset: const Offset(0, 2),
           ),
         ],
@@ -677,25 +621,34 @@ class _InstructionItem extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(
-              icon,
-              size: 20,
-              color: AppColors.primary,
-            ),
+            child: Icon(icon, color: color, size: 24),
           ),
           const SizedBox(width: 16),
           Expanded(
-            child: Text(
-              text,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: AppColors.textPrimary,
-                    fontWeight: FontWeight.w500,
-                  ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: AppColors.textSecondary,
+                        fontWeight: FontWeight.w500,
+                      ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  value,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: isHighlighted ? color : AppColors.textPrimary,
+                      ),
+                ),
+              ],
             ),
           ),
         ],
@@ -703,3 +656,94 @@ class _InstructionItem extends StatelessWidget {
     );
   }
 }
+
+class _ModernInstructionItem extends StatelessWidget {
+  final IconData icon;
+  final String text;
+  final Color color;
+
+  const _ModernInstructionItem({
+    required this.icon,
+    required this.text,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(icon, color: color, size: 16),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            text,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: AppColors.textPrimary,
+                  fontWeight: FontWeight.w500,
+                ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ModernActionButton extends StatelessWidget {
+  final String text;
+  final VoidCallback onPressed;
+  final IconData icon;
+  final bool isPrimary;
+
+  const _ModernActionButton({
+    required this.text,
+    required this.onPressed,
+    required this.icon,
+    required this.isPrimary,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: isPrimary ? AppColors.primary : Colors.white,
+          foregroundColor: isPrimary ? Colors.white : AppColors.primary,
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: isPrimary 
+                ? BorderSide.none 
+                : BorderSide(color: AppColors.primary.withValues(alpha: 0.3)),
+          ),
+          elevation: isPrimary ? 4 : 0,
+          shadowColor: isPrimary ? AppColors.primary.withValues(alpha: 0.3) : null,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 20),
+            const SizedBox(width: 8),
+            Text(
+              text,
+              style: const TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 16,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
