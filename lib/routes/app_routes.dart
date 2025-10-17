@@ -10,6 +10,7 @@ import '../features/auth/presentation/views/screens/reset_password_screen.dart';
 import '../features/home/presentation/views/screens/main_screen.dart';
 import '../features/home/presentation/views/screens/sub_departments_screen.dart';
 import '../features/home/presentation/views/screens/courses_screen.dart';
+import '../features/home/data/models/department_model.dart';
 import '../features/courses/presentation/screens/course_content_screen.dart';
 import '../features/assignments/presentation/views/screens/assignments_screen.dart';
 import '../features/assignments/presentation/views/screens/assignment_details_screen.dart';
@@ -102,7 +103,7 @@ GoRouter createAppRouter({
     GoRoute(
       path: '/department/:id/subdepartments',
       builder: (context, state) {
-        final department = state.extra as Map<String, dynamic>;
+        final department = state.extra as DepartmentModel;
         return SubDepartmentsScreen(department: department);
       },
     ),

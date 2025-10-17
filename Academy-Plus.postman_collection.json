@@ -727,7 +727,81 @@
 							"host": ["{{base_url}}"],
 							"path": ["api", "sub-departments"]
 						},
-						"description": "Get all sub departments"
+						"description": "Get all sub departments with courses_count by default"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Sub Departments with Courses",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.length > 0) {",
+									"        pm.environment.set('sub_department_id', response.data[0].id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/sub-departments?withObjects=true",
+							"host": ["{{base_url}}"],
+							"path": ["api", "sub-departments"],
+							"query": [
+								{
+									"key": "withObjects",
+									"value": "true",
+									"description": "Include full courses objects instead of just count"
+								}
+							]
+						},
+						"description": "Get all sub departments with full courses objects included"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Sub Departments Count Only",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.length > 0) {",
+									"        pm.environment.set('sub_department_id', response.data[0].id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/sub-departments?withObjects=false",
+							"host": ["{{base_url}}"],
+							"path": ["api", "sub-departments"],
+							"query": [
+								{
+									"key": "withObjects",
+									"value": "false",
+									"description": "Only include courses_count (default behavior)"
+								}
+							]
+						},
+						"description": "Get all sub departments with only courses_count (explicit)"
 					},
 					"response": []
 				},
@@ -747,7 +821,32 @@
 								}
 							]
 						},
-						"description": "Get sub departments filtered by main department"
+						"description": "Get sub departments filtered by main department (with courses_count by default)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Sub Departments by Main Department with Courses",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/sub-departments?department_id={{department_id}}&withObjects=true",
+							"host": ["{{base_url}}"],
+							"path": ["api", "sub-departments"],
+							"query": [
+								{
+									"key": "department_id",
+									"value": "{{department_id}}"
+								},
+								{
+									"key": "withObjects",
+									"value": "true",
+									"description": "Include full courses objects"
+								}
+							]
+						},
+						"description": "Get sub departments filtered by main department with full courses objects"
 					},
 					"response": []
 				},
@@ -891,7 +990,7 @@
 					"response": []
 				}
 			],
-			"description": "Sub Department management endpoints"
+			"description": "Sub Department management endpoints. Use withObjects=true to get full courses objects, or withObjects=false (default) to get only courses_count."
 		},
 		{
 			"name": "Courses",

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/utils/navigation_helper.dart';
 import '../../../data/models/department_model.dart';
 
 class DepartmentsGridWidget extends StatelessWidget {
@@ -64,11 +65,11 @@ class DepartmentsGridWidget extends StatelessWidget {
 
           return InkWell(
             onTap: () {
-              // NavigationHelper.to(
-              //   path: '/department/${department.id}/subdepartments',
-              //   context: context,
-              //   data: department,
-              // );
+              NavigationHelper.to(
+                path: '/department/${department.id}/subdepartments',
+                context: context,
+                data: department,
+              );
             },
             borderRadius: BorderRadius.circular(16),
             child: Container(
