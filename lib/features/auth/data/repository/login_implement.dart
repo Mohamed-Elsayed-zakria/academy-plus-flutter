@@ -10,17 +10,7 @@ class LoginImplement extends LoginRepo {
     try {
       const url = "${APIEndPoint.url}${APIEndPoint.login}";
       final requestData = loginModel.toJson();
-
-      print('Login Request:');
-      print('URL: $url');
-      print('Data: $requestData');
-
       final response = await dio.post(url, data: requestData);
-
-      print('Login Response:');
-      print('Status Code: ${response.statusCode}');
-      print('Response Data: ${response.data}');
-
       if (response.statusCode == 200) {
         final loginResponse = LoginResponseModel.fromJson(response.data);
         return right(loginResponse);
@@ -28,7 +18,6 @@ class LoginImplement extends LoginRepo {
         return left(ServerFailures(errMessage: 'Login failed'));
       }
     } catch (e) {
-      print('Login Error: $e');
       return left(returnDioException(e));
     }
   }

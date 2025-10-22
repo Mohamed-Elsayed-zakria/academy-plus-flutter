@@ -10,13 +10,6 @@ class ProfileImplement extends ProfileRepo {
   Future<Either<Failures, void>> updateProfile(UpdateProfileModel updateProfileModel) async {
     try {
       const url = "${APIEndPoint.url}${APIEndPoint.userProfile}";
-      
-      print('Update Profile Request:');
-      print('URL: $url');
-      print('Full Name: ${updateProfileModel.fullName}');
-      print('Profile Image: ${updateProfileModel.profileImage?.path}');
-      
-      // Create FormData for multipart request
       final formData = FormData.fromMap({
         if (updateProfileModel.fullName != null) 'full_name': updateProfileModel.fullName!,
         if (updateProfileModel.profileImage != null)
@@ -25,20 +18,13 @@ class ProfileImplement extends ProfileRepo {
             filename: 'profile_image.jpg',
           ),
       });
-      
       final response = await dio.put(url, data: formData);
-      
-      print('Update Profile Response:');
-      print('Status Code: ${response.statusCode}');
-      print('Response Data: ${response.data}');
-      
       if (response.statusCode == 200) {
         return right(null);
       } else {
         return left(ServerFailures(errMessage: 'Failed to update profile'));
       }
     } catch (e) {
-      print('Update Profile Error: $e');
       return left(returnDioException(e));
     }
   }

@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/errors/server_failures.dart';
 import '../../../../../core/localization/app_localizations.dart';
@@ -13,6 +14,22 @@ import 'register_state.dart';
 class RegisterCubit extends Cubit<RegisterState> {
   RegisterCubit(this._registerRepo) : super(RegisterInitial());
   final RegisterRepo _registerRepo;
+
+  // Form controllers and key
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  @override
+  Future<void> close() {
+    nameController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    phoneController.dispose();
+    return super.close();
+  }
 
   // Update form fields
   void updateName(String name) {
@@ -40,6 +57,20 @@ class RegisterCubit extends Cubit<RegisterState> {
     if (state is RegisterInitial) {
       final currentState = state as RegisterInitial;
       emit(currentState.copyWith(phone: phone));
+    }
+  }
+
+  // Validate and register
+  void validateAndRegister() {
+    if (formKey.currentState!.validate()) {
+      // Update cubit with current form values
+      updateName(nameController.text);
+      updatePassword(passwordController.text);
+      updateConfirmPassword(confirmPasswordController.text);
+      updatePhone(phoneController.text);
+      
+      // Register user
+      register();
     }
   }
 

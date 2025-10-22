@@ -13,24 +13,13 @@ class OtpImplement extends OtpRepo {
     try {
       const url = "${APIEndPoint.url}${APIEndPoint.otpRequest}";
       final requestData = otpRequestModel.toJson();
-      
-      print('OTP Request:');
-      print('URL: $url');
-      print('Data: $requestData');
-      
       final response = await dio.post(url, data: requestData);
-      
-      print('OTP Request Response:');
-      print('Status Code: ${response.statusCode}');
-      print('Response Data: ${response.data}');
-      
       if (response.statusCode == 200) {
         return right(null);
       } else {
         return left(ServerFailures(errMessage: 'Failed to request OTP'));
       }
     } catch (e) {
-      print('OTP Request Error: $e');
       return left(returnDioException(e));
     }
   }
@@ -40,24 +29,13 @@ class OtpImplement extends OtpRepo {
     try {
       const url = "${APIEndPoint.url}${APIEndPoint.otpVerify}";
       final requestData = otpVerifyModel.toJson();
-      
-      print('OTP Verify Request:');
-      print('URL: $url');
-      print('Data: $requestData');
-      
       final response = await dio.post(url, data: requestData);
-      
-      print('OTP Verify Response:');
-      print('Status Code: ${response.statusCode}');
-      print('Response Data: ${response.data}');
-      
       if (response.statusCode == 200) {
         return right(null);
       } else {
         return left(ServerFailures(errMessage: 'Invalid OTP code'));
       }
     } catch (e) {
-      print('OTP Verify Error: $e');
       return left(returnDioException(e));
     }
   }
@@ -67,24 +45,13 @@ class OtpImplement extends OtpRepo {
     try {
       const url = "${APIEndPoint.url}${APIEndPoint.forgotPassword}";
       final requestData = forgotPasswordModel.toJson();
-      
-      print('Forgot Password Request:');
-      print('URL: $url');
-      print('Data: $requestData');
-      
       final response = await dio.post(url, data: requestData);
-      
-      print('Forgot Password Response:');
-      print('Status Code: ${response.statusCode}');
-      print('Response Data: ${response.data}');
-      
       if (response.statusCode == 200) {
         return right(null);
       } else {
         return left(ServerFailures(errMessage: 'Failed to send password reset code'));
       }
     } catch (e) {
-      print('Forgot Password Error: $e');
       return left(returnDioException(e));
     }
   }
@@ -94,24 +61,13 @@ class OtpImplement extends OtpRepo {
     try {
       const url = "${APIEndPoint.url}${APIEndPoint.resetPassword}";
       final requestData = resetPasswordModel.toJson();
-      
-      print('Reset Password Request:');
-      print('URL: $url');
-      print('Data: $requestData');
-      
       final response = await dio.post(url, data: requestData);
-      
-      print('Reset Password Response:');
-      print('Status Code: ${response.statusCode}');
-      print('Response Data: ${response.data}');
-      
       if (response.statusCode == 200) {
         return right(null);
       } else {
         return left(ServerFailures(errMessage: 'Failed to reset password'));
       }
     } catch (e) {
-      print('Reset Password Error: $e');
       return left(returnDioException(e));
     }
   }

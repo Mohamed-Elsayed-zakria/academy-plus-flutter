@@ -231,6 +231,8 @@
   "please_enter_description": "Please enter a description",
   "please_select_date": "Please select a date",
   "please_enter_admin_username": "Please enter admin username",
-  "please_enter_admin_password": "Please enter admin password"
+  "please_enter_admin_password": "Please enter admin password",
+  "code_sent_to": "Code sent to",
+  "phone_number_display": "Code sent to {phone}"
 }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/utils/navigation_helper.dart';
 import '../../data/models/course_model.dart';
 import 'widgets/course_content_attachments_tab.dart';
 import 'widgets/course_content_content_tab.dart';
@@ -46,7 +47,7 @@ class _CourseContentScreenState extends State<CourseContentScreen>
           elevation: 0,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () => NavigationHelper.back(context),
           ),
         ),
         body: Column(

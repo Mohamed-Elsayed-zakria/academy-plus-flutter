@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/localization/app_localizations.dart';
+import '../../core/constants/app_colors.dart';
+import '../../core/localization/app_localizations.dart';
+import '../../core/utils/navigation_helper.dart';
 
 class MultiSubjectSelectorWidget extends StatefulWidget {
   final List<String> selectedSubjects;
@@ -274,7 +275,7 @@ class _MultiSubjectSelectorWidgetState extends State<MultiSubjectSelectorWidget>
             ),
             actions: [
               TextButton(
-                onPressed: () => Navigator.of(context).pop(),
+                onPressed: () => NavigationHelper.back(context),
                 child: Text(
                   AppLocalizations.cancel,
                   style: TextStyle(color: AppColors.textSecondary),
@@ -283,7 +284,7 @@ class _MultiSubjectSelectorWidgetState extends State<MultiSubjectSelectorWidget>
               ElevatedButton(
                 onPressed: () {
                   widget.onSubjectsChanged(tempSelectedSubjects);
-                  Navigator.of(context).pop();
+                  NavigationHelper.back(context);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,

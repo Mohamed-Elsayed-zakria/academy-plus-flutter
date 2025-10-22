@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/errors/server_failures.dart';
 import '../../../../../core/localization/app_localizations.dart';
@@ -12,6 +13,18 @@ class LoginCubit extends Cubit<LoginState> {
   LoginCubit(this._loginRepo) : super(LoginInitial());
   final LoginRepo _loginRepo;
 
+  // Form controllers and key
+  final TextEditingController phoneController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  @override
+  Future<void> close() {
+    phoneController.dispose();
+    passwordController.dispose();
+    return super.close();
+  }
+
   // Update form fields
   void updatePhone(String phone) {
     if (state is LoginInitial) {
@@ -24,6 +37,18 @@ class LoginCubit extends Cubit<LoginState> {
     if (state is LoginInitial) {
       final currentState = state as LoginInitial;
       emit(currentState.copyWith(password: password));
+    }
+  }
+
+  // Validate and login
+  void validateAndLogin() {
+    if (formKey.currentState!.validate()) {
+      // Update cubit with current form values
+      updatePhone(phoneController.text);
+      updatePassword(passwordController.text);
+      
+      // Login user
+      login();
     }
   }
 

@@ -244,5 +244,7 @@ class AppLocalizations {
   static String get pleaseSelectDate => 'please_select_date'.tr();
   static String get pleaseEnterAdminUsername => 'please_enter_admin_username'.tr();
   static String get pleaseEnterAdminPassword => 'please_enter_admin_password'.tr();
+  static String get codeSentTo => 'code_sent_to'.tr();
+  static String get phoneNumberDisplay => 'phone_number_display'.tr();
 }
 

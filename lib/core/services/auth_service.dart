@@ -1,5 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../features/auth/data/models/login_model.dart';
+import 'dart:developer';
 
 class AuthService {
   static const String _tokenKey = 'auth_token';
@@ -9,15 +10,9 @@ class AuthService {
   // Save login data
   static Future<void> saveLoginData(LoginResponseModel loginResponse) async {
     final prefs = await SharedPreferences.getInstance();
-    
     await prefs.setString(_tokenKey, loginResponse.token);
     await prefs.setString(_userKey, _userToJson(loginResponse.user));
     await prefs.setBool(_isLoggedInKey, true);
-    
-    print('Login data saved successfully');
-    print('Token: ${loginResponse.token}');
-    print('User: ${loginResponse.user.fullName}');
-    print('University ID: ${loginResponse.user.universityId}');
   }
 
   // Get auth token
@@ -61,35 +56,18 @@ class AuthService {
         role: user.role,
         universityId: user.universityId,
       );
-      
       // Save updated user data
       await prefs.setString(_userKey, _userToJson(updatedUser));
-      
-      print('Phone verification status updated: $isVerified');
+      log('Phone verification status updated: $isVerified');
     }
   }
 
   // Logout - clear all data
   static Future<void> logout() async {
     final prefs = await SharedPreferences.getInstance();
-    
-    print('🔄 AuthService.logout() - Starting logout process...');
-    
-    // Check current state before clearing
-    final currentToken = prefs.getString(_tokenKey);
-    final currentIsLoggedIn = prefs.getBool(_isLoggedInKey);
-    print('🔍 Before logout - Token exists: ${currentToken != null}, isLoggedIn: $currentIsLoggedIn');
-    
     await prefs.remove(_tokenKey);
     await prefs.remove(_userKey);
     await prefs.setBool(_isLoggedInKey, false);
-    
-    // Verify after clearing
-    final tokenAfter = prefs.getString(_tokenKey);
-    final isLoggedInAfter = prefs.getBool(_isLoggedInKey);
-    print('🔍 After logout - Token exists: ${tokenAfter != null}, isLoggedIn: $isLoggedInAfter');
-    
-    print('✅ AuthService.logout() - User logged out successfully');
   }
 
   // Helper method to convert UserModel to JSON string

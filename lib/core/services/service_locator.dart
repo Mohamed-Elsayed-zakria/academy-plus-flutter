@@ -4,18 +4,18 @@ import '../../features/universities/data/repository/universities_implement.dart'
 import '../../features/universities/presentation/manager/cubit/universities_cubit.dart';
 import '../../features/auth/data/repository/register_repo.dart';
 import '../../features/auth/data/repository/register_implement.dart';
-import '../../features/auth/presentation/manager/cubit/register_cubit.dart';
+import '../../features/auth/presentation/manager/register_cubit/register_cubit.dart';
 import '../../features/auth/data/repository/login_repo.dart';
 import '../../features/auth/data/repository/login_implement.dart';
-import '../../features/auth/presentation/manager/cubit/login_cubit.dart';
+import '../../features/auth/presentation/manager/login_cubit/login_cubit.dart';
 import '../../features/auth/data/repository/otp_repo.dart';
 import '../../features/auth/data/repository/otp_implement.dart';
-import '../../features/auth/presentation/manager/cubit/otp_cubit.dart';
-import '../../features/auth/presentation/manager/cubit/forgot_password_cubit.dart';
-import '../../features/auth/presentation/manager/cubit/reset_password_cubit.dart';
+import '../../features/auth/presentation/manager/otp_cubit/otp_cubit.dart';
+import '../../features/auth/presentation/manager/forgot_password_cubit/forgot_password_cubit.dart';
+import '../../features/auth/presentation/manager/reset_password_cubit/reset_password_cubit.dart';
 import '../../features/auth/data/repository/profile_repo.dart';
 import '../../features/auth/data/repository/profile_implement.dart';
-import '../../features/auth/presentation/manager/cubit/profile_picture_cubit.dart';
+import '../../features/auth/presentation/manager/profile_picture_cubit/profile_picture_cubit.dart';
 
 class SetupLocator {
   static GetIt locator = GetIt.instance;

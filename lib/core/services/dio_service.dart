@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'auth_service.dart';
+import 'dart:developer';
 
 class DioService {
   static Dio? _dio;
@@ -57,10 +58,10 @@ class _AuthInterceptor extends Interceptor {
       options.headers['Authorization'] = 'Bearer $token';
     }
     
-    print('🚀 Request: ${options.method} ${options.uri}');
-    print('📤 Headers: ${options.headers}');
+    log('🚀 Request: ${options.method} ${options.uri}');
+    log('📤 Headers: ${options.headers}');
     if (options.data != null) {
-      print('📦 Data: ${options.data}');
+      log('📦 Data: ${options.data}');
     }
     
     handler.next(options);
@@ -68,13 +69,13 @@ class _AuthInterceptor extends Interceptor {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
-    print('❌ Error: ${err.message}');
-    print('📊 Status Code: ${err.response?.statusCode}');
-    print('📄 Response Data: ${err.response?.data}');
+    log('❌ Error: ${err.message}');
+    log('📊 Status Code: ${err.response?.statusCode}');
+    log('📄 Response Data: ${err.response?.data}');
     
     // Handle 401 Unauthorized
     if (err.response?.statusCode == 401) {
-      print('🔒 Unauthorized access - token may be expired');
+      log('🔒 Unauthorized access - token may be expired');
       // You can add logic here to redirect to login screen
     }
     
@@ -83,8 +84,8 @@ class _AuthInterceptor extends Interceptor {
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
-    print('✅ Response: ${response.statusCode} ${response.requestOptions.uri}');
-    print('📥 Response Data: ${response.data}');
+    log('✅ Response: ${response.statusCode} ${response.requestOptions.uri}');
+    log('📥 Response Data: ${response.data}');
     
     handler.next(response);
   }
@@ -93,30 +94,30 @@ class _AuthInterceptor extends Interceptor {
 class _LoggingInterceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    print('🌐 API Request:');
-    print('   Method: ${options.method}');
-    print('   URL: ${options.uri}');
-    print('   Headers: ${options.headers}');
+    log('🌐 API Request:');
+    log('   Method: ${options.method}');
+    log('   URL: ${options.uri}');
+    log('   Headers: ${options.headers}');
     if (options.data != null) {
-      print('   Body: ${options.data}');
+      log('   Body: ${options.data}');
     }
     handler.next(options);
   }
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
-    print('📡 API Response:');
-    print('   Status: ${response.statusCode}');
-    print('   Data: ${response.data}');
+    log('📡 API Response:');
+    log('   Status: ${response.statusCode}');
+    log('   Data: ${response.data}');
     handler.next(response);
   }
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
-    print('💥 API Error:');
-    print('   Message: ${err.message}');
-    print('   Status: ${err.response?.statusCode}');
-    print('   Data: ${err.response?.data}');
+    log('💥 API Error:');
+    log('   Message: ${err.message}');
+    log('   Status: ${err.response?.statusCode}');
+    log('   Data: ${err.response?.data}');
     handler.next(err);
   }
 }

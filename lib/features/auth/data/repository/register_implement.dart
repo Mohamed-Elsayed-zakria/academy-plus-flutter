@@ -13,12 +13,8 @@ class RegisterImplement extends RegisterRepo {
   }) async {
     try {
       const url = "${APIEndPoint.url}${APIEndPoint.register}";
-      
-      // Create FormData for file upload
       final formData = FormData.fromMap(loginModel.toFormData());
-      
       final response = await dio.post(url, data: formData);
-      
       if (response.statusCode == 201) {
         // Parse the response to extract token and user data
         final loginResponse = LoginResponseModel.fromJson(response.data);

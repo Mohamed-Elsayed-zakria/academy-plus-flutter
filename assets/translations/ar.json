@@ -231,6 +231,8 @@
   "please_enter_description": "يرجى إدخال الوصف",
   "please_select_date": "يرجى اختيار التاريخ",
   "please_enter_admin_username": "يرجى إدخال اسم المستخدم للأدمن",
-  "please_enter_admin_password": "يرجى إدخال كلمة المرور للأدمن"
+  "please_enter_admin_password": "يرجى إدخال كلمة المرور للأدمن",
+  "code_sent_to": "تم إرسال الرمز إلى",
+  "phone_number_display": "تم إرسال الرمز إلى {phone}"
 }
 

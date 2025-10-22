@@ -1,5 +1,5 @@
 abstract class APIEndPoint {
-  static const url = "http://192.168.0.104:4000";
+  static const url = "https://academy-plus.vercel.app";
   static const register = "/api/auth/register";
   static const login = "/api/auth/login";
   static const logout = "/api/auth/logout";
