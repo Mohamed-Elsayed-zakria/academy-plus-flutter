@@ -11,6 +11,11 @@ import '../../features/auth/presentation/manager/cubit/login_cubit.dart';
 import '../../features/auth/data/repository/otp_repo.dart';
 import '../../features/auth/data/repository/otp_implement.dart';
 import '../../features/auth/presentation/manager/cubit/otp_cubit.dart';
+import '../../features/auth/presentation/manager/cubit/forgot_password_cubit.dart';
+import '../../features/auth/presentation/manager/cubit/reset_password_cubit.dart';
+import '../../features/auth/data/repository/profile_repo.dart';
+import '../../features/auth/data/repository/profile_implement.dart';
+import '../../features/auth/presentation/manager/cubit/profile_picture_cubit.dart';
 
 class SetupLocator {
   static GetIt locator = GetIt.instance;
@@ -30,5 +35,15 @@ class SetupLocator {
     // OTP
     locator.registerLazySingleton<OtpRepo>(() => OtpImplement());
     locator.registerFactory(() => OtpCubit(locator()));
+
+    // Forgot Password
+    locator.registerFactory(() => ForgotPasswordCubit(locator()));
+
+    // Reset Password
+    locator.registerFactory(() => ResetPasswordCubit(locator<OtpRepo>()));
+
+    // Profile
+    locator.registerLazySingleton<ProfileRepo>(() => ProfileImplement());
+    locator.registerFactory(() => ProfilePictureCubit(locator()));
   }
 }

@@ -1,76 +1,62 @@
-import '../../../data/models/login_model.dart';
+abstract class ForgotPasswordState {}
 
-abstract class LoginState {}
-
-final class LoginInitial extends LoginState {
+final class ForgotPasswordInitial extends ForgotPasswordState {
   final String phone;
-  final String password;
   final String selectedDialCode;
   final bool hasAttemptedSubmit;
 
-  LoginInitial({
+  ForgotPasswordInitial({
     this.phone = '',
-    this.password = '',
     this.selectedDialCode = '+20',
     this.hasAttemptedSubmit = false,
   });
 
-  LoginInitial copyWith({
+  ForgotPasswordInitial copyWith({
     String? phone,
-    String? password,
     String? selectedDialCode,
     bool? hasAttemptedSubmit,
   }) {
-    return LoginInitial(
+    return ForgotPasswordInitial(
       phone: phone ?? this.phone,
-      password: password ?? this.password,
       selectedDialCode: selectedDialCode ?? this.selectedDialCode,
       hasAttemptedSubmit: hasAttemptedSubmit ?? this.hasAttemptedSubmit,
     );
   }
 }
 
-final class LoginLoading extends LoginState {
+final class ForgotPasswordLoading extends ForgotPasswordState {
   final String phone;
-  final String password;
   final String selectedDialCode;
   final bool hasAttemptedSubmit;
 
-  LoginLoading({
+  ForgotPasswordLoading({
     required this.phone,
-    required this.password,
     required this.selectedDialCode,
     required this.hasAttemptedSubmit,
   });
 }
 
-final class LoginSuccess extends LoginState {
-  final LoginResponseModel loginResponse;
+final class ForgotPasswordSuccess extends ForgotPasswordState {
   final String phone;
-  final String password;
   final String selectedDialCode;
   final bool hasAttemptedSubmit;
 
-  LoginSuccess({
-    required this.loginResponse,
+  ForgotPasswordSuccess({
     required this.phone,
-    required this.password,
     required this.selectedDialCode,
     required this.hasAttemptedSubmit,
   });
 }
 
-final class LoginError extends LoginState {
+final class ForgotPasswordError extends ForgotPasswordState {
   final String error;
   final String phone;
-  final String password;
   final String selectedDialCode;
   final bool hasAttemptedSubmit;
 
-  LoginError({
+  ForgotPasswordError({
     required this.error,
     required this.phone,
-    required this.password,
     required this.selectedDialCode,
     required this.hasAttemptedSubmit,
   });

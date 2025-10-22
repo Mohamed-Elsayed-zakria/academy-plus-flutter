@@ -12,67 +12,37 @@ import '../../../../../core/utils/navigation_helper.dart';
 import '../../../../../core/services/service_locator.dart';
 import '../../../../universities/presentation/manager/cubit/universities_cubit.dart';
 import '../../../../universities/presentation/manager/cubit/universities_state.dart';
-import '../../../../universities/data/models/university_model.dart';
 import '../../manager/cubit/register_cubit.dart';
 import '../../manager/cubit/register_state.dart';
-import '../../../data/models/register_model.dart';
 import '../../manager/cubit/otp_cubit.dart';
 import '../../manager/cubit/otp_state.dart';
 
-class RegisterScreen extends StatefulWidget {
+class RegisterScreen extends StatelessWidget {
   const RegisterScreen({super.key});
 
   @override
-  State<RegisterScreen> createState() => _RegisterScreenState();
-}
-
-class _RegisterScreenState extends State<RegisterScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _phoneController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
-  UniversityModel? _selectedUniversity;
-  bool _hasAttemptedSubmit = false;
-  late UniversitiesCubit _universitiesCubit;
-  late RegisterCubit _registerCubit;
-  late OtpCubit _otpCubit;
-  String _selectedDialCode = '+20'; // Default to Egypt dial code
-
-  @override
-  void initState() {
-    super.initState();
-    _universitiesCubit = SetupLocator.locator<UniversitiesCubit>();
-    _registerCubit = SetupLocator.locator<RegisterCubit>();
-    _otpCubit = SetupLocator.locator<OtpCubit>();
-  }
-
-  @override
-  void dispose() {
-    _nameController.dispose();
-    _phoneController.dispose();
-    _passwordController.dispose();
-    _confirmPasswordController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    // Create controllers for form fields
+    final nameController = TextEditingController();
+    final passwordController = TextEditingController();
+    final confirmPasswordController = TextEditingController();
+    final phoneController = TextEditingController();
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => _universitiesCubit),
-        BlocProvider(create: (context) => _registerCubit),
-        BlocProvider(create: (context) => _otpCubit),
+        BlocProvider(create: (context) => SetupLocator.locator<UniversitiesCubit>()..getUniversities()),
+        BlocProvider(create: (context) => SetupLocator.locator<RegisterCubit>()),
+        BlocProvider(create: (context) => SetupLocator.locator<OtpCubit>()),
       ],
       child: MultiBlocListener(
         listeners: [
           BlocListener<RegisterCubit, RegisterState>(
             listener: (context, state) {
               if (state is RegisterSuccess) {
-                final fullPhoneNumber =
-                    '$_selectedDialCode${_phoneController.text}';
+                final registerCubit = context.read<RegisterCubit>();
+                final currentState = registerCubit.state as RegisterSuccess;
+                final fullPhoneNumber = '${currentState.selectedDialCode}${currentState.phone}';
                 // Request OTP after successful registration
-                _otpCubit.requestOtp(fullPhoneNumber);
+                context.read<OtpCubit>().requestOtp(fullPhoneNumber);
               } else if (state is RegisterError) {
                 // Show error toast
                 CustomToast.showError(context, message: state.error);
@@ -82,9 +52,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
           BlocListener<OtpCubit, OtpState>(
             listener: (context, state) {
               if (state is OtpRequestSuccess) {
+                final registerCubit = context.read<RegisterCubit>();
+                final currentState = registerCubit.state as RegisterSuccess;
+                final fullPhoneNumber = '${currentState.selectedDialCode}${currentState.phone}';
                 // Navigate to OTP screen after successful OTP request
-                final fullPhoneNumber =
-                    '$_selectedDialCode${_phoneController.text}';
                 NavigationHelper.to(
                   path: '/otp',
                   context: context,
@@ -92,10 +63,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     'phoneNumber': fullPhoneNumber,
                     'isResetPassword': false,
                     'extraData': {
-                      'name': _nameController.text,
+                      'name': currentState.name,
                       'phone': fullPhoneNumber,
-                      'password': _passwordController.text,
-                      'universityId': _selectedUniversity!.id,
+                      'password': currentState.password,
+                      'universityId': currentState.selectedUniversity?.id ?? 0,
                     },
                   },
                 );
@@ -161,267 +132,270 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                     const SizedBox(height: 48),
                     // Register Form Section
-                    Form(
-                      key: _formKey,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Full Name Field
-                          CustomTextField(
-                            label: AppLocalizations.fullName,
-                            hintText: AppLocalizations.fullName,
-                            controller: _nameController,
-                            prefixIcon: const Icon(Ionicons.person_outline),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return AppLocalizations.pleaseEnterFullName;
-                              }
-                              return null;
-                            },
-                          ),
-
-                          const SizedBox(height: 20),
-
-                          // Password Field
-                          CustomTextField(
-                            label: AppLocalizations.password,
-                            hintText: AppLocalizations.password,
-                            controller: _passwordController,
-                            isPassword: true,
-                            prefixIcon: const Icon(
-                              Ionicons.lock_closed_outline,
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter your password';
-                              }
-                              if (value.length < 6) {
-                                return AppLocalizations.passwordMustBeAtLeast6;
-                              }
-                              return null;
-                            },
-                          ),
-
-                          const SizedBox(height: 20),
-
-                          // Confirm Password Field
-                          CustomTextField(
-                            label: AppLocalizations.confirmPassword,
-                            hintText: AppLocalizations.confirmPassword,
-                            controller: _confirmPasswordController,
-                            isPassword: true,
-                            prefixIcon: const Icon(
-                              Ionicons.lock_closed_outline,
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return AppLocalizations.pleaseConfirmPassword;
-                              }
-                              if (value != _passwordController.text) {
-                                return AppLocalizations.passwordsDoNotMatch;
-                              }
-                              return null;
-                            },
-                          ),
-
-                          const SizedBox(height: 20),
-
-                          // Phone Number Field
-                          CustomPhoneInput(
-                            label: AppLocalizations.phoneNumber,
-                            hintText: AppLocalizations.phoneNumber,
-                            controller: _phoneController,
-                            initialCountryCode: 'EG',
-                            onCountryChanged: (countryCode, dialCode) {
-                              setState(() {
-                                _selectedDialCode = dialCode;
-                              });
-                              print(
-                                'Country changed: $countryCode, Dial code: $dialCode',
-                              );
-                            },
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return AppLocalizations.pleaseEnterPhone;
-                              }
-                              return null;
-                            },
-                          ),
-
-                          const SizedBox(height: 20),
-
-                          // University Selection
-                          BlocBuilder<UniversitiesCubit, UniversitiesState>(
-                            builder: (context, state) {
-                              return UniversitySelectorWidget(
-                                selectedUniversity: _selectedUniversity,
-                                onUniversitySelected: (university) {
-                                  setState(() {
-                                    _selectedUniversity = university;
-                                    _hasAttemptedSubmit = false;
-                                  });
-                                },
-                                onTap: () {
-                                  if (state is UniversitiesInitial) {
-                                    _universitiesCubit.getUniversities();
-                                  }
-                                },
-                                label: AppLocalizations.selectUniversity,
-                                universities: state is UniversitiesSuccess
-                                    ? state.universities
-                                    : [],
-                                isLoading: state is UniversitiesLoading,
-                                hasError:
-                                    _hasAttemptedSubmit &&
-                                    _selectedUniversity == null,
-                                errorText:
-                                    _hasAttemptedSubmit &&
-                                        _selectedUniversity == null
-                                    ? 'Please select your university'
-                                    : null,
-                              );
-                            },
-                          ),
-
-                          const SizedBox(height: 32),
-
-                          // Register Button
-                          BlocBuilder<RegisterCubit, RegisterState>(
-                            builder: (context, state) {
-                              final isLoading = state is RegisterLoading;
-
-                              return CustomButton(
-                                text: isLoading
-                                    ? 'جاري إنشاء الحساب...'
-                                    : AppLocalizations.register,
-                                onPressed: isLoading
-                                    ? null
-                                    : () {
-                                        setState(() {
-                                          _hasAttemptedSubmit = true;
-                                        });
-
-                                        if (_formKey.currentState!.validate() &&
-                                            _selectedUniversity != null) {
-                                          // Prepare phone number with country code
-                                          final fullPhoneNumber =
-                                              '$_selectedDialCode${_phoneController.text}';
-
-                                          // Register user first
-                                          _registerCubit.register(
-                                            registerModel: RegisterModel(
-                                              name: _nameController.text,
-                                              phone: fullPhoneNumber,
-                                              password:
-                                                  _passwordController.text,
-                                              universityId:
-                                                  _selectedUniversity!.id,
-                                            ),
-                                          );
-                                        } else if (_selectedUniversity ==
-                                            null) {
-                                          CustomToast.showError(
-                                            context,
-                                            message: 'يرجى اختيار الجامعة',
-                                          );
-                                        }
-                                      },
-                                isOutlined: true,
-                                width: double.infinity,
-                                icon: isLoading
-                                    ? const SizedBox(
-                                        width: 20,
-                                        height: 20,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                          valueColor:
-                                              AlwaysStoppedAnimation<Color>(
-                                                AppColors.primary,
-                                              ),
-                                        ),
-                                      )
-                                    : const Icon(
-                                        Ionicons.person_add_outline,
-                                        color: AppColors.primary,
-                                        size: 20,
-                                      ),
-                              );
-                            },
-                          ),
-
-                          const SizedBox(height: 32),
-
-                          // Divider
-                          Row(
+                    BlocBuilder<RegisterCubit, RegisterState>(
+                      builder: (context, registerState) {
+                        return Form(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Expanded(
-                                child: Divider(
-                                  color: AppColors.textTertiary.withValues(
-                                    alpha: 0.3,
-                                  ),
-                                ),
+                              // Full Name Field
+                              CustomTextField(
+                                label: AppLocalizations.fullName,
+                                hintText: AppLocalizations.fullName,
+                                controller: nameController,
+                                prefixIcon: const Icon(Ionicons.person_outline),
+                                validator: (value) {
+                                  return context.read<RegisterCubit>().validateName(value);
+                                },
                               ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
+
+                              const SizedBox(height: 20),
+
+                              // Password Field
+                              CustomTextField(
+                                label: AppLocalizations.password,
+                                hintText: AppLocalizations.password,
+                                controller: passwordController,
+                                isPassword: true,
+                                prefixIcon: const Icon(
+                                  Ionicons.lock_closed_outline,
                                 ),
-                                child: Text(
-                                  AppLocalizations.or,
-                                  style: Theme.of(context).textTheme.bodySmall
-                                      ?.copyWith(
-                                        color: AppColors.textTertiary,
-                                        fontWeight: FontWeight.w500,
+                                validator: (value) {
+                                  return context.read<RegisterCubit>().validatePassword(value);
+                                },
+                              ),
+
+                              const SizedBox(height: 20),
+
+                              // Confirm Password Field
+                              CustomTextField(
+                                label: AppLocalizations.confirmPassword,
+                                hintText: AppLocalizations.confirmPassword,
+                                controller: confirmPasswordController,
+                                isPassword: true,
+                                prefixIcon: const Icon(
+                                  Ionicons.lock_closed_outline,
+                                ),
+                                validator: (value) {
+                                  return context.read<RegisterCubit>().validateConfirmPassword(value, passwordController.text);
+                                },
+                              ),
+
+                              const SizedBox(height: 20),
+
+                              // Phone Number Field
+                              BlocBuilder<RegisterCubit, RegisterState>(
+                                builder: (context, state) {
+                                  return CustomPhoneInput(
+                                    label: AppLocalizations.phoneNumber,
+                                    hintText: AppLocalizations.phoneNumber,
+                                    controller: phoneController,
+                                    initialCountryCode: 'EG',
+                                    onCountryChanged: (countryCode, dialCode) {
+                                      context.read<RegisterCubit>().updateDialCode(dialCode);
+                                    },
+                                    validator: (value) {
+                                      return context.read<RegisterCubit>().validatePhone(value);
+                                    },
+                                  );
+                                },
+                              ),
+
+                              const SizedBox(height: 20),
+
+                              // University Selection
+                              BlocBuilder<UniversitiesCubit, UniversitiesState>(
+                                builder: (context, universitiesState) {
+                                  return BlocBuilder<RegisterCubit, RegisterState>(
+                                    builder: (context, registerState) {
+                                      final currentState = registerState is RegisterInitial ? registerState : RegisterInitial();
+                                      return UniversitySelectorWidget(
+                                        selectedUniversity: currentState.selectedUniversity,
+                                        onUniversitySelected: (university) {
+                                          context.read<RegisterCubit>().updateSelectedUniversity(university);
+                                        },
+                                        onTap: () {
+                                          // Universities are already loaded automatically
+                                        },
+                                        label: AppLocalizations.selectUniversity,
+                                        universities: universitiesState is UniversitiesSuccess
+                                            ? universitiesState.universities
+                                            : [],
+                                        isLoading: universitiesState is UniversitiesLoading,
+                                        hasError: currentState.hasAttemptedSubmit && currentState.selectedUniversity == null,
+                                        errorText: currentState.hasAttemptedSubmit && currentState.selectedUniversity == null
+                                            ? 'Please select your university'
+                                            : null,
+                                      );
+                                    },
+                                  );
+                                },
+                              ),
+
+                              // Error message display
+                              BlocBuilder<RegisterCubit, RegisterState>(
+                                builder: (context, state) {
+                                  if (state is RegisterError) {
+                                    return Container(
+                                      margin: const EdgeInsets.only(top: 16),
+                                      padding: const EdgeInsets.all(12),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.error.withValues(alpha: 0.1),
+                                        borderRadius: BorderRadius.circular(8),
+                                        border: Border.all(
+                                          color: AppColors.error.withValues(alpha: 0.3),
+                                          width: 1,
+                                        ),
                                       ),
-                                ),
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Ionicons.warning_outline,
+                                            color: AppColors.error,
+                                            size: 20,
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Expanded(
+                                            child: Text(
+                                              state.error,
+                                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                                color: AppColors.error,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }
+                                  return const SizedBox.shrink();
+                                },
                               ),
-                              Expanded(
-                                child: Divider(
-                                  color: AppColors.textTertiary.withValues(
-                                    alpha: 0.3,
-                                  ),
-                                ),
+
+                              const SizedBox(height: 32),
+
+                              // Register Button
+                              BlocBuilder<RegisterCubit, RegisterState>(
+                                builder: (context, state) {
+                                  final isLoading = state is RegisterLoading;
+                                  final hasError = state is RegisterError;
+
+                                  return CustomButton(
+                                    text: isLoading
+                                        ? 'جاري إنشاء الحساب...'
+                                        : hasError
+                                            ? 'إعادة المحاولة'
+                                            : AppLocalizations.register,
+                                    onPressed: isLoading
+                                        ? null
+                                        : () {
+                                            // Update cubit with current form values
+                                            context.read<RegisterCubit>().updateName(nameController.text);
+                                            context.read<RegisterCubit>().updatePassword(passwordController.text);
+                                            context.read<RegisterCubit>().updateConfirmPassword(confirmPasswordController.text);
+                                            context.read<RegisterCubit>().updatePhone(phoneController.text);
+                                            
+                                            // Register user
+                                            context.read<RegisterCubit>().register();
+                                          },
+                                    isOutlined: true,
+                                    width: double.infinity,
+                                    icon: isLoading
+                                        ? const SizedBox(
+                                            width: 20,
+                                            height: 20,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              valueColor:
+                                                  AlwaysStoppedAnimation<Color>(
+                                                    AppColors.primary,
+                                                  ),
+                                            ),
+                                          )
+                                        : Icon(
+                                            hasError ? Ionicons.refresh_outline : Ionicons.person_add_outline,
+                                            color: AppColors.primary,
+                                            size: 20,
+                                          ),
+                                  );
+                                },
                               ),
-                            ],
-                          ),
 
-                          const SizedBox(height: 32),
+                              const SizedBox(height: 32),
 
-                          // Login Link
-                          Center(
-                            child: RichText(
-                              text: TextSpan(
-                                style: Theme.of(context).textTheme.bodyLarge,
+                              // Divider
+                              Row(
                                 children: [
-                                  TextSpan(
-                                    text: AppLocalizations.alreadyHaveAccount,
-                                    style: TextStyle(
-                                      color: AppColors.textSecondary,
+                                  Expanded(
+                                    child: Divider(
+                                      color: AppColors.textTertiary.withValues(
+                                        alpha: 0.3,
+                                      ),
                                     ),
                                   ),
-                                  WidgetSpan(
-                                    child: GestureDetector(
-                                      onTap: () => NavigationHelper.off(
-                                        path: '/login',
-                                        context: context,
-                                      ),
-                                      child: Text(
-                                        AppLocalizations.login,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge
-                                            ?.copyWith(
-                                              color: AppColors.primary,
-                                              fontWeight: FontWeight.w600,
-                                            ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                    ),
+                                    child: Text(
+                                      AppLocalizations.or,
+                                      style: Theme.of(context).textTheme.bodySmall
+                                          ?.copyWith(
+                                            color: AppColors.textTertiary,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Divider(
+                                      color: AppColors.textTertiary.withValues(
+                                        alpha: 0.3,
                                       ),
                                     ),
                                   ),
                                 ],
                               ),
-                            ),
+
+                              const SizedBox(height: 32),
+
+                              // Login Link
+                              Center(
+                                child: RichText(
+                                  text: TextSpan(
+                                    style: Theme.of(context).textTheme.bodyLarge,
+                                    children: [
+                                      TextSpan(
+                                        text: AppLocalizations.alreadyHaveAccount,
+                                        style: TextStyle(
+                                          color: AppColors.textSecondary,
+                                        ),
+                                      ),
+                                      WidgetSpan(
+                                        child: GestureDetector(
+                                          onTap: () => NavigationHelper.off(
+                                            path: '/login',
+                                            context: context,
+                                          ),
+                                          child: Text(
+                                            AppLocalizations.login,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge
+                                                ?.copyWith(
+                                                  color: AppColors.primary,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                        );
+                      },
                     ),
 
                     const SizedBox(height: 40),

@@ -153,6 +153,52 @@
 						"description": "Verify OTP code"
 					},
 					"response": []
+				},
+				{
+					"name": "Forgot Password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"phone_number\": \"+201234567890\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/forgot-password",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "forgot-password"]
+						},
+						"description": "Request password reset OTP. Returns success message regardless of whether phone number exists (security feature)."
+					},
+					"response": []
+				},
+				{
+					"name": "Reset Password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"phone_number\": \"+201234567890\",\n  \"otp\": \"123456\",\n  \"new_password\": \"newpassword123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/reset-password",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "reset-password"]
+						},
+						"description": "Reset password using OTP received from forgot password request. OTP expires in 15 minutes."
+					},
+					"response": []
 				}
 			],
 			"description": "Authentication endpoints for user registration, login, and OTP verification. New users are automatically assigned the 'Student' role."
@@ -1021,7 +1067,7 @@
 							"host": ["{{base_url}}"],
 							"path": ["api", "courses"]
 						},
-						"description": "Get all courses"
+						"description": "Get all courses with subscribers count for each course"
 					},
 					"response": []
 				},
@@ -1051,7 +1097,7 @@
 							"host": ["{{base_url}}"],
 							"path": ["api", "courses", "sub-department", "{{sub_department_id}}"]
 						},
-						"description": "Get all courses for a specific sub department"
+						"description": "Get all courses for a specific sub department with subscribers count"
 					},
 					"response": []
 				},
@@ -1095,7 +1141,7 @@
 							"host": ["{{base_url}}"],
 							"path": ["api", "courses", "{{course_id}}"]
 						},
-						"description": "Get course details by ID"
+						"description": "Get course details by ID with subscribers count and subscription status (if authenticated)"
 					},
 					"response": []
 				},
@@ -1282,7 +1328,7 @@
 					"response": []
 				}
 			],
-			"description": "Course management endpoints (now using sub_department_id instead of department_id)"
+			"description": "Course management endpoints (now using sub_department_id instead of department_id). All course endpoints now include subscribers_count showing the number of active subscribers for each course."
 		},
 		{
 			"name": "Subscriptions",

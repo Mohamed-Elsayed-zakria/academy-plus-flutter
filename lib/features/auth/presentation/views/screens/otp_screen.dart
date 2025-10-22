@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:pinput/pinput.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -12,8 +11,10 @@ import '../../../../../core/utils/navigation_helper.dart';
 import '../../../../../core/services/service_locator.dart';
 import '../../manager/cubit/otp_cubit.dart';
 import '../../manager/cubit/otp_state.dart';
+import '../../manager/cubit/forgot_password_cubit.dart';
+import '../../manager/cubit/forgot_password_state.dart';
 
-class OtpScreen extends StatefulWidget {
+class OtpScreen extends StatelessWidget {
   final String phoneNumber;
   final bool isResetPassword;
   final Function(String phoneNumber)? onOtpVerified;
@@ -30,100 +31,99 @@ class OtpScreen extends StatefulWidget {
   });
 
   @override
-  State<OtpScreen> createState() => _OtpScreenState();
-}
-
-class _OtpScreenState extends State<OtpScreen> {
-  final _pinController = TextEditingController();
-  final _focusNode = FocusNode();
-  late OtpCubit _otpCubit;
-  String _currentOtp = '';
-
-  @override
-  void initState() {
-    super.initState();
-    _otpCubit = SetupLocator.locator<OtpCubit>();
-  }
-
-  @override
-  void dispose() {
-    _pinController.dispose();
-    _focusNode.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final defaultPinTheme = PinTheme(
-      width: 60,
-      height: 60,
-      textStyle: Theme.of(context).textTheme.headlineMedium?.copyWith(
-        color: AppColors.textPrimary,
-        fontWeight: FontWeight.w600,
-      ),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.primaryLight, width: 2),
-      ),
-    );
+    // Create controllers for form fields
+    final pinController = TextEditingController();
+    final focusNode = FocusNode();
 
-    final focusedPinTheme = defaultPinTheme.copyWith(
-      decoration: defaultPinTheme.decoration?.copyWith(
-        border: Border.all(color: AppColors.primary, width: 2),
-      ),
-    );
-
-    final submittedPinTheme = defaultPinTheme.copyWith(
-      decoration: defaultPinTheme.decoration?.copyWith(
-        color: AppColors.primaryLight.withValues(alpha: 0.1),
-        border: Border.all(color: AppColors.primary, width: 2),
-      ),
-    );
-
-    return BlocProvider(
-      create: (context) => _otpCubit,
-      child: BlocListener<OtpCubit, OtpState>(
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<OtpCubit>(
+          create: (context) => SetupLocator.locator<OtpCubit>()..updatePhoneNumber(phoneNumber),
+        ),
+        BlocProvider<ForgotPasswordCubit>(
+          create: (context) => SetupLocator.locator<ForgotPasswordCubit>(),
+        ),
+      ],
+      child: MultiBlocListener(
+        listeners: [
+          BlocListener<OtpCubit, OtpState>(
         listener: (context, state) {
-              if (state is OtpVerifySuccess) {
-                // Call the custom verification handler
-                if (widget.onOtpVerified != null) {
-                  widget.onOtpVerified!(widget.phoneNumber);
-                } else {
-                  // Check if this is login verification
-                  if (widget.extraData?['isLoginVerification'] == true) {
-                    // Navigate to main screen after successful login verification
-                    NavigationHelper.off(
-                      path: '/main',
-                      context: context,
-                    );
-                    CustomToast.showSuccess(
-                      context,
-                      message: 'تم التحقق من رقم الهاتف بنجاح!',
-                    );
-                  } else if (widget.isResetPassword) {
-                    NavigationHelper.off(
-                      path: '/reset-password',
-                      context: context,
-                      data: {'phoneNumber': widget.phoneNumber},
-                    );
-                  } else {
-                    // Navigate to profile picture screen for registration
-                    NavigationHelper.off(
-                      path: '/profile-picture',
-                      context: context,
-                      data: widget.extraData,
-                    );
-                  }
-                }
-              } else if (state is OtpVerifyError) {
+          if (state is OtpVerifySuccess) {
+            // Call the custom verification handler
+            if (onOtpVerified != null) {
+              onOtpVerified!(phoneNumber);
+            } else {
+              // Check if this is login verification
+              if (extraData?['isLoginVerification'] == true) {
+                // Navigate to main screen after successful login verification
+                NavigationHelper.off(
+                  path: '/main',
+                  context: context,
+                );
+                CustomToast.showSuccess(
+                  context,
+                  message: 'تم التحقق من رقم الهاتف بنجاح!',
+                );
+              } else if (isResetPassword) {
+                // Get the OTP code from the current state
+                final otpCode = state.otpCode;
+                NavigationHelper.off(
+                  path: '/reset-password',
+                  context: context,
+                  data: {
+                    'phoneNumber': phoneNumber,
+                    'otpCode': otpCode,
+                  },
+                );
+              } else {
+                // Navigate to profile picture screen for registration
+                NavigationHelper.off(
+                  path: '/profile-picture',
+                  context: context,
+                  data: extraData,
+                );
+              }
+            }
+          } else if (state is OtpVerifyError) {
             // Show error toast
+            CustomToast.showError(
+              context,
+              message: state.error,
+            );
+          } else if (state is OtpRequestSuccess) {
+            // Show success message for resend
+            CustomToast.showSuccess(
+              context,
+              message: 'تم إرسال رمز التحقق مرة أخرى',
+            );
+          } else if (state is OtpRequestError) {
+            // Show error toast for resend
             CustomToast.showError(
               context,
               message: state.error,
             );
           }
         },
+          ),
+          BlocListener<ForgotPasswordCubit, ForgotPasswordState>(
+            listener: (context, state) {
+              if (state is ForgotPasswordSuccess) {
+                // Show success message for resend
+                CustomToast.showSuccess(
+                  context,
+                  message: 'تم إرسال رمز التحقق مرة أخرى',
+                );
+              } else if (state is ForgotPasswordError) {
+                // Show error toast for resend
+                CustomToast.showError(
+                  context,
+                  message: state.error,
+                );
+              }
+            },
+          ),
+        ],
         child: Scaffold(
           backgroundColor: AppColors.background,
           body: SafeArea(
@@ -177,131 +177,251 @@ class _OtpScreenState extends State<OtpScreen> {
                       ),
                     ),
                     const SizedBox(height: 48),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Center(
-                          child: Directionality(
-                            textDirection: TextDirection.ltr,
-                            child: Pinput(
-                              controller: _pinController,
-                              focusNode: _focusNode,
-                              length: 6,
-                              defaultPinTheme: defaultPinTheme,
-                              focusedPinTheme: focusedPinTheme,
-                              submittedPinTheme: submittedPinTheme,
-                              showCursor: true,
-                              keyboardType: TextInputType.number,
-                              inputFormatters: [],
-                              onChanged: (value) {
-                                print('OTP Changed: "$value" (length: ${value.length})');
-                                setState(() {
-                                  _currentOtp = value;
-                                });
-                              },
-                              onCompleted: (pin) {
-                                print('OTP Completed: "$pin" (length: ${pin.length})');
-                                // Verify OTP when completed
-                                if (pin.length == 6) {
-                                  // Use phone number as received from registration (already formatted with country code)
-                                  String formattedPhone = widget.phoneNumber;
-                                  
-                                  print('Auto-completed OTP verification:');
-                                  print('Phone: $formattedPhone');
-                                  print('OTP: $pin');
-                                  _otpCubit.verifyOtp(formattedPhone, pin);
-                                } else {
-                                  CustomToast.showError(
-                                    context,
-                                    message: 'رمز التحقق غير صحيح',
-                                  );
-                                }
-                              },
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 32),
-                        Center(
-                          child: RichText(
-                            text: TextSpan(
-                              style: Theme.of(context).textTheme.bodyMedium,
-                              children: [
-                                TextSpan(
-                                  text: AppLocalizations.didntReceiveCode,
-                                  style: TextStyle(color: AppColors.textSecondary),
-                                ),
-                                WidgetSpan(
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      // Call custom resend handler or default behavior
-                                      if (widget.onResendOtp != null) {
-                                        widget.onResendOtp!(widget.phoneNumber);
-                                      } else {
-                                        _otpCubit.requestOtp(widget.phoneNumber);
-                                      }
-                                    },
-                                    child: Text(
-                                      AppLocalizations.resend,
-                                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                        color: AppColors.primary,
-                                        fontWeight: FontWeight.w600,
-                                      ),
+                    BlocBuilder<OtpCubit, OtpState>(
+                      builder: (context, otpState) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Center(
+                              child: Directionality(
+                                textDirection: TextDirection.ltr,
+                                child: Pinput(
+                                  controller: pinController,
+                                  focusNode: focusNode,
+                                  length: 6,
+                                  defaultPinTheme: PinTheme(
+                                    width: 60,
+                                    height: 60,
+                                    textStyle: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                                      color: AppColors.textPrimary,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.surface,
+                                      borderRadius: BorderRadius.circular(16),
+                                      border: Border.all(color: AppColors.primaryLight, width: 2),
                                     ),
                                   ),
+                                  focusedPinTheme: PinTheme(
+                                    width: 60,
+                                    height: 60,
+                                    textStyle: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                                      color: AppColors.textPrimary,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.surface,
+                                      borderRadius: BorderRadius.circular(16),
+                                      border: Border.all(color: AppColors.primary, width: 2),
+                                    ),
+                                  ),
+                                  submittedPinTheme: PinTheme(
+                                    width: 60,
+                                    height: 60,
+                                    textStyle: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                                      color: AppColors.textPrimary,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.primaryLight.withValues(alpha: 0.1),
+                                      borderRadius: BorderRadius.circular(16),
+                                      border: Border.all(color: AppColors.primary, width: 2),
+                                    ),
+                                  ),
+                                  showCursor: true,
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: [],
+                                  onChanged: (value) {
+                                    context.read<OtpCubit>().updateOtpCode(value);
+                                  },
+                                  onCompleted: (pin) {
+                                    // Verify OTP when completed
+                                    if (pin.length == 6) {
+                                      context.read<OtpCubit>().verifyOtp(phoneNumber, pin);
+                                    } else {
+                                      CustomToast.showError(
+                                        context,
+                                        message: 'رمز التحقق غير صحيح',
+                                      );
+                                    }
+                                  },
                                 ),
-                              ],
+                              ),
                             ),
-                          ),
-                        ),
-                        const SizedBox(height: 32),
-                        BlocBuilder<OtpCubit, OtpState>(
-                          builder: (context, state) {
-                            final isLoading = state is OtpVerifyLoading;
                             
-                            return CustomButton(
-                              text: isLoading ? 'جاري التحقق...' : AppLocalizations.verify,
-                              onPressed: isLoading ? null : () {
-                                final otpCode = _currentOtp.isNotEmpty ? _currentOtp : _pinController.text.trim();
-                                
-                                if (otpCode.length == 6) {
-                                  print('Calling _otpCubit.verifyOtp with:');
-                                  print('Phone: ${widget.phoneNumber}');
-                                  print('OTP: $otpCode');
-                                  
-                                  // Use phone number as received from registration (already formatted with country code)
-                                  String formattedPhone = widget.phoneNumber;
-                                  
-                                  print('Using Phone: $formattedPhone');
-                                  _otpCubit.verifyOtp(formattedPhone, otpCode);
-                                } else {
-                                  CustomToast.showError(
-                                    context,
-                                    message: 'يرجى إدخال رمز التحقق كاملاً (6 أرقام)',
+                            // Error message display
+                            BlocBuilder<OtpCubit, OtpState>(
+                              builder: (context, state) {
+                                if (state is OtpVerifyError) {
+                                  return Container(
+                                    margin: const EdgeInsets.only(top: 16),
+                                    padding: const EdgeInsets.all(12),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.error.withValues(alpha: 0.1),
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(
+                                        color: AppColors.error.withValues(alpha: 0.3),
+                                        width: 1,
+                                      ),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Ionicons.warning_outline,
+                                          color: AppColors.error,
+                                          size: 20,
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Expanded(
+                                          child: Text(
+                                            state.error,
+                                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                              color: AppColors.error,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   );
                                 }
+                                return const SizedBox.shrink();
                               },
-                              isOutlined: true,
-                              width: double.infinity,
-                              icon: isLoading
-                                  ? const SizedBox(
-                                      width: 20,
-                                      height: 20,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        valueColor: AlwaysStoppedAnimation<Color>(
-                                          AppColors.primary,
+                            ),
+                            
+                            const SizedBox(height: 32),
+                            Center(
+                              child: BlocBuilder<OtpCubit, OtpState>(
+                                builder: (context, otpState) {
+                                  return BlocBuilder<ForgotPasswordCubit, ForgotPasswordState>(
+                                    builder: (context, forgotPasswordState) {
+                                      final isResendingOtp = otpState is OtpRequestLoading;
+                                      final isResendingForgotPassword = forgotPasswordState is ForgotPasswordLoading;
+                                      final isResending = isResendingOtp || isResendingForgotPassword;
+                                  
+                                  return RichText(
+                                    text: TextSpan(
+                                      style: Theme.of(context).textTheme.bodyMedium,
+                                      children: [
+                                        TextSpan(
+                                          text: AppLocalizations.didntReceiveCode,
+                                          style: TextStyle(color: AppColors.textSecondary),
                                         ),
-                                      ),
-                                    )
-                                  : const Icon(
-                                      Ionicons.checkmark_circle_outline,
-                                      color: AppColors.primary,
-                                      size: 20,
+                                        WidgetSpan(
+                                          child: GestureDetector(
+                                            onTap: isResending ? null : () {
+                                              // Call custom resend handler or default behavior
+                                              if (onResendOtp != null) {
+                                                onResendOtp!(phoneNumber);
+                                              } else if (isResetPassword) {
+                                                // For forgot password, use ForgotPasswordCubit
+                                                final forgotPasswordCubit = context.read<ForgotPasswordCubit>();
+                                                
+                                                // Extract dial code and phone number from full phone number
+                                                String dialCode = '+20'; // Default for Egypt
+                                                String phone = phoneNumber;
+                                                
+                                                // Try to extract dial code (common patterns)
+                                                if (phoneNumber.startsWith('+20')) {
+                                                  dialCode = '+20';
+                                                  phone = phoneNumber.substring(3);
+                                                } else if (phoneNumber.startsWith('+1')) {
+                                                  dialCode = '+1';
+                                                  phone = phoneNumber.substring(2);
+                                                } else if (phoneNumber.startsWith('+966')) {
+                                                  dialCode = '+966';
+                                                  phone = phoneNumber.substring(4);
+                                                }
+                                                
+                                                forgotPasswordCubit.updatePhone(phone);
+                                                forgotPasswordCubit.updateDialCode(dialCode);
+                                                forgotPasswordCubit.sendOtp();
+                                              } else {
+                                                // For normal OTP (registration/login), use OtpCubit
+                                                context.read<OtpCubit>().requestOtp(phoneNumber);
+                                              }
+                                            },
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                if (isResending)
+                                                  const SizedBox(
+                                                    width: 16,
+                                                    height: 16,
+                                                    child: CircularProgressIndicator(
+                                                      strokeWidth: 2,
+                                                      valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+                                                    ),
+                                                  ),
+                                                if (isResending)
+                                                  const SizedBox(width: 8),
+                                                Text(
+                                                  isResending ? 'جاري الإرسال...' : AppLocalizations.resend,
+                                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                                    color: isResending ? AppColors.textSecondary : AppColors.primary,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                            );
-                          },
-                        ),
-                      ],
+                                  );
+                                    },
+                                  );
+                                },
+                              ),
+                            ),
+                            const SizedBox(height: 32),
+                            BlocBuilder<OtpCubit, OtpState>(
+                              builder: (context, state) {
+                                final isLoading = state is OtpVerifyLoading;
+                                final hasError = state is OtpVerifyError;
+                                
+                                return CustomButton(
+                                  text: isLoading 
+                                      ? 'جاري التحقق...' 
+                                      : hasError 
+                                          ? 'إعادة المحاولة' 
+                                          : AppLocalizations.verify,
+                                  onPressed: isLoading ? null : () {
+                                    final otpCode = pinController.text.trim();
+                                    
+                                    if (otpCode.length == 6) {
+                                      context.read<OtpCubit>().verifyOtp(phoneNumber, otpCode);
+                                    } else {
+                                      CustomToast.showError(
+                                        context,
+                                        message: 'يرجى إدخال رمز التحقق كاملاً (6 أرقام)',
+                                      );
+                                    }
+                                  },
+                                  isOutlined: true,
+                                  width: double.infinity,
+                                  icon: isLoading
+                                      ? const SizedBox(
+                                          width: 20,
+                                          height: 20,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            valueColor: AlwaysStoppedAnimation<Color>(
+                                              AppColors.primary,
+                                            ),
+                                          ),
+                                        )
+                                      : Icon(
+                                          hasError ? Ionicons.refresh_outline : Ionicons.checkmark_circle_outline,
+                                          color: AppColors.primary,
+                                          size: 20,
+                                        ),
+                                );
+                              },
+                            ),
+                          ],
+                        );
+                      },
                     ),
                     const SizedBox(height: 40),
                   ],

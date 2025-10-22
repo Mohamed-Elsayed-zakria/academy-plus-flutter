@@ -33,7 +33,7 @@ class HomeScreenQuickAccessSection extends StatelessWidget {
                   },
                 ),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 14),
               Expanded(
                 child: _buildEnhancedQuickAccessCard(
                   context: context,

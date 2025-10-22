@@ -28,8 +28,12 @@ import '../features/cart/presentation/screens/cart_screen.dart';
 GoRouter createAppRouter({
   required bool isOnboardingCompleted,
   required bool isLoggedIn,
+  required bool needsPhoneVerification,
+  String? userPhoneNumber,
 }) => GoRouter(
-  initialLocation: isLoggedIn
+  initialLocation: needsPhoneVerification
+      ? '/otp'
+      : isLoggedIn
       ? '/main'
       : isOnboardingCompleted
       ? '/welcome'
@@ -67,8 +71,10 @@ GoRouter createAppRouter({
       path: '/otp',
       builder: (context, state) {
         final extra = state.extra as Map<String, dynamic>?;
+        // For app startup scenario, use userPhoneNumber from router params
+        final phoneNumber = extra?['phoneNumber'] ?? userPhoneNumber ?? '';
         return OtpScreen(
-          phoneNumber: extra?['phoneNumber'] ?? '',
+          phoneNumber: phoneNumber,
           isResetPassword: extra?['isResetPassword'] ?? false,
           extraData: extra?['extraData'],
         );
@@ -94,7 +100,11 @@ GoRouter createAppRouter({
       builder: (context, state) {
         final extra = state.extra as Map<String, dynamic>?;
         final phoneNumber = extra?['phoneNumber'] as String? ?? '';
-        return ResetPasswordScreen(phoneNumber: phoneNumber);
+        final otpCode = extra?['otpCode'] as String? ?? '';
+        return ResetPasswordScreen(
+          phoneNumber: phoneNumber,
+          otpCode: otpCode,
+        );
       },
     ),
 

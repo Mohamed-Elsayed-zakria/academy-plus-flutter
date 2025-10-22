@@ -14,42 +14,19 @@ import '../../manager/cubit/login_state.dart';
 import '../../manager/cubit/otp_cubit.dart';
 import '../../manager/cubit/otp_state.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
-}
-
-class _LoginScreenState extends State<LoginScreen>
-    with TickerProviderStateMixin {
-  final _formKey = GlobalKey<FormState>();
-  final _phoneController = TextEditingController();
-  final _passwordController = TextEditingController();
-  String _selectedDialCode = '+20'; // Default to Egypt dial code
-  late LoginCubit _loginCubit;
-  late OtpCubit _otpCubit;
-
-  @override
-  void initState() {
-    super.initState();
-    _loginCubit = SetupLocator.locator<LoginCubit>();
-    _otpCubit = SetupLocator.locator<OtpCubit>();
-  }
-
-  @override
-  void dispose() {
-    _phoneController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    // Create controllers for form fields
+    final phoneController = TextEditingController();
+    final passwordController = TextEditingController();
+
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => _loginCubit),
-        BlocProvider(create: (context) => _otpCubit),
+        BlocProvider(create: (context) => SetupLocator.locator<LoginCubit>()),
+        BlocProvider(create: (context) => SetupLocator.locator<OtpCubit>()),
       ],
       child: MultiBlocListener(
         listeners: [
@@ -69,8 +46,8 @@ class _LoginScreenState extends State<LoginScreen>
                   );
                 } else {
                   // Phone not verified, request OTP and navigate to OTP screen
-                  final fullPhoneNumber = '$_selectedDialCode${_phoneController.text}';
-                  _otpCubit.requestOtp(fullPhoneNumber);
+                  final fullPhoneNumber = '${state.selectedDialCode}${state.phone}';
+                  context.read<OtpCubit>().requestOtp(fullPhoneNumber);
                 }
               } else if (state is LoginError) {
                 // Show error toast
@@ -85,7 +62,9 @@ class _LoginScreenState extends State<LoginScreen>
             listener: (context, state) {
               if (state is OtpRequestSuccess) {
                 // Navigate to OTP screen for phone verification
-                final fullPhoneNumber = '$_selectedDialCode${_phoneController.text}';
+                final loginCubit = context.read<LoginCubit>();
+                final loginState = loginCubit.state as LoginSuccess;
+                final fullPhoneNumber = '${loginState.selectedDialCode}${loginState.phone}';
                 NavigationHelper.to(
                   path: '/otp',
                   context: context,
@@ -159,111 +138,148 @@ class _LoginScreenState extends State<LoginScreen>
                     ),
                     const SizedBox(height: 48),
                     // Login Form Section
-                    Form(
-                      key: _formKey,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Phone Number Field
-                          CustomPhoneInput(
-                            label: AppLocalizations.phoneNumber,
-                            hintText: AppLocalizations.phoneNumber,
-                            controller: _phoneController,
-                            initialCountryCode: 'EG',
-                            onCountryChanged: (countryCode, dialCode) {
-                              setState(() {
-                                _selectedDialCode = dialCode;
-                              });
-                              print('Country changed: $countryCode, Dial code: $dialCode');
-                            },
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return AppLocalizations.pleaseEnterPhone;
-                              }
-                              return null;
-                            },
-                          ),
-
-                          const SizedBox(height: 20),
-
-                          // Password Field
-                          CustomTextField(
-                            label: AppLocalizations.password,
-                            hintText: AppLocalizations.password,
-                            controller: _passwordController,
-                            isPassword: true,
-                            prefixIcon: const Icon(Ionicons.lock_closed_outline),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return AppLocalizations.pleaseEnterPassword;
-                              }
-                              return null;
-                            },
-                          ),
-                          const SizedBox(height: 16),
-                          // Forgot Password Link
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: GestureDetector(
-                              onTap: () {
-                                NavigationHelper.to(
-                                  path: '/forgot-password',
-                                  context: context,
-                                );
-                              },
-                              child: Text(
-                                AppLocalizations.forgotPassword,
-                                style: Theme.of(context).textTheme.bodyMedium
-                                    ?.copyWith(
-                                      color: AppColors.primary,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                              ),
-                            ),
-                          ),
-
-                          const SizedBox(height: 32),
-
-                          // Login Button
-                          BlocBuilder<LoginCubit, LoginState>(
-                            builder: (context, state) {
-                              final isLoading = state is LoginLoading;
-
-                              return CustomButton(
-                                text: isLoading ? 'جاري تسجيل الدخول...' : AppLocalizations.login,
-                                onPressed: isLoading ? null : () {
-                                  if (_formKey.currentState!.validate()) {
-                                    // Prepare phone number with country code
-                                    final fullPhoneNumber = '$_selectedDialCode${_phoneController.text}';
-                                    print('Logging in with phone: $fullPhoneNumber');
-                                    
-                                    // Login user
-                                    _loginCubit.login(fullPhoneNumber, _passwordController.text);
-                                  }
+                    BlocBuilder<LoginCubit, LoginState>(
+                      builder: (context, loginState) {
+                        return Form(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Phone Number Field
+                              CustomPhoneInput(
+                                label: AppLocalizations.phoneNumber,
+                                hintText: AppLocalizations.phoneNumber,
+                                controller: phoneController,
+                                initialCountryCode: 'EG',
+                                onCountryChanged: (countryCode, dialCode) {
+                                  context.read<LoginCubit>().updateDialCode(dialCode);
                                 },
-                                isOutlined: true,
-                                width: double.infinity,
-                                icon: isLoading
-                                    ? const SizedBox(
-                                        width: 20,
-                                        height: 20,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                          valueColor: AlwaysStoppedAnimation<Color>(
-                                            AppColors.primary,
-                                          ),
+                                validator: (value) {
+                                  return context.read<LoginCubit>().validatePhone(value);
+                                },
+                              ),
+
+                              const SizedBox(height: 20),
+
+                              // Password Field
+                              CustomTextField(
+                                label: AppLocalizations.password,
+                                hintText: AppLocalizations.password,
+                                controller: passwordController,
+                                isPassword: true,
+                                prefixIcon: const Icon(Ionicons.lock_closed_outline),
+                                validator: (value) {
+                                  return context.read<LoginCubit>().validatePassword(value);
+                                },
+                              ),
+                              const SizedBox(height: 16),
+                              // Forgot Password Link
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    NavigationHelper.to(
+                                      path: '/forgot-password',
+                                      context: context,
+                                    );
+                                  },
+                                  child: Text(
+                                    AppLocalizations.forgotPassword,
+                                    style: Theme.of(context).textTheme.bodyMedium
+                                        ?.copyWith(
+                                          color: AppColors.primary,
+                                          fontWeight: FontWeight.w600,
                                         ),
-                                      )
-                                    : const Icon(
-                                        Ionicons.enter_outline,
-                                        color: AppColors.primary,
-                                        size: 22,
+                                  ),
+                                ),
+                              ),
+
+                              // Error message display
+                              BlocBuilder<LoginCubit, LoginState>(
+                                builder: (context, state) {
+                                  if (state is LoginError) {
+                                    return Container(
+                                      margin: const EdgeInsets.only(top: 16),
+                                      padding: const EdgeInsets.all(12),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.error.withValues(alpha: 0.1),
+                                        borderRadius: BorderRadius.circular(8),
+                                        border: Border.all(
+                                          color: AppColors.error.withValues(alpha: 0.3),
+                                          width: 1,
+                                        ),
                                       ),
-                              );
-                            },
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Ionicons.warning_outline,
+                                            color: AppColors.error,
+                                            size: 20,
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Expanded(
+                                            child: Text(
+                                              state.error,
+                                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                                color: AppColors.error,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }
+                                  return const SizedBox.shrink();
+                                },
+                              ),
+
+                              const SizedBox(height: 32),
+
+                              // Login Button
+                              BlocBuilder<LoginCubit, LoginState>(
+                                builder: (context, state) {
+                                  final isLoading = state is LoginLoading;
+                                  final hasError = state is LoginError;
+
+                                  return CustomButton(
+                                    text: isLoading 
+                                        ? 'جاري تسجيل الدخول...' 
+                                        : hasError 
+                                            ? 'إعادة المحاولة' 
+                                            : AppLocalizations.login,
+                                    onPressed: isLoading ? null : () {
+                                      // Update cubit with current form values
+                                      context.read<LoginCubit>().updatePhone(phoneController.text);
+                                      context.read<LoginCubit>().updatePassword(passwordController.text);
+                                      
+                                      // Login user
+                                      context.read<LoginCubit>().login();
+                                    },
+                                    isOutlined: true,
+                                    width: double.infinity,
+                                    icon: isLoading
+                                        ? const SizedBox(
+                                            width: 20,
+                                            height: 20,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              valueColor: AlwaysStoppedAnimation<Color>(
+                                                AppColors.primary,
+                                              ),
+                                            ),
+                                          )
+                                        : Icon(
+                                            hasError ? Ionicons.refresh_outline : Ionicons.enter_outline,
+                                            color: AppColors.primary,
+                                            size: 22,
+                                          ),
+                                  );
+                                },
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                        );
+                      },
                     ),
 
                     const SizedBox(height: 32),

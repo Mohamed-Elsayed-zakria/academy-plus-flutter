@@ -1,6 +1,7 @@
+import '../../features/auth/data/models/login_model.dart';
 import 'auth_service.dart';
 import 'dio_service.dart';
-import '../../features/auth/data/models/login_model.dart';
+import 'dart:developer';
 
 class AuthManager {
   static UserModel? _currentUser;
@@ -9,17 +10,17 @@ class AuthManager {
   // Initialize auth state on app start
   static Future<void> initialize() async {
     final isLoggedIn = await AuthService.isLoggedIn();
-    
+
     if (isLoggedIn) {
       _currentToken = await AuthService.getToken();
       _currentUser = await AuthService.getUser();
-      
+
       if (_currentToken != null) {
         DioService.updateToken(_currentToken!);
-        print('🔐 Auth initialized - User logged in: ${_currentUser?.fullName}');
+        log('🔐 Auth initialized - User logged in: ${_currentUser?.fullName}');
       }
     } else {
-      print('🔓 Auth initialized - No user logged in');
+      log('🔓 Auth initialized - No user logged in');
     }
   }
 
@@ -34,28 +35,32 @@ class AuthManager {
 
   // Check if user is logged in (with SharedPreferences verification)
   static Future<bool> isLoggedInAsync() async {
-    print('🔄 AuthManager.isLoggedInAsync() - Starting verification...');
-    
+    log('🔄 AuthManager.isLoggedInAsync() - Starting verification...');
+
     // First check local variables
-    print('🔍 Local check - _currentUser: ${_currentUser != null}, _currentToken: ${_currentToken != null}');
-    
+    log(
+      '🔍 Local check - _currentUser: ${_currentUser != null}, _currentToken: ${_currentToken != null}',
+    );
+
     if (_currentUser != null && _currentToken != null) {
       // Double-check with SharedPreferences
       final isLoggedInPrefs = await AuthService.isLoggedIn();
-      print('🔍 SharedPreferences check - isLoggedIn: $isLoggedInPrefs');
-      
+      log('🔍 SharedPreferences check - isLoggedIn: $isLoggedInPrefs');
+
       if (!isLoggedInPrefs) {
         // Clear local data if SharedPreferences says user is not logged in
-        print('⚠️ SharedPreferences says user is not logged in, clearing local data...');
+        log(
+          '⚠️ SharedPreferences says user is not logged in, clearing local data...',
+        );
         clearUserData();
-        print('🔍 After clearing - isLoggedIn: false');
+        log('🔍 After clearing - isLoggedIn: false');
         return false;
       }
-      print('✅ User is logged in (verified with SharedPreferences)');
+      log('✅ User is logged in (verified with SharedPreferences)');
       return true;
     }
-    
-    print('🔍 User is not logged in (no local data)');
+
+    log('🔍 User is not logged in (no local data)');
     return false;
   }
 
@@ -75,6 +80,9 @@ class AuthManager {
 
   // Check if phone is verified
   static bool get isPhoneVerified => _currentUser?.phoneVerified ?? false;
+
+  // Check if phone verification is needed (for app startup routing)
+  static bool get needsPhoneVerification => _currentUser != null && _currentToken != null && !isPhoneVerified;
 
   // Get user role
   static String get userRole => _currentUser?.role ?? 'Student';

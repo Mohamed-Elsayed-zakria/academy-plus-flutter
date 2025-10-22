@@ -82,12 +82,23 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
               buttonText: '',
               onButtonPressed: () {},
             )
-          : Column(
+          : ListView(
               children: [
                 // Header with stats
                 Container(
+                  margin: const EdgeInsets.all(16),
                   padding: const EdgeInsets.all(16),
-                  color: AppColors.surface,
+                  decoration: BoxDecoration(
+                    color: AppColors.surface,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.05),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
                   child: Row(
                     children: [
                       _buildStatCard(
@@ -115,16 +126,15 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
                 ),
                 
                 // Subscriptions list
-                Expanded(
-                  child: ListView.builder(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: subscriptions.length,
-                    itemBuilder: (context, index) {
-                      final subscription = subscriptions[index];
-                      return _buildSubscriptionCard(context, subscription);
-                    },
+                ...subscriptions.map((subscription) => 
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                    child: _buildSubscriptionCard(context, subscription),
                   ),
                 ),
+                
+                // Add some bottom padding
+                const SizedBox(height: 16),
               ],
             ),
     );
@@ -196,7 +206,6 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
     }
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),

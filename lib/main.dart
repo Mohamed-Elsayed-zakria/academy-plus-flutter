@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'core/theme/app_theme.dart';
@@ -24,13 +25,22 @@ void main() async {
 
   // Check if user is logged in (with proper verification)
   final isLoggedIn = await AuthManager.isLoggedInAsync();
-  print('🔍 main.dart - Final isLoggedIn result: $isLoggedIn');
+  log('🔍 main.dart - Final isLoggedIn result: $isLoggedIn');
+
+  // Check if phone verification is needed
+  final needsPhoneVerification = AuthManager.needsPhoneVerification;
+  final userPhoneNumber = AuthManager.currentUser?.phoneNumber;
+  
+  log('🔍 main.dart - needsPhoneVerification: $needsPhoneVerification');
+  log('🔍 main.dart - userPhoneNumber: $userPhoneNumber');
 
   runApp(
     AppLocalizationConfig.getLocalizationWidget(
       child: MyApp(
         isOnboardingCompleted: isOnboardingCompleted,
         isLoggedIn: isLoggedIn,
+        needsPhoneVerification: needsPhoneVerification,
+        userPhoneNumber: userPhoneNumber,
       ),
     ),
   );
@@ -39,11 +49,15 @@ void main() async {
 class MyApp extends StatelessWidget {
   final bool isOnboardingCompleted;
   final bool isLoggedIn;
+  final bool needsPhoneVerification;
+  final String? userPhoneNumber;
 
   const MyApp({
     super.key, 
     required this.isOnboardingCompleted,
     required this.isLoggedIn,
+    required this.needsPhoneVerification,
+    this.userPhoneNumber,
   });
 
   @override
@@ -61,6 +75,8 @@ class MyApp extends StatelessWidget {
       routerConfig: createAppRouter(
         isOnboardingCompleted: isOnboardingCompleted,
         isLoggedIn: isLoggedIn,
+        needsPhoneVerification: needsPhoneVerification,
+        userPhoneNumber: userPhoneNumber,
       ),
     );
   }

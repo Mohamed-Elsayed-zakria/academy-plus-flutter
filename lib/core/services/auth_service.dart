@@ -43,6 +43,32 @@ class AuthService {
     return prefs.getBool(_isLoggedInKey) ?? false;
   }
 
+  // Update phone verification status
+  static Future<void> updatePhoneVerificationStatus(bool isVerified) async {
+    final prefs = await SharedPreferences.getInstance();
+    final userJson = prefs.getString(_userKey);
+    
+    if (userJson != null) {
+      // Parse current user data
+      final user = _userFromJson(userJson);
+      
+      // Create updated user with new verification status
+      final updatedUser = UserModel(
+        id: user.id,
+        fullName: user.fullName,
+        phoneNumber: user.phoneNumber,
+        phoneVerified: isVerified,
+        role: user.role,
+        universityId: user.universityId,
+      );
+      
+      // Save updated user data
+      await prefs.setString(_userKey, _userToJson(updatedUser));
+      
+      print('Phone verification status updated: $isVerified');
+    }
+  }
+
   // Logout - clear all data
   static Future<void> logout() async {
     final prefs = await SharedPreferences.getInstance();
