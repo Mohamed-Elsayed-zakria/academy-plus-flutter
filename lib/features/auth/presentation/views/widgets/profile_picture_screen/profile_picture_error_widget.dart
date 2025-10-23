@@ -17,7 +17,6 @@ class ProfilePictureErrorWidget extends StatelessWidget {
             margin: const EdgeInsets.only(top: 16),
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: AppColors.error.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
                 color: AppColors.error.withValues(alpha: 0.3),

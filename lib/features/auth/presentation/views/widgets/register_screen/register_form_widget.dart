@@ -24,10 +24,10 @@ class RegisterFormWidget extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Full Name Field
+              // Username Field
               CustomTextField(
-                label: AppLocalizations.fullName,
-                hintText: AppLocalizations.fullName,
+                label: AppLocalizations.username,
+                hintText: AppLocalizations.username,
                 controller: registerCubit.nameController,
                 prefixIcon: const Icon(Ionicons.person_outline),
                 validator: (value) {
@@ -114,7 +114,7 @@ class RegisterFormWidget extends StatelessWidget {
                         errorText:
                             currentState.hasAttemptedSubmit &&
                                 currentState.selectedUniversity == null
-                            ? 'Please select your university'
+                            ? AppLocalizations.pleaseSelectUniversity
                             : null,
                       );
                     },

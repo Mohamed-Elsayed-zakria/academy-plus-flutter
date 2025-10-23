@@ -274,6 +274,8 @@
   "please_enter_complete_otp": "يرجى إدخال رمز التحقق كاملاً (6 أرقام)",
   "password_reset_success": "تم إعادة تعيين كلمة المرور بنجاح!",
   "please_enter_verification_code": "يرجى إدخال رمز التحقق",
-  "verification_code_must_be_6_digits": "رمز التحقق يجب أن يكون 6 أرقام"
+  "verification_code_must_be_6_digits": "رمز التحقق يجب أن يكون 6 أرقام",
+  "username": "اسم المستخدم",
+  "please_enter_username": "يرجى إدخال اسم المستخدم"
 }
 

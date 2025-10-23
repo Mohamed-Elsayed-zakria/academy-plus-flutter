@@ -291,5 +291,7 @@ class AppLocalizations {
   static String get passwordResetSuccess => 'password_reset_success'.tr();
   static String get pleaseEnterVerificationCode => 'please_enter_verification_code'.tr();
   static String get verificationCodeMustBe6Digits => 'verification_code_must_be_6_digits'.tr();
+  static String get username => 'username'.tr();
+  static String get pleaseEnterUsername => 'please_enter_username'.tr();
 }
 

@@ -274,6 +274,8 @@
   "please_enter_complete_otp": "Please enter complete verification code (6 digits)",
   "password_reset_success": "Password reset successfully!",
   "please_enter_verification_code": "Please enter verification code",
-  "verification_code_must_be_6_digits": "Verification code must be 6 digits"
+  "verification_code_must_be_6_digits": "Verification code must be 6 digits",
+  "username": "Username",
+  "please_enter_username": "Please enter your username"
 }
 

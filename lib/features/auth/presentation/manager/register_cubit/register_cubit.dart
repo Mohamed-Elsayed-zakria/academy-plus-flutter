@@ -198,13 +198,42 @@ class RegisterCubit extends Cubit<RegisterState> {
 
   // Validate and register
   void validateAndRegister() {
-    if (formKey.currentState!.validate()) {
-      // Update cubit with current form values
-      updateName(nameController.text);
-      updatePassword(passwordController.text);
-      updateConfirmPassword(confirmPasswordController.text);
-      updatePhone(phoneController.text);
-      
+    // First validate the form fields
+    bool isFormValid = formKey.currentState!.validate();
+    
+    // Then check university selection
+    RegisterInitial currentState;
+    if (state is RegisterInitial) {
+      currentState = state as RegisterInitial;
+    } else if (state is RegisterError) {
+      final errorState = state as RegisterError;
+      currentState = RegisterInitial(
+        name: errorState.name,
+        password: errorState.password,
+        confirmPassword: errorState.confirmPassword,
+        phone: errorState.phone,
+        selectedDialCode: errorState.selectedDialCode,
+        selectedUniversity: errorState.selectedUniversity,
+        hasAttemptedSubmit: false,
+      );
+    } else {
+      currentState = RegisterInitial();
+    }
+    
+    // Update cubit with current form values
+    updateName(nameController.text);
+    updatePassword(passwordController.text);
+    updateConfirmPassword(confirmPasswordController.text);
+    updatePhone(phoneController.text);
+    
+    // Set attempted submit to true to show validation errors
+    setAttemptedSubmit(true);
+    
+    // Check if university is selected
+    bool isUniversityValid = currentState.selectedUniversity != null;
+    
+    // Only proceed if both form and university are valid
+    if (isFormValid && isUniversityValid) {
       // Register user
       register();
     }
@@ -339,7 +368,7 @@ class RegisterCubit extends Cubit<RegisterState> {
   // Validation methods
   String? validateName(String? value) {
     if (value == null || value.isEmpty) {
-      return AppLocalizations.pleaseEnterFullName;
+      return AppLocalizations.pleaseEnterUsername;
     }
     return null;
   }
