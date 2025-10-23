@@ -40,7 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
             IconButton(
               onPressed: () {},
               icon: const Icon(Ionicons.heart_outline),
-              tooltip: 'Favorites',
+              tooltip: AppLocalizations.favorites,
             ),
             const SizedBox(width: 8),
           ],
@@ -125,7 +125,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   context.read<DepartmentCubit>().getAllDepartments();
                                 }
                               },
-                              child: const Text('إعادة المحاولة'),
+                              child: Text(AppLocalizations.retry),
                             ),
                           ],
                         ),

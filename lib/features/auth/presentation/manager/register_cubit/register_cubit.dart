@@ -346,7 +346,7 @@ class RegisterCubit extends Cubit<RegisterState> {
 
   String? validatePassword(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Please enter your password';
+      return AppLocalizations.pleaseEnterPassword;
     }
     if (value.length < 6) {
       return AppLocalizations.passwordMustBeAtLeast6;
@@ -373,7 +373,7 @@ class RegisterCubit extends Cubit<RegisterState> {
 
   String? validateUniversity(UniversityModel? university, bool hasAttemptedSubmit) {
     if (hasAttemptedSubmit && university == null) {
-      return 'Please select your university';
+      return AppLocalizations.pleaseSelectUniversity;
     }
     return null;
   }

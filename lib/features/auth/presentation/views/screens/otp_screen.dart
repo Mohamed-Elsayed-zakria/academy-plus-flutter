@@ -4,6 +4,7 @@ import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/widgets/custom_toast.dart';
 import '../../../../../core/utils/navigation_helper.dart';
 import '../../../../../core/services/service_locator.dart';
+import '../../../../../core/localization/app_localizations.dart';
 import '../../manager/otp_cubit/otp_cubit.dart';
 import '../../manager/otp_cubit/otp_state.dart';
 import '../../manager/forgot_password_cubit/forgot_password_cubit.dart';
@@ -59,7 +60,7 @@ class OtpScreen extends StatelessWidget {
                 );
                 CustomToast.showSuccess(
                   context,
-                  message: 'تم التحقق من رقم الهاتف بنجاح!',
+                  message: AppLocalizations.phoneVerificationSuccess,
                 );
               } else if (isResetPassword) {
                 // Get the OTP code from the current state
@@ -91,7 +92,7 @@ class OtpScreen extends StatelessWidget {
             // Show success message for resend
             CustomToast.showSuccess(
               context,
-              message: 'تم إرسال رمز التحقق مرة أخرى',
+              message: AppLocalizations.otpCodeResent,
             );
           } else if (state is OtpRequestError) {
             // Show error toast for resend
@@ -108,7 +109,7 @@ class OtpScreen extends StatelessWidget {
                 // Show success message for resend
                 CustomToast.showSuccess(
                   context,
-                  message: 'تم إرسال رمز التحقق مرة أخرى',
+                  message: AppLocalizations.otpCodeResent,
                 );
               } else if (state is ForgotPasswordError) {
                 // Show error toast for resend
@@ -175,7 +176,7 @@ class OtpScreen extends StatelessWidget {
                                   style: Theme.of(context).textTheme.bodyMedium,
                                   children: [
                                     TextSpan(
-                                      text: 'غير رقم الهاتف؟ ',
+                                      text: AppLocalizations.wrongPhoneNumber,
                                       style: TextStyle(color: AppColors.textSecondary),
                                     ),
                                     WidgetSpan(
@@ -193,7 +194,7 @@ class OtpScreen extends StatelessWidget {
                                           }
                                         },
                                         child: Text(
-                                          'العودة إلى تسجيل الدخول',
+                                          AppLocalizations.backToLoginAuth,
                                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                             color: AppColors.primary,
                                             fontWeight: FontWeight.w600,

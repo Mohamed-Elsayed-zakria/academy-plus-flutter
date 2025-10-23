@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pinput/pinput.dart';
 import '../../../../../../core/constants/app_colors.dart';
 import '../../../../../../core/widgets/custom_toast.dart';
+import '../../../../../../core/localization/app_localizations.dart';
 import '../../../manager/otp_cubit/otp_cubit.dart';
 
 class OtpInputWidget extends StatelessWidget {
@@ -78,7 +79,7 @@ class OtpInputWidget extends StatelessWidget {
             } else {
               CustomToast.showError(
                 context,
-                message: 'رمز التحقق غير صحيح',
+                message: AppLocalizations.invalidVerificationCode,
               );
             }
           },

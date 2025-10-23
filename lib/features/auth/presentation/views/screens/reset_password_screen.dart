@@ -4,6 +4,7 @@ import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/widgets/custom_toast.dart';
 import '../../../../../core/utils/navigation_helper.dart';
 import '../../../../../core/services/service_locator.dart';
+import '../../../../../core/localization/app_localizations.dart';
 import '../../manager/reset_password_cubit/reset_password_cubit.dart';
 import '../../manager/reset_password_cubit/reset_password_state.dart';
 import '../widgets/reset_password_screen/reset_password_screen_widgets.dart';
@@ -32,7 +33,7 @@ class ResetPasswordScreen extends StatelessWidget {
             // Show success message
             CustomToast.showSuccess(
               context,
-              message: 'تم إعادة تعيين كلمة المرور بنجاح!',
+              message: AppLocalizations.passwordResetSuccess,
             );
             
             // Navigate to login screen

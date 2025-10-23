@@ -246,5 +246,50 @@ class AppLocalizations {
   static String get pleaseEnterAdminPassword => 'please_enter_admin_password'.tr();
   static String get codeSentTo => 'code_sent_to'.tr();
   static String get phoneNumberDisplay => 'phone_number_display'.tr();
+  
+  // Additional missing translations
+  static String get favorites => 'favorites'.tr();
+  static String get retry => 'retry'.tr();
+  static String get errorLoadingData => 'error_loading_data'.tr();
+  static String get errorLogout => 'error_logout'.tr();
+  static String get logoutSessionWarning => 'logout_session_warning'.tr();
+  static String get englishName => 'english_name'.tr();
+  static String get arabicName => 'arabic_name'.tr();
+  static String get languageDialogTitle => 'language_dialog_title'.tr();
+  static String get systemDialogTitle => 'system_dialog_title'.tr();
+  static String get lightMode => 'light_mode'.tr();
+  static String get defaultSystemMode => 'default_system'.tr();
+  static String get darkModeTitle => 'dark_mode_title'.tr();
+  static String get nightModeTheme => 'night_mode'.tr();
+  static String get couponCode => 'coupon_code'.tr();
+  static String get enterCouponCode => 'enter_coupon_code'.tr();
+  static String get pleaseEnterCoupon => 'please_enter_coupon'.tr();
+  static String get couponAppliedSuccess => 'coupon_applied_success'.tr();
+  static String get invalidCoupon => 'invalid_coupon'.tr();
+  static String get apply => 'apply'.tr();
+  static String get remove => 'remove'.tr();
+  static String get couponApplied => 'coupon_applied'.tr();
+  static String get couponDiscountLabel => 'coupon_discount_label'.tr();
+  static String get successToastTitle => 'success_toast_title'.tr();
+  static String get errorToastTitle => 'error_toast_title'.tr();
+  static String get warningToastTitle => 'warning_toast_title'.tr();
+  static String get infoToastTitle => 'info_toast_title'.tr();
+  static String get welcomeCoupon => 'welcome_coupon'.tr();
+  static String get studentDiscount => 'student_discount'.tr();
+  static String get save50 => 'save_50'.tr();
+  static String get firstOrderDiscount => 'first_order_discount'.tr();
+  static String get newUser => 'new_user'.tr();
+  
+  // Authentication specific translations
+  static String get phoneVerificationSuccess => 'phone_verification_success'.tr();
+  static String get otpCodeResent => 'otp_code_resent'.tr();
+  static String get wrongPhoneNumber => 'wrong_phone_number'.tr();
+  static String get backToLoginAuth => 'back_to_login'.tr();
+  static String get invalidVerificationCode => 'invalid_verification_code'.tr();
+  static String get verifying => 'verifying'.tr();
+  static String get pleaseEnterCompleteOtp => 'please_enter_complete_otp'.tr();
+  static String get passwordResetSuccess => 'password_reset_success'.tr();
+  static String get pleaseEnterVerificationCode => 'please_enter_verification_code'.tr();
+  static String get verificationCodeMustBe6Digits => 'verification_code_must_be_6_digits'.tr();
 }
 

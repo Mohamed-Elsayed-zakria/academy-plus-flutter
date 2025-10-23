@@ -44,7 +44,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               // Show error message for logout
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('خطأ في تسجيل الخروج: ${state.error}'),
+                  content: Text('${AppLocalizations.errorLogout}: ${state.error}'),
                   backgroundColor: Colors.red,
                 ),
               );
@@ -70,7 +70,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      'خطأ في تحميل البيانات',
+                      AppLocalizations.errorLoadingData,
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         color: AppColors.textPrimary,
                       ),
@@ -88,7 +88,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       onPressed: () {
                         context.read<ProfileCubit>().getUserProfile();
                       },
-                      child: const Text('إعادة المحاولة'),
+                      child: Text(AppLocalizations.retry),
                     ),
                   ],
                 ),
@@ -248,8 +248,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     icon: Ionicons.language_outline,
                     title: AppLocalizations.language,
                     subtitle: _selectedLanguage == 'English'
-                        ? 'الإنجليزية'
-                        : 'العربية',
+                        ? AppLocalizations.englishName
+                        : AppLocalizations.arabicName,
                     color: AppColors.primary,
                     onTap: () {
                       _showLanguageDialog(context);
@@ -470,7 +470,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Icon(Ionicons.language_outline, color: AppColors.primary),
               const SizedBox(width: 12),
               Text(
-                'اللغة',
+                AppLocalizations.languageDialogTitle,
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   color: AppColors.textPrimary,
                   fontWeight: FontWeight.bold,
@@ -609,7 +609,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Icon(Ionicons.color_palette_outline, color: AppColors.primary),
               const SizedBox(width: 12),
               Text(
-                'النظام',
+                AppLocalizations.systemDialogTitle,
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   color: AppColors.textPrimary,
                   fontWeight: FontWeight.bold,
@@ -622,8 +622,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             children: [
               _buildThemeOption(
                 context: context,
-                title: 'الوضع العادي',
-                subtitle: 'النظام الافتراضي',
+                title: AppLocalizations.lightMode,
+                subtitle: AppLocalizations.defaultSystemMode,
                 icon: Ionicons.sunny_outline,
                 isSelected: !_isDarkMode,
                 onTap: () {
@@ -636,8 +636,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(height: 12),
               _buildThemeOption(
                 context: context,
-                title: 'الدارك',
-                subtitle: 'الوضع الليلي',
+                title: AppLocalizations.darkModeTitle,
+                subtitle: AppLocalizations.nightModeTheme,
                 icon: Ionicons.moon_outline,
                 isSelected: _isDarkMode,
                 onTap: () {
@@ -813,7 +813,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  'سيتم إغلاق الجلسة الحالية والعودة إلى شاشة تسجيل الدخول',
+                  AppLocalizations.logoutSessionWarning,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: AppColors.error,
                     fontWeight: FontWeight.w500,

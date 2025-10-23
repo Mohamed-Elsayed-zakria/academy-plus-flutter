@@ -55,27 +55,27 @@ class _CartScreenState extends State<CartScreen> {
   // Mock coupon codes - replace with actual API call
   final Map<String, Map<String, dynamic>> _validCoupons = {
     'WELCOME10': {
-      'name': 'كوبون الترحيب',
+      'name': AppLocalizations.welcomeCoupon,
       'type': 'percentage',
       'value': 10.0,
     },
     'STUDENT20': {
-      'name': 'خصم الطلاب',
+      'name': AppLocalizations.studentDiscount,
       'type': 'percentage',
       'value': 20.0,
     },
     'SAVE50': {
-      'name': 'وفر 50 دولار',
+      'name': AppLocalizations.save50,
       'type': 'fixed',
       'value': 50.0,
     },
     'FIRST15': {
-      'name': 'خصم أول طلب',
+      'name': AppLocalizations.firstOrderDiscount,
       'type': 'percentage',
       'value': 15.0,
     },
     'NEWUSER': {
-      'name': 'مستخدم جديد',
+      'name': AppLocalizations.newUser,
       'type': 'fixed',
       'value': 25.0,
     },
@@ -87,7 +87,7 @@ class _CartScreenState extends State<CartScreen> {
     if (couponCode.isEmpty) {
       CustomToast.showError(
         context,
-        message: 'يرجى إدخال كود الكوبون',
+        message: AppLocalizations.pleaseEnterCoupon,
       );
       return;
     }
@@ -102,12 +102,12 @@ class _CartScreenState extends State<CartScreen> {
       
       CustomToast.showSuccess(
         context,
-        message: 'تم تطبيق الكوبون "${couponData['name']}" بنجاح! (${couponData['type'] == 'percentage' ? '${couponData['value']}%' : '\$${couponData['value']}'})',
+        message: '${AppLocalizations.couponAppliedSuccess} "${couponData['name']}" (${couponData['type'] == 'percentage' ? '${couponData['value']}%' : '\$${couponData['value']}'})',
       );
     } else {
       CustomToast.showError(
         context,
-        message: 'كود الكوبون غير صحيح أو منتهي الصلاحية',
+        message: AppLocalizations.invalidCoupon,
       );
     }
   }
@@ -432,7 +432,7 @@ class _CartScreenState extends State<CartScreen> {
               ),
               const SizedBox(width: 8),
               Text(
-                'كوبون الخصم',
+                AppLocalizations.couponCode,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w600,
                   color: AppColors.textPrimary,
@@ -448,13 +448,13 @@ class _CartScreenState extends State<CartScreen> {
                 Expanded(
                   child: CustomTextField(
                     controller: _couponController,
-                    hintText: 'أدخل كود الكوبون',
+                    hintText: AppLocalizations.enterCouponCode,
                     textDirection: TextDirection.ltr,
                   ),
                 ),
                 const SizedBox(width: 8),
                 CustomButton(
-                  text: 'تطبيق',
+                  text: AppLocalizations.apply,
                   onPressed: _applyCoupon,
                   width: 100,
                 ),
@@ -480,7 +480,7 @@ class _CartScreenState extends State<CartScreen> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'تم تطبيق الكوبون: ${_appliedCouponData?['name'] ?? _appliedCouponCode}',
+                      '${AppLocalizations.couponApplied}: ${_appliedCouponData?['name'] ?? _appliedCouponCode}',
                       style: TextStyle(
                         color: AppColors.accent,
                         fontWeight: FontWeight.w600,
@@ -490,7 +490,7 @@ class _CartScreenState extends State<CartScreen> {
                   TextButton(
                     onPressed: _removeCoupon,
                     child: Text(
-                      'إزالة',
+                      AppLocalizations.remove,
                       style: TextStyle(
                         color: AppColors.error,
                         fontSize: 12,
@@ -613,7 +613,7 @@ class _CartScreenState extends State<CartScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'خصم الكوبون (${_appliedCouponData?['name'] ?? _appliedCouponCode})',
+                  '${AppLocalizations.couponDiscountLabel} (${_appliedCouponData?['name'] ?? _appliedCouponCode})',
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     color: AppColors.accent,
                   ),

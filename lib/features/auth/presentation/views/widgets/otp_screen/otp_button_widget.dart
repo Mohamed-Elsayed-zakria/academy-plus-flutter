@@ -27,9 +27,9 @@ class OtpButtonWidget extends StatelessWidget {
         
         return CustomButton(
           text: isLoading 
-              ? 'جاري التحقق...' 
+              ? AppLocalizations.verifying
               : hasError 
-                  ? 'إعادة المحاولة' 
+                  ? AppLocalizations.retry
                   : AppLocalizations.verify,
           onPressed: isLoading ? null : () {
             final otpCode = pinController.text.trim();
@@ -39,7 +39,7 @@ class OtpButtonWidget extends StatelessWidget {
             } else {
               CustomToast.showError(
                 context,
-                message: 'يرجى إدخال رمز التحقق كاملاً (6 أرقام)',
+                message: AppLocalizations.pleaseEnterCompleteOtp,
               );
             }
           },

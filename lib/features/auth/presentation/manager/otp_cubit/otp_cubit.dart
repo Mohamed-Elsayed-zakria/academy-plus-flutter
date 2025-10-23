@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/errors/server_failures.dart';
 import '../../../../../core/services/auth_service.dart';
 import '../../../../../core/services/auth_manager.dart';
+import '../../../../../core/localization/app_localizations.dart';
 import '../../../data/models/otp_request_model.dart';
 import '../../../data/models/otp_verify_model.dart';
 import '../../../data/models/login_model.dart';
@@ -62,10 +63,10 @@ class OtpCubit extends Cubit<OtpState> {
   // Validation methods
   String? validateOtpCode(String? value) {
     if (value == null || value.isEmpty) {
-      return 'يرجى إدخال رمز التحقق';
+      return AppLocalizations.pleaseEnterVerificationCode;
     }
     if (value.length != 6) {
-      return 'رمز التحقق يجب أن يكون 6 أرقام';
+      return AppLocalizations.verificationCodeMustBe6Digits;
     }
     return null;
   }

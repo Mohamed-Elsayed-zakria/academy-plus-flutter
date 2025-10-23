@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import '../constants/app_colors.dart';
+import '../localization/app_localizations.dart';
 
 class CustomToast extends StatefulWidget {
   final String message;
@@ -245,12 +246,12 @@ class _CustomToastState extends State<CustomToast>
                         children: [
                           Text(
                             widget.type == ToastType.success
-                                ? 'تم بنجاح!'
+                                ? AppLocalizations.successToastTitle
                                 : widget.type == ToastType.error
-                                    ? 'خطأ!'
+                                    ? AppLocalizations.errorToastTitle
                                     : widget.type == ToastType.warning
-                                        ? 'تحذير'
-                                        : 'تنبيه',
+                                        ? AppLocalizations.warningToastTitle
+                                        : AppLocalizations.infoToastTitle,
                             style: theme.textTheme.titleSmall?.copyWith(
                               color: widget.type == ToastType.success
                                   ? AppColors.success
