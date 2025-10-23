@@ -92,6 +92,15 @@ class OtpCubit extends Cubit<OtpState> {
     }
   }
 
+  // Cancel OTP process and clear all data
+  Future<void> cancelOtpProcess() async {
+    // Clear all authentication data
+    await AuthService.logout();
+    
+    // Reset OTP state to initial
+    emit(OtpInitial());
+  }
+
   Future<void> requestOtp(String phoneNumber) async {
     // Allow retry from OtpRequestError and OtpVerifyError states
     if (state is! OtpInitial && state is! OtpRequestError && state is! OtpVerifyError) return;

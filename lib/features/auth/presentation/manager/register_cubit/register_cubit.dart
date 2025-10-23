@@ -33,30 +33,166 @@ class RegisterCubit extends Cubit<RegisterState> {
 
   // Update form fields
   void updateName(String name) {
+    // Handle all state types to preserve data
     if (state is RegisterInitial) {
       final currentState = state as RegisterInitial;
       emit(currentState.copyWith(name: name));
+    } else if (state is RegisterError) {
+      final errorState = state as RegisterError;
+      emit(RegisterInitial(
+        name: name,
+        password: errorState.password,
+        confirmPassword: errorState.confirmPassword,
+        phone: errorState.phone,
+        selectedDialCode: errorState.selectedDialCode,
+        selectedUniversity: errorState.selectedUniversity,
+        hasAttemptedSubmit: false,
+      ));
+    } else if (state is RegisterLoading) {
+      final loadingState = state as RegisterLoading;
+      emit(RegisterInitial(
+        name: name,
+        password: loadingState.password,
+        confirmPassword: loadingState.confirmPassword,
+        phone: loadingState.phone,
+        selectedDialCode: loadingState.selectedDialCode,
+        selectedUniversity: loadingState.selectedUniversity,
+        hasAttemptedSubmit: false,
+      ));
+    } else if (state is RegisterSuccess) {
+      final successState = state as RegisterSuccess;
+      emit(RegisterInitial(
+        name: name,
+        password: successState.password,
+        confirmPassword: successState.confirmPassword,
+        phone: successState.phone,
+        selectedDialCode: successState.selectedDialCode,
+        selectedUniversity: successState.selectedUniversity,
+        hasAttemptedSubmit: false,
+      ));
     }
   }
 
   void updatePassword(String password) {
+    // Handle all state types to preserve data
     if (state is RegisterInitial) {
       final currentState = state as RegisterInitial;
       emit(currentState.copyWith(password: password));
+    } else if (state is RegisterError) {
+      final errorState = state as RegisterError;
+      emit(RegisterInitial(
+        name: errorState.name,
+        password: password,
+        confirmPassword: errorState.confirmPassword,
+        phone: errorState.phone,
+        selectedDialCode: errorState.selectedDialCode,
+        selectedUniversity: errorState.selectedUniversity,
+        hasAttemptedSubmit: false,
+      ));
+    } else if (state is RegisterLoading) {
+      final loadingState = state as RegisterLoading;
+      emit(RegisterInitial(
+        name: loadingState.name,
+        password: password,
+        confirmPassword: loadingState.confirmPassword,
+        phone: loadingState.phone,
+        selectedDialCode: loadingState.selectedDialCode,
+        selectedUniversity: loadingState.selectedUniversity,
+        hasAttemptedSubmit: false,
+      ));
+    } else if (state is RegisterSuccess) {
+      final successState = state as RegisterSuccess;
+      emit(RegisterInitial(
+        name: successState.name,
+        password: password,
+        confirmPassword: successState.confirmPassword,
+        phone: successState.phone,
+        selectedDialCode: successState.selectedDialCode,
+        selectedUniversity: successState.selectedUniversity,
+        hasAttemptedSubmit: false,
+      ));
     }
   }
 
   void updateConfirmPassword(String confirmPassword) {
+    // Handle all state types to preserve data
     if (state is RegisterInitial) {
       final currentState = state as RegisterInitial;
       emit(currentState.copyWith(confirmPassword: confirmPassword));
+    } else if (state is RegisterError) {
+      final errorState = state as RegisterError;
+      emit(RegisterInitial(
+        name: errorState.name,
+        password: errorState.password,
+        confirmPassword: confirmPassword,
+        phone: errorState.phone,
+        selectedDialCode: errorState.selectedDialCode,
+        selectedUniversity: errorState.selectedUniversity,
+        hasAttemptedSubmit: false,
+      ));
+    } else if (state is RegisterLoading) {
+      final loadingState = state as RegisterLoading;
+      emit(RegisterInitial(
+        name: loadingState.name,
+        password: loadingState.password,
+        confirmPassword: confirmPassword,
+        phone: loadingState.phone,
+        selectedDialCode: loadingState.selectedDialCode,
+        selectedUniversity: loadingState.selectedUniversity,
+        hasAttemptedSubmit: false,
+      ));
+    } else if (state is RegisterSuccess) {
+      final successState = state as RegisterSuccess;
+      emit(RegisterInitial(
+        name: successState.name,
+        password: successState.password,
+        confirmPassword: confirmPassword,
+        phone: successState.phone,
+        selectedDialCode: successState.selectedDialCode,
+        selectedUniversity: successState.selectedUniversity,
+        hasAttemptedSubmit: false,
+      ));
     }
   }
 
   void updatePhone(String phone) {
+    // Handle all state types to preserve data
     if (state is RegisterInitial) {
       final currentState = state as RegisterInitial;
       emit(currentState.copyWith(phone: phone));
+    } else if (state is RegisterError) {
+      final errorState = state as RegisterError;
+      emit(RegisterInitial(
+        name: errorState.name,
+        password: errorState.password,
+        confirmPassword: errorState.confirmPassword,
+        phone: phone,
+        selectedDialCode: errorState.selectedDialCode,
+        selectedUniversity: errorState.selectedUniversity,
+        hasAttemptedSubmit: false,
+      ));
+    } else if (state is RegisterLoading) {
+      final loadingState = state as RegisterLoading;
+      emit(RegisterInitial(
+        name: loadingState.name,
+        password: loadingState.password,
+        confirmPassword: loadingState.confirmPassword,
+        phone: phone,
+        selectedDialCode: loadingState.selectedDialCode,
+        selectedUniversity: loadingState.selectedUniversity,
+        hasAttemptedSubmit: false,
+      ));
+    } else if (state is RegisterSuccess) {
+      final successState = state as RegisterSuccess;
+      emit(RegisterInitial(
+        name: successState.name,
+        password: successState.password,
+        confirmPassword: successState.confirmPassword,
+        phone: phone,
+        selectedDialCode: successState.selectedDialCode,
+        selectedUniversity: successState.selectedUniversity,
+        hasAttemptedSubmit: false,
+      ));
     }
   }
 
@@ -75,16 +211,84 @@ class RegisterCubit extends Cubit<RegisterState> {
   }
 
   void updateDialCode(String dialCode) {
+    // Handle all state types to preserve data
     if (state is RegisterInitial) {
       final currentState = state as RegisterInitial;
       emit(currentState.copyWith(selectedDialCode: dialCode));
+    } else if (state is RegisterError) {
+      final errorState = state as RegisterError;
+      emit(RegisterInitial(
+        name: errorState.name,
+        password: errorState.password,
+        confirmPassword: errorState.confirmPassword,
+        phone: errorState.phone,
+        selectedDialCode: dialCode,
+        selectedUniversity: errorState.selectedUniversity,
+        hasAttemptedSubmit: false,
+      ));
+    } else if (state is RegisterLoading) {
+      final loadingState = state as RegisterLoading;
+      emit(RegisterInitial(
+        name: loadingState.name,
+        password: loadingState.password,
+        confirmPassword: loadingState.confirmPassword,
+        phone: loadingState.phone,
+        selectedDialCode: dialCode,
+        selectedUniversity: loadingState.selectedUniversity,
+        hasAttemptedSubmit: false,
+      ));
+    } else if (state is RegisterSuccess) {
+      final successState = state as RegisterSuccess;
+      emit(RegisterInitial(
+        name: successState.name,
+        password: successState.password,
+        confirmPassword: successState.confirmPassword,
+        phone: successState.phone,
+        selectedDialCode: dialCode,
+        selectedUniversity: successState.selectedUniversity,
+        hasAttemptedSubmit: false,
+      ));
     }
   }
 
   void updateSelectedUniversity(UniversityModel? university) {
+    // Handle all state types to preserve university selection
     if (state is RegisterInitial) {
       final currentState = state as RegisterInitial;
       emit(currentState.copyWith(
+        selectedUniversity: university,
+        hasAttemptedSubmit: false,
+      ));
+    } else if (state is RegisterError) {
+      final errorState = state as RegisterError;
+      emit(RegisterInitial(
+        name: errorState.name,
+        password: errorState.password,
+        confirmPassword: errorState.confirmPassword,
+        phone: errorState.phone,
+        selectedDialCode: errorState.selectedDialCode,
+        selectedUniversity: university,
+        hasAttemptedSubmit: false,
+      ));
+    } else if (state is RegisterLoading) {
+      final loadingState = state as RegisterLoading;
+      emit(RegisterInitial(
+        name: loadingState.name,
+        password: loadingState.password,
+        confirmPassword: loadingState.confirmPassword,
+        phone: loadingState.phone,
+        selectedDialCode: loadingState.selectedDialCode,
+        selectedUniversity: university,
+        hasAttemptedSubmit: false,
+      ));
+    } else if (state is RegisterSuccess) {
+      final successState = state as RegisterSuccess;
+      emit(RegisterInitial(
+        name: successState.name,
+        password: successState.password,
+        confirmPassword: successState.confirmPassword,
+        phone: successState.phone,
+        selectedDialCode: successState.selectedDialCode,
         selectedUniversity: university,
         hasAttemptedSubmit: false,
       ));
@@ -92,9 +296,43 @@ class RegisterCubit extends Cubit<RegisterState> {
   }
 
   void setAttemptedSubmit(bool attempted) {
+    // Handle all state types to preserve data
     if (state is RegisterInitial) {
       final currentState = state as RegisterInitial;
       emit(currentState.copyWith(hasAttemptedSubmit: attempted));
+    } else if (state is RegisterError) {
+      final errorState = state as RegisterError;
+      emit(RegisterInitial(
+        name: errorState.name,
+        password: errorState.password,
+        confirmPassword: errorState.confirmPassword,
+        phone: errorState.phone,
+        selectedDialCode: errorState.selectedDialCode,
+        selectedUniversity: errorState.selectedUniversity,
+        hasAttemptedSubmit: attempted,
+      ));
+    } else if (state is RegisterLoading) {
+      final loadingState = state as RegisterLoading;
+      emit(RegisterInitial(
+        name: loadingState.name,
+        password: loadingState.password,
+        confirmPassword: loadingState.confirmPassword,
+        phone: loadingState.phone,
+        selectedDialCode: loadingState.selectedDialCode,
+        selectedUniversity: loadingState.selectedUniversity,
+        hasAttemptedSubmit: attempted,
+      ));
+    } else if (state is RegisterSuccess) {
+      final successState = state as RegisterSuccess;
+      emit(RegisterInitial(
+        name: successState.name,
+        password: successState.password,
+        confirmPassword: successState.confirmPassword,
+        phone: successState.phone,
+        selectedDialCode: successState.selectedDialCode,
+        selectedUniversity: successState.selectedUniversity,
+        hasAttemptedSubmit: attempted,
+      ));
     }
   }
 

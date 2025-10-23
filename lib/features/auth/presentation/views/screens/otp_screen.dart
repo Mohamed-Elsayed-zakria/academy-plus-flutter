@@ -165,6 +165,46 @@ class OtpScreen extends StatelessWidget {
                               pinController: pinController,
                               phoneNumber: phoneNumber,
                             ),
+                            
+                            const SizedBox(height: 24),
+                            
+                            // Back to Login Link
+                            Center(
+                              child: RichText(
+                                text: TextSpan(
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                  children: [
+                                    TextSpan(
+                                      text: 'غير رقم الهاتف؟ ',
+                                      style: TextStyle(color: AppColors.textSecondary),
+                                    ),
+                                    WidgetSpan(
+                                      child: GestureDetector(
+                                        onTap: () async {
+                                          // Cancel OTP process and clear all data
+                                          await context.read<OtpCubit>().cancelOtpProcess();
+                                          
+                                          // Navigate to login screen
+                                          if (context.mounted) {
+                                            NavigationHelper.offAll(
+                                              path: '/login',
+                                              context: context,
+                                            );
+                                          }
+                                        },
+                                        child: Text(
+                                          'العودة إلى تسجيل الدخول',
+                                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                            color: AppColors.primary,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
                           ],
                         );
                       },
