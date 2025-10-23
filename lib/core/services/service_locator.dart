@@ -16,6 +16,8 @@ import '../../features/auth/presentation/manager/reset_password_cubit/reset_pass
 import '../../features/auth/data/repository/profile_repo.dart';
 import '../../features/auth/data/repository/profile_implement.dart';
 import '../../features/auth/presentation/manager/profile_picture_cubit/profile_picture_cubit.dart';
+import '../../features/cart/data/repository/cart_repo.dart';
+import '../../features/cart/data/repository/cart_implement.dart';
 
 class SetupLocator {
   static GetIt locator = GetIt.instance;
@@ -45,5 +47,8 @@ class SetupLocator {
     // Profile
     locator.registerLazySingleton<ProfileRepo>(() => ProfileImplement());
     locator.registerFactory(() => ProfilePictureCubit(locator()));
+
+    // Cart
+    locator.registerLazySingleton<CartRepo>(() => CartImplement());
   }
 }

@@ -14,4 +14,10 @@ abstract class APIEndPoint {
   static const userProfile = "/api/users/profile";
   static const ads = "/api/ads";
   static const adsByUniversity = "/api/ads/university";
+  
+  // Cart endpoints
+  static const cartItems = "/api/cart/items";
+  static const cartSummary = "/api/cart/summary";
+  static const cartTotal = "/api/cart/total";
+  static const cartClear = "/api/cart/clear";
 }

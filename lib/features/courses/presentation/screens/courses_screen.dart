@@ -7,6 +7,7 @@ import '../../../../../core/widgets/custom_text_field.dart';
 import '../../../../../core/widgets/skeleton_loader.dart';
 import '../../../../../core/widgets/skeleton_course_grid.dart';
 import '../../../../../core/utils/navigation_helper.dart';
+import '../../../../../core/widgets/custom_toast.dart';
 import '../../../home/data/models/sub_department_model.dart';
 import '../../data/models/course_model.dart';
 import '../../data/repository/course_implement.dart';
@@ -16,10 +17,7 @@ import '../manager/course_state.dart';
 class CoursesScreen extends StatefulWidget {
   final SubDepartmentModel subDepartment;
 
-  const CoursesScreen({
-    super.key,
-    required this.subDepartment,
-  });
+  const CoursesScreen({super.key, required this.subDepartment});
 
   @override
   State<CoursesScreen> createState() => _CoursesScreenState();
@@ -61,11 +59,9 @@ class _CoursesScreenState extends State<CoursesScreen> {
             ),
           ),
         ),
-        
+
         // Grid Skeleton
-        SliverToBoxAdapter(
-          child: SkeletonCourseGrid(itemCount: 6),
-        ),
+        SliverToBoxAdapter(child: SkeletonCourseGrid(itemCount: 6)),
       ],
     );
   }
@@ -73,8 +69,9 @@ class _CoursesScreenState extends State<CoursesScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => CourseCubit(CourseImplement())
-        ..getCoursesBySubDepartment(widget.subDepartment.id),
+      create: (context) =>
+          CourseCubit(CourseImplement())
+            ..getCoursesBySubDepartment(widget.subDepartment.id),
       child: Scaffold(
         backgroundColor: AppColors.background,
         appBar: AppBar(
@@ -88,61 +85,85 @@ class _CoursesScreenState extends State<CoursesScreen> {
           backgroundColor: AppColors.background,
           elevation: 0,
         ),
-        body: BlocBuilder<CourseCubit, CourseState>(
-          builder: (context, state) {
-            if (state is CourseLoading) {
-              return _buildLoadingState();
-            } else if (state is CourseError) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Ionicons.alert_circle_outline,
-                      size: 64,
-                      color: AppColors.textSecondary,
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      state.error,
-                      style: TextStyle(
-                        color: AppColors.textSecondary,
-                        fontSize: 16,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () {
-                        context.read<CourseCubit>().getCoursesBySubDepartment(widget.subDepartment.id);
-                      },
-                      child: const Text('إعادة المحاولة'),
-                    ),
-                  ],
-                ),
-              );
-            } else if (state is CourseLoaded) {
-              return _buildCoursesList(state.courses);
-            } else {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
+        body: BlocListener<CourseCubit, CourseState>(
+          listener: (context, state) {
+            // Handle cart-related states
+            if (state is CourseAddedToCart) {
+              CustomToast.showSuccess(context, message: state.message);
+            } else if (state is CourseCartError) {
+              CustomToast.showError(context, message: state.error);
             }
           },
+          child: BlocBuilder<CourseCubit, CourseState>(
+            builder: (context, state) {
+              if (state is CourseLoading) {
+                return _buildLoadingState();
+              } else if (state is CourseError) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Ionicons.alert_circle_outline,
+                        size: 64,
+                        color: AppColors.textSecondary,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        state.error,
+                        style: TextStyle(
+                          color: AppColors.textSecondary,
+                          fontSize: 16,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: () {
+                          context.read<CourseCubit>().getCoursesBySubDepartment(
+                            widget.subDepartment.id,
+                          );
+                        },
+                        child: const Text('إعادة المحاولة'),
+                      ),
+                    ],
+                  ),
+                );
+              } else if (state is CourseLoaded || 
+                         state is CourseAddingToCart || 
+                         state is CourseAddedToCart || 
+                         state is CourseCartError) {
+                // Get courses from any of these states
+                List<CourseModel> courses = [];
+                if (state is CourseLoaded) {
+                  courses = state.courses;
+                } else if (state is CourseAddingToCart) {
+                  courses = state.courses;
+                } else if (state is CourseAddedToCart) {
+                  courses = state.courses;
+                } else if (state is CourseCartError) {
+                  courses = state.courses;
+                }
+                return _buildCoursesList(courses, state);
+              } else {
+                return const Center(child: CircularProgressIndicator());
+              }
+            },
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildCoursesList(List<CourseModel> courses) {
+  Widget _buildCoursesList(List<CourseModel> courses, CourseState state) {
     // Filter courses based on search
     List<CourseModel> filteredList = courses;
     if (_searchController.text.isNotEmpty) {
       final query = _searchController.text.toLowerCase();
       filteredList = courses.where((course) {
         return course.titleAr.toLowerCase().contains(query) ||
-               course.titleEn.toLowerCase().contains(query) ||
-               course.instructorName.toLowerCase().contains(query);
+            course.titleEn.toLowerCase().contains(query) ||
+            course.instructorName.toLowerCase().contains(query);
       }).toList();
     }
 
@@ -164,7 +185,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
             ),
           ),
         ),
-        
+
         // Results count
         if (_searchController.text.isNotEmpty)
           SliverToBoxAdapter(
@@ -172,14 +193,11 @@ class _CoursesScreenState extends State<CoursesScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
                 'تم العثور على ${filteredList.length} مادة',
-                style: TextStyle(
-                  color: AppColors.textSecondary,
-                  fontSize: 14,
-                ),
+                style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
               ),
             ),
           ),
-        
+
         // Grid or Empty State
         if (filteredList.isEmpty)
           SliverToBoxAdapter(
@@ -195,7 +213,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
                     ),
                     const SizedBox(height: 24),
                     Text(
-                      _searchController.text.isNotEmpty 
+                      _searchController.text.isNotEmpty
                           ? 'لا توجد نتائج للبحث'
                           : 'لا توجد مواد متاحة',
                       style: TextStyle(
@@ -207,7 +225,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      _searchController.text.isNotEmpty 
+                      _searchController.text.isNotEmpty
                           ? 'جرب البحث بكلمات مختلفة'
                           : 'سيتم إضافة المواد قريباً',
                       style: TextStyle(
@@ -231,20 +249,17 @@ class _CoursesScreenState extends State<CoursesScreen> {
                 mainAxisSpacing: 12,
                 childAspectRatio: 0.75,
               ),
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  final course = filteredList[index];
-                  return _buildCourseCard(course);
-                },
-                childCount: filteredList.length,
-              ),
+              delegate: SliverChildBuilderDelegate((context, index) {
+                final course = filteredList[index];
+                return _buildCourseCard(course, state, context.read<CourseCubit>());
+              }, childCount: filteredList.length),
             ),
           ),
       ],
     );
   }
 
-  Widget _buildCourseCard(CourseModel course) {
+  Widget _buildCourseCard(CourseModel course, CourseState state, CourseCubit cubit) {
     return InkWell(
       onTap: () {
         // Navigate to course details
@@ -317,9 +332,10 @@ class _CoursesScreenState extends State<CoursesScreen> {
                               height: 30,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                value: loadingProgress.expectedTotalBytes != null
+                                value:
+                                    loadingProgress.expectedTotalBytes != null
                                     ? loadingProgress.cumulativeBytesLoaded /
-                                        loadingProgress.expectedTotalBytes!
+                                          loadingProgress.expectedTotalBytes!
                                     : null,
                               ),
                             ),
@@ -345,13 +361,16 @@ class _CoursesScreenState extends State<CoursesScreen> {
                       top: 8,
                       right: 8,
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
                           color: AppColors.primary,
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
-                          course.discountPrice > 0 
+                          course.discountPrice > 0
                               ? '${course.discountPrice.toStringAsFixed(0)} ج.م'
                               : '${course.price.toStringAsFixed(0)} ج.م',
                           style: const TextStyle(
@@ -362,11 +381,49 @@ class _CoursesScreenState extends State<CoursesScreen> {
                         ),
                       ),
                     ),
+                    // Cart icon
+                    Positioned(
+                      top: 8,
+                      left: 8,
+                      child: GestureDetector(
+                        onTap: () => cubit.addCourseToCart(course),
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.9),
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.1),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: (state is CourseAddingToCart && 
+                                  state.courseId == course.id)
+                              ? SizedBox(
+                                  width: 18,
+                                  height: 18,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      AppColors.primary,
+                                    ),
+                                  ),
+                                )
+                              : const Icon(
+                                  Ionicons.cart_outline,
+                                  color: AppColors.primary,
+                                  size: 18,
+                                ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
             ),
-            
             // Text section
             Expanded(
               flex: 2,

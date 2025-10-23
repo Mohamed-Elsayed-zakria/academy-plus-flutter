@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "academy-plus-complete-v2",
 		"name": "Academy Plus - Complete API Collection",
-		"description": "Complete API collection for Academy Plus - Educational Platform Backend\n\n**Authentication:**\n- Token is automatically set after successful login/registration\n- All endpoints (except auth) require authentication - unauthenticated users get 401\n\n**Data Visibility:**\n- Users only see their university's data\n- Main Departments filtered by user's university\n- Sub Departments filtered by user's main departments\n- Courses filtered by user's sub departments\n- Unauthenticated users see NO data\n\n**Role-Based Access Control:**\n- Four roles (enum): Super Admin, Admin, Teacher, Student\n- Default role: Student (auto-assigned)\n- Student permissions: view courses, enroll, access materials, submit assignments, view grades, edit profile",
+		"description": "Complete API collection for Academy Plus - Educational Platform Backend\n\n**Authentication:**\n- Token is automatically set after successful login/registration\n- All endpoints (except auth) require authentication - unauthenticated users get 401\n\n**Data Visibility:**\n- Users only see their university's data\n- Main Departments filtered by user's university\n- Sub Departments filtered by user's main departments\n- Courses filtered by user's sub departments\n- Unauthenticated users see NO data\n\n**Role-Based Access Control:**\n- Four roles (enum): Super Admin, Admin, Teacher, Student\n- Default role: Student (auto-assigned)\n- Student permissions: view courses, enroll, access materials, submit assignments, view grades, edit profile\n\n**Cart System:**\n- Users can add courses, assignments, and quizzes to their cart\n- System prevents adding items that user already has active subscription for\n- Cart includes price calculations with discounts\n- Support for individual item removal or clearing entire cart",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "academy-plus"
 	},
@@ -2471,6 +2471,188 @@
 				}
 			],
 			"description": "Ad management endpoints. Simple ads with university association and image upload."
+		},
+		{
+			"name": "Cart",
+			"item": [
+				{
+					"name": "Get Cart Items",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/cart/items",
+							"host": ["{{base_url}}"],
+							"path": ["api", "cart", "items"]
+						},
+						"description": "Get all items in user's cart"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Cart Summary",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/cart/summary",
+							"host": ["{{base_url}}"],
+							"path": ["api", "cart", "summary"]
+						},
+						"description": "Get cart summary with items and total calculation"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Cart Total",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/cart/total",
+							"host": ["{{base_url}}"],
+							"path": ["api", "cart", "total"]
+						},
+						"description": "Get cart total calculation (total, discount total, savings, item count)"
+					},
+					"response": []
+				},
+				{
+					"name": "Add Course to Cart",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"itemType\": \"course\",\n  \"itemId\": \"{{course_id}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/cart/items",
+							"host": ["{{base_url}}"],
+							"path": ["api", "cart", "items"]
+						},
+						"description": "Add a course to cart"
+					},
+					"response": []
+				},
+				{
+					"name": "Add Assignment to Cart",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"itemType\": \"assignment\",\n  \"itemId\": \"{{assignment_id}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/cart/items",
+							"host": ["{{base_url}}"],
+							"path": ["api", "cart", "items"]
+						},
+						"description": "Add an assignment to cart"
+					},
+					"response": []
+				},
+				{
+					"name": "Add Quiz to Cart",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"itemType\": \"quiz\",\n  \"itemId\": \"{{quiz_id}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/cart/items",
+							"host": ["{{base_url}}"],
+							"path": ["api", "cart", "items"]
+						},
+						"description": "Add a quiz to cart"
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Item from Cart",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/cart/items/{{cart_item_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "cart", "items", "{{cart_item_id}}"]
+						},
+						"description": "Remove a specific item from cart using cart item ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Clear Cart",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/cart/clear",
+							"host": ["{{base_url}}"],
+							"path": ["api", "cart", "clear"]
+						},
+						"description": "Clear all items from cart"
+					},
+					"response": []
+				}
+			],
+			"description": "Cart management endpoints. Users can add courses, assignments, and quizzes to their cart before purchasing. System prevents adding items that user already has active subscription for."
 		},
 		{
 			"name": "Health Check",

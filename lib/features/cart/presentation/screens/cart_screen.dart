@@ -6,7 +6,10 @@ import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/custom_text_field.dart';
 import '../../../../core/utils/navigation_helper.dart';
 import '../../../../core/widgets/custom_toast.dart';
-import '../widgets/empty_cart_illustration.dart';
+import '../../../../core/services/service_locator.dart';
+import '../../data/models/cart_item_model.dart';
+import '../../data/repository/cart_repo.dart';
+import 'widgets/empty_cart_illustration.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -16,29 +19,14 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
-  // Mock cart data - replace with actual cart state management
-  List<Map<String, dynamic>> cartItems = [
-    {
-      'id': '1',
-      'title': 'البرمجة المتقدمة',
-      'titleEn': 'Advanced Programming',
-      'instructor': 'Dr. Sarah Johnson',
-      'price': 299.99,
-      'discount': 20,
-      'image': 'https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=500&h=300&fit=crop',
-      'quantity': 1,
-    },
-    {
-      'id': '2',
-      'title': 'تعلم الذكاء الاصطناعي',
-      'titleEn': 'AI Learning',
-      'instructor': 'Prof. Ahmed Ali',
-      'price': 199.99,
-      'discount': 15,
-      'image': 'https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=500&h=300&fit=crop',
-      'quantity': 1,
-    },
-  ];
+  // Cart data from API
+  List<CartItemModel> cartItems = [];
+  bool isLoading = true;
+  bool isRefreshing = false;
+  String? errorMessage;
+  
+  // Cart repository
+  final CartRepo _cartRepo = SetupLocator.locator<CartRepo>();
 
   // Coupon code state
   final TextEditingController _couponController = TextEditingController();
@@ -47,9 +35,81 @@ class _CartScreenState extends State<CartScreen> {
   bool _isCouponApplied = false;
 
   @override
+  void initState() {
+    super.initState();
+    _loadCartItems();
+  }
+
+  @override
   void dispose() {
     _couponController.dispose();
     super.dispose();
+  }
+
+  // Load cart items from API
+  Future<void> _loadCartItems() async {
+    setState(() {
+      isLoading = true;
+      errorMessage = null;
+    });
+
+    final result = await _cartRepo.getCartItems();
+    result.fold(
+      (failure) {
+        setState(() {
+          isLoading = false;
+          errorMessage = failure.errMessage;
+        });
+        CustomToast.showError(context, message: failure.errMessage);
+      },
+      (cartResponse) {
+        setState(() {
+          isLoading = false;
+          cartItems = cartResponse.data;
+        });
+      },
+    );
+  }
+
+  // Refresh cart items
+  Future<void> _refreshCartItems() async {
+    setState(() {
+      isRefreshing = true;
+    });
+
+    await _loadCartItems();
+    
+    setState(() {
+      isRefreshing = false;
+    });
+  }
+
+  // Remove item from cart
+  Future<void> _removeItemFromCart(String cartItemId) async {
+    final result = await _cartRepo.removeItemFromCart(cartItemId);
+    result.fold(
+      (failure) {
+        CustomToast.showError(context, message: failure.errMessage);
+      },
+      (response) {
+        CustomToast.showSuccess(context, message: 'Item removed from cart');
+        _loadCartItems(); // Reload cart items
+      },
+    );
+  }
+
+  // Clear entire cart
+  Future<void> _clearCart() async {
+    final result = await _cartRepo.clearCart();
+    result.fold(
+      (failure) {
+        CustomToast.showError(context, message: failure.errMessage);
+      },
+      (response) {
+        CustomToast.showSuccess(context, message: 'Cart cleared successfully');
+        _loadCartItems(); // Reload cart items
+      },
+    );
   }
 
   // Mock coupon codes - replace with actual API call
@@ -133,12 +193,12 @@ class _CartScreenState extends State<CartScreen> {
           if (cartItems.isNotEmpty)
             IconButton(
               icon: Icon(Icons.delete_outline, color: AppColors.error),
-              onPressed: _clearCart,
+              onPressed: _showClearCartDialog,
             ),
         ],
       ),
-      body: cartItems.isEmpty ? _buildEmptyCart() : _buildCartContent(),
-      floatingActionButton: cartItems.isNotEmpty ? Container(
+      body: _buildBody(),
+      floatingActionButton: cartItems.isNotEmpty && !isLoading ? Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(30),
           boxShadow: [
@@ -168,6 +228,77 @@ class _CartScreenState extends State<CartScreen> {
         ),
       ) : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+    );
+  }
+
+  Widget _buildBody() {
+    if (isLoading) {
+      return _buildLoadingState();
+    }
+    
+    if (errorMessage != null) {
+      return _buildErrorState();
+    }
+    
+    if (cartItems.isEmpty) {
+      return _buildEmptyCart();
+    }
+    
+    return _buildCartContent();
+  }
+
+  Widget _buildLoadingState() {
+    return const Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CircularProgressIndicator(),
+          SizedBox(height: 16),
+          Text('Loading cart items...'),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildErrorState() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.error_outline,
+              size: 64,
+              color: AppColors.error,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Error loading cart',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              errorMessage ?? 'Something went wrong',
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                color: AppColors.textSecondary,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            CustomButton(
+              text: 'Retry',
+              onPressed: _loadCartItems,
+              isGradient: true,
+              width: double.infinity,
+              icon: Icon(Icons.refresh, color: Colors.white),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -225,13 +356,16 @@ class _CartScreenState extends State<CartScreen> {
       children: [
         // Cart items list
         Expanded(
-          child: ListView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: cartItems.length,
-            itemBuilder: (context, index) {
-              final item = cartItems[index];
-              return _buildCartItem(item, index);
-            },
+          child: RefreshIndicator(
+            onRefresh: _refreshCartItems,
+            child: ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: cartItems.length,
+              itemBuilder: (context, index) {
+                final item = cartItems[index];
+                return _buildCartItem(item, index);
+              },
+            ),
           ),
         ),
         
@@ -244,8 +378,10 @@ class _CartScreenState extends State<CartScreen> {
     );
   }
 
-  Widget _buildCartItem(Map<String, dynamic> item, int index) {
-    final discountedPrice = item['price'] - (item['price'] * item['discount'] / 100);
+  Widget _buildCartItem(CartItemModel item, int index) {
+    final discountedPrice = item.finalPrice;
+    final originalPrice = item.price;
+    final discountPercentage = item.discountPercentage;
     
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -280,8 +416,8 @@ class _CartScreenState extends State<CartScreen> {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                child: Image.network(
-                  item['image'],
+                child: item.imageUrl != null ? Image.network(
+                  item.imageUrl!,
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
                     return Container(
@@ -290,7 +426,7 @@ class _CartScreenState extends State<CartScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Icon(
-                        Icons.book,
+                        _getItemIcon(item.itemType),
                         color: Colors.white,
                         size: 32,
                       ),
@@ -318,6 +454,16 @@ class _CartScreenState extends State<CartScreen> {
                       ),
                     );
                   },
+                ) : Container(
+                  decoration: BoxDecoration(
+                    gradient: AppColors.primaryGradient,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    _getItemIcon(item.itemType),
+                    color: Colors.white,
+                    size: 32,
+                  ),
                 ),
               ),
             ),
@@ -328,9 +474,9 @@ class _CartScreenState extends State<CartScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Course title (Arabic)
+                  // Item title (Arabic)
                   Text(
-                    item['title'],
+                    item.title,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w600,
                       color: AppColors.textPrimary,
@@ -340,9 +486,9 @@ class _CartScreenState extends State<CartScreen> {
                   ),
                   const SizedBox(height: 4),
                   
-                  // Instructor
+                  // Instructor/Type
                   Text(
-                    item['instructor'],
+                    item.instructor.isNotEmpty ? item.instructor : _getItemTypeLabel(item.itemType),
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: AppColors.textSecondary,
                     ),
@@ -352,7 +498,7 @@ class _CartScreenState extends State<CartScreen> {
                   // Price section
                   Row(
                     children: [
-                      // Discounted price
+                      // Final price
                       Text(
                         '\$${discountedPrice.toStringAsFixed(2)}',
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -362,31 +508,33 @@ class _CartScreenState extends State<CartScreen> {
                       ),
                       const SizedBox(width: 8),
                       
-                      // Original price (crossed out)
-                      Text(
-                        '\$${item['price'].toStringAsFixed(2)}',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          decoration: TextDecoration.lineThrough,
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      
-                      // Discount badge
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: AppColors.accent.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Text(
-                          '-${item['discount']}%',
+                      // Original price (crossed out) - only show if there's a discount
+                      if (discountPercentage > 0) ...[
+                        Text(
+                          '\$${originalPrice.toStringAsFixed(2)}',
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: AppColors.accent,
-                            fontWeight: FontWeight.w600,
+                            decoration: TextDecoration.lineThrough,
+                            color: AppColors.textSecondary,
                           ),
                         ),
-                      ),
+                        const SizedBox(width: 8),
+                        
+                        // Discount badge
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: AppColors.accent.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            '-${discountPercentage.toStringAsFixed(0)}%',
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: AppColors.accent,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ],
@@ -400,7 +548,7 @@ class _CartScreenState extends State<CartScreen> {
                 color: AppColors.error,
                 size: 20,
               ),
-              onPressed: () => _removeItem(index),
+              onPressed: () => _removeItemFromCart(item.id),
             ),
           ],
         ),
@@ -509,11 +657,11 @@ class _CartScreenState extends State<CartScreen> {
   Widget _buildCheckoutSection() {
     final originalTotal = cartItems.fold<double>(
       0,
-      (sum, item) => sum + item['price'],
+      (sum, item) => sum + item.price,
     );
     final discountAmount = cartItems.fold<double>(
       0,
-      (sum, item) => sum + (item['price'] * item['discount'] / 100),
+      (sum, item) => sum + item.discountAmount,
     );
     final subtotal = originalTotal - discountAmount;
     
@@ -658,13 +806,34 @@ class _CartScreenState extends State<CartScreen> {
     );
   }
 
-  void _removeItem(int index) {
-    setState(() {
-      cartItems.removeAt(index);
-    });
+  // Helper methods
+  IconData _getItemIcon(String itemType) {
+    switch (itemType) {
+      case 'course':
+        return Icons.book;
+      case 'assignment':
+        return Icons.assignment;
+      case 'quiz':
+        return Icons.quiz;
+      default:
+        return Icons.shopping_cart;
+    }
   }
 
-  void _clearCart() {
+  String _getItemTypeLabel(String itemType) {
+    switch (itemType) {
+      case 'course':
+        return 'Course';
+      case 'assignment':
+        return 'Assignment';
+      case 'quiz':
+        return 'Quiz';
+      default:
+        return 'Item';
+    }
+  }
+
+  void _showClearCartDialog() {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -679,9 +848,7 @@ class _CartScreenState extends State<CartScreen> {
           TextButton(
             onPressed: () {
               NavigationHelper.back(context);
-              setState(() {
-                cartItems.clear();
-              });
+              _clearCart();
             },
             child: Text(AppLocalizations.delete, style: TextStyle(color: AppColors.error)),
           ),
