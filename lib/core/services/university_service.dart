@@ -7,7 +7,6 @@ class UniversityService {
   static Future<void> saveUniversityId(String universityId) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_universityIdKey, universityId);
-    print('University ID saved: $universityId');
   }
 
   // Get university ID
@@ -20,7 +19,6 @@ class UniversityService {
   static Future<void> clearUniversityId() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_universityIdKey);
-    print('University ID cleared');
   }
 
   // Check if university ID exists

@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "academy-plus-complete-v2",
 		"name": "Academy Plus - Complete API Collection",
-		"description": "Complete API collection for Academy Plus - Educational Platform Backend\n\n**Authentication:**\n- Token is automatically set after successful login/registration\n- All endpoints (except auth) require authentication - unauthenticated users get 401\n\n**Data Visibility:**\n- Users only see their university's data\n- Main Departments filtered by user's university\n- Sub Departments filtered by user's main departments\n- Courses filtered by user's sub departments\n- Unauthenticated users see NO data\n\n**Role-Based Access Control:**\n- Four roles (enum): Super Admin, Admin, Teacher, Student\n- Default role: Student (auto-assigned)\n- Student permissions: view courses, enroll, access materials, submit assignments, view grades, edit profile\n\n**Cart System:**\n- Users can add courses, assignments, and quizzes to their cart\n- System prevents adding items that user already has active subscription for\n- Cart includes price calculations with discounts\n- Support for individual item removal or clearing entire cart",
+		"description": "Complete API collection for Academy Plus - Educational Platform Backend\n\n**Authentication:**\n- Token is automatically set after successful login/registration\n- All endpoints (except auth) require authentication - unauthenticated users get 401\n\n**Data Visibility:**\n- Users only see their university's data\n- Main Departments filtered by user's university\n- Sub Departments filtered by user's main departments\n- Courses filtered by user's sub departments\n- Unauthenticated users see NO data\n\n**Role-Based Access Control:**\n- Four roles (enum): Super Admin, Admin, Teacher, Student\n- Default role: Student (auto-assigned)\n- Student permissions: view courses, enroll, access materials, submit assignments, view grades, edit profile\n\n**Enhanced Subscription System:**\n- Course subscriptions: Use single course_id (as before)\n- Assignment/Quiz subscriptions: Use course_ids array for multiple courses\n- Users can subscribe to assignments/quizzes for multiple courses simultaneously\n- No requirement to be subscribed to the courses themselves\n- Enhanced error messages in Arabic and English\n\n**Coupon System:**\n- Two discount types: 'percentage' (0-100%) and 'fixed' (amount > 0)\n- Advanced usage tracking with user-specific restrictions\n- Usage limits per user (usage_per_user)\n- Cooldown periods between uses (cooldown_hours)\n- Multiple usage control (allow_multiple_usage)\n- Complete usage history and statistics\n- Enhanced validation and error messages\n\n**Cart System:**\n- Users can add courses, assignments, and quizzes to their cart\n- System prevents adding items that user already has active subscription for\n- Cart includes price calculations with discounts\n- Support for individual item removal or clearing entire cart",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "academy-plus"
 	},
@@ -1334,7 +1334,7 @@
 			"name": "Subscriptions",
 			"item": [
 				{
-					"name": "Create Subscription",
+					"name": "Create Course Subscription",
 					"event": [
 						{
 							"listen": "test",
@@ -1370,7 +1370,89 @@
 							"host": ["{{base_url}}"],
 							"path": ["api", "subscriptions"]
 						},
-						"description": "Create a new subscription"
+						"description": "Create a new course subscription"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Assignment Subscription (Multiple Courses)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set('subscription_id', response.data.subscription.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"subscription_type\": \"assignment\",\n  \"assignment_id\": \"{{assignment_id}}\",\n  \"course_ids\": [\"{{course_id}}\", \"{{course_id_2}}\"],\n  \"payment_method\": \"whatsapp\",\n  \"coupon_code\": \"SAVE50\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/subscriptions",
+							"host": ["{{base_url}}"],
+							"path": ["api", "subscriptions"]
+						},
+						"description": "Create a new assignment subscription for multiple courses. course_ids is required for assignment subscriptions."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Quiz Subscription (Multiple Courses)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set('subscription_id', response.data.subscription.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"subscription_type\": \"quiz\",\n  \"quiz_id\": \"{{quiz_id}}\",\n  \"course_ids\": [\"{{course_id}}\", \"{{course_id_2}}\", \"{{course_id_3}}\"],\n  \"payment_method\": \"gateway\",\n  \"coupon_code\": \"NEWUSER100\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/subscriptions",
+							"host": ["{{base_url}}"],
+							"path": ["api", "subscriptions"]
+						},
+						"description": "Create a new quiz subscription for multiple courses. course_ids is required for quiz subscriptions."
 					},
 					"response": []
 				},
@@ -1451,7 +1533,7 @@
 					"response": []
 				}
 			],
-			"description": "Subscription management endpoints"
+			"description": "Subscription management endpoints. Enhanced to support multiple course subscriptions for assignments and quizzes. For assignments and quizzes, course_ids array is required to specify which courses the subscription applies to. Course subscriptions work as before with single course_id."
 		},
 		{
 			"name": "Coupons",
@@ -1506,6 +1588,25 @@
 					"response": []
 				},
 				{
+					"name": "Get Coupon by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/coupons/{{coupon_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "coupons", "{{coupon_id}}"]
+						},
+						"description": "Get coupon details by ID (Admin only)"
+					},
+					"response": []
+				},
+				{
 					"name": "Get Coupon by Code",
 					"request": {
 						"method": "GET",
@@ -1516,16 +1617,16 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/api/coupons/WELCOME10",
+							"raw": "{{base_url}}/api/coupons/code/WELCOME10",
 							"host": ["{{base_url}}"],
-							"path": ["api", "coupons", "WELCOME10"]
+							"path": ["api", "coupons", "code", "WELCOME10"]
 						},
 						"description": "Get coupon details by code"
 					},
 					"response": []
 				},
 				{
-					"name": "Create Coupon",
+					"name": "Create Percentage Coupon",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -1540,14 +1641,41 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"code\": \"NEWCOUPON\",\n  \"discount_value\": 15,\n  \"max_uses\": 100\n}"
+							"raw": "{\n  \"code\": \"PERCENT20\",\n  \"discount_type\": \"percentage\",\n  \"discount_value\": 20,\n  \"max_uses\": 100,\n  \"usage_per_user\": 1,\n  \"cooldown_hours\": 24,\n  \"allow_multiple_usage\": false\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/coupons",
 							"host": ["{{base_url}}"],
 							"path": ["api", "coupons"]
 						},
-						"description": "Create a new coupon (Admin only)"
+						"description": "Create a new percentage coupon (Admin only). discount_value must be between 0-100 for percentage type."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Fixed Amount Coupon",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"code\": \"SAVE50\",\n  \"discount_type\": \"fixed\",\n  \"discount_value\": 50,\n  \"max_uses\": 200,\n  \"usage_per_user\": 2,\n  \"cooldown_hours\": 0,\n  \"allow_multiple_usage\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/coupons",
+							"host": ["{{base_url}}"],
+							"path": ["api", "coupons"]
+						},
+						"description": "Create a new fixed amount coupon (Admin only). discount_value must be greater than 0 for fixed type."
 					},
 					"response": []
 				},
@@ -1567,21 +1695,21 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"discount_value\": 20,\n  \"max_uses\": 150\n}"
+							"raw": "{\n  \"discount_type\": \"fixed\",\n  \"discount_value\": 75,\n  \"max_uses\": 150,\n  \"usage_per_user\": 3,\n  \"cooldown_hours\": 12,\n  \"allow_multiple_usage\": true\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/coupons/{{coupon_id}}",
 							"host": ["{{base_url}}"],
 							"path": ["api", "coupons", "{{coupon_id}}"]
 						},
-						"description": "Update coupon (Admin only)"
+						"description": "Update coupon (Admin only). Can update discount_type, discount_value, and max_uses. discount_value validation depends on discount_type."
 					},
 					"response": []
 				},
 				{
-					"name": "Delete Coupon",
+					"name": "Get User Coupon Usage Stats",
 					"request": {
-						"method": "DELETE",
+						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
@@ -1589,16 +1717,35 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/api/coupons/{{coupon_id}}",
+							"raw": "{{base_url}}/api/coupons/usage/history",
 							"host": ["{{base_url}}"],
-							"path": ["api", "coupons", "{{coupon_id}}"]
+							"path": ["api", "coupons", "usage", "history"]
 						},
-						"description": "Delete coupon (Admin only)"
+						"description": "Get user's coupon usage statistics and recent history"
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Coupon Usage History",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/coupons/usage/history/{{coupon_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "coupons", "usage", "history", "{{coupon_id}}"]
+						},
+						"description": "Get user's usage history for a specific coupon"
 					},
 					"response": []
 				}
 			],
-			"description": "Coupon management endpoints"
+			"description": "Advanced Coupon Management System with Usage Tracking:\n\n**Discount Types:**\n- 'percentage' (0-100%): discount_value between 0-100\n- 'fixed' (amount > 0): discount_value must be greater than 0\n\n**Usage Restrictions:**\n- usage_per_user: Maximum times a single user can use the coupon (default: 1)\n- cooldown_hours: Hours to wait between uses by same user (default: 0)\n- allow_multiple_usage: Whether user can use coupon multiple times (default: false)\n\n**Features:**\n- User-specific usage tracking\n- Cooldown periods between uses\n- Usage history and statistics\n- Enhanced validation and error messages\n\nAll existing coupons default to 'percentage' type with single use per user."
 		},
 		{
 			"name": "Notifications",
@@ -2674,6 +2821,18 @@
 			"key": "base_url",
 			"value": "http://localhost:3000",
 			"type": "string"
+		},
+		{
+			"key": "course_id_2",
+			"value": "",
+			"type": "string",
+			"description": "Second course ID for multi-course subscriptions"
+		},
+		{
+			"key": "course_id_3",
+			"value": "",
+			"type": "string",
+			"description": "Third course ID for multi-course subscriptions"
 		}
 	]
 }

@@ -25,7 +25,6 @@ class AdImplement extends AdRepo {
         return left(ServerFailures(errMessage: 'Failed to fetch ads'));
       }
     } catch (e) {
-      print('Get Ads Error: $e');
       return left(returnDioException(e));
     }
   }
@@ -50,7 +49,6 @@ class AdImplement extends AdRepo {
         return left(ServerFailures(errMessage: 'Failed to fetch ads by university'));
       }
     } catch (e) {
-      print('Get Ads by University Error: $e');
       return left(returnDioException(e));
     }
   }
@@ -74,7 +72,6 @@ class AdImplement extends AdRepo {
         return left(ServerFailures(errMessage: 'Failed to fetch ad'));
       }
     } catch (e) {
-      print('Get Ad by ID Error: $e');
       return left(returnDioException(e));
     }
   }

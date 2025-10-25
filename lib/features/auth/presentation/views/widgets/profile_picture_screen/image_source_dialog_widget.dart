@@ -60,10 +60,10 @@ class ImageSourceDialogWidget extends StatelessWidget {
                 Text(
                   'اختر مصدر الصورة',
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
-                        fontSize: 18,
-                      ),
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                    fontSize: 18,
+                  ),
                 ),
                 const Spacer(),
                 GestureDetector(
@@ -95,17 +95,10 @@ class ImageSourceDialogWidget extends StatelessWidget {
                 // Camera option
                 GestureDetector(
                   onTap: () {
-                    print('ImageSourceDialogWidget: Camera option tapped');
                     NavigationHelper.back(context);
                     // Use a post-frame callback to ensure context is still valid
                     WidgetsBinding.instance.addPostFrameCallback((_) {
-                      print(
-                        'ImageSourceDialogWidget: Post-frame callback executed',
-                      );
                       final cubit = context.read<ProfilePictureCubit>();
-                      print(
-                        'ImageSourceDialogWidget: Using cubit: $cubit',
-                      );
                       _pickImage(ImageSource.camera, context, cubit);
                     });
                   },
@@ -139,16 +132,16 @@ class ImageSourceDialogWidget extends StatelessWidget {
                             children: [
                               Text(
                                 'التقاط صورة',
-                                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                style: Theme.of(context).textTheme.bodyLarge
+                                    ?.copyWith(
                                       fontWeight: FontWeight.w600,
                                       color: AppColors.textPrimary,
                                     ),
                               ),
                               Text(
                                 'استخدم الكاميرا لالتقاط صورة جديدة',
-                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      color: AppColors.textSecondary,
-                                    ),
+                                style: Theme.of(context).textTheme.bodySmall
+                                    ?.copyWith(color: AppColors.textSecondary),
                               ),
                             ],
                           ),
@@ -168,17 +161,10 @@ class ImageSourceDialogWidget extends StatelessWidget {
                 // Gallery option
                 GestureDetector(
                   onTap: () {
-                    print('ImageSourceDialogWidget: Gallery option tapped');
                     NavigationHelper.back(context);
                     // Use a post-frame callback to ensure context is still valid
                     WidgetsBinding.instance.addPostFrameCallback((_) {
-                      print(
-                        'ImageSourceDialogWidget: Post-frame callback executed',
-                      );
                       final cubit = context.read<ProfilePictureCubit>();
-                      print(
-                        'ImageSourceDialogWidget: Using cubit: $cubit',
-                      );
                       _pickImage(ImageSource.gallery, context, cubit);
                     });
                   },
@@ -212,16 +198,16 @@ class ImageSourceDialogWidget extends StatelessWidget {
                             children: [
                               Text(
                                 'اختيار من المعرض',
-                                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                style: Theme.of(context).textTheme.bodyLarge
+                                    ?.copyWith(
                                       fontWeight: FontWeight.w600,
                                       color: AppColors.textPrimary,
                                     ),
                               ),
                               Text(
                                 'اختر صورة من معرض الصور',
-                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      color: AppColors.textSecondary,
-                                    ),
+                                style: Theme.of(context).textTheme.bodySmall
+                                    ?.copyWith(color: AppColors.textSecondary),
                               ),
                             ],
                           ),

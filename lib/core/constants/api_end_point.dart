@@ -20,4 +20,7 @@ abstract class APIEndPoint {
   static const cartSummary = "/api/cart/summary";
   static const cartTotal = "/api/cart/total";
   static const cartClear = "/api/cart/clear";
+  
+  // Coupon endpoints
+  static const couponValidate = "/api/coupons/validate";
 }

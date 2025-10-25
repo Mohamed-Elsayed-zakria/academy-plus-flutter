@@ -14,11 +14,6 @@ class EditProfileImplement extends EditProfileRepo {
   ) async {
     try {
       const url = "${APIEndPoint.url}${APIEndPoint.userProfile}";
-      
-      print('Update Profile Request:');
-      print('URL: $url');
-      print('Profile Name: $name');
-      print('Has Image: ${profileImage != null}');
 
       // Create FormData for the request
       final Map<String, dynamic> formDataMap = {
@@ -37,10 +32,6 @@ class EditProfileImplement extends EditProfileRepo {
 
       final response = await dio.put(url, data: formData);
 
-      print('Update Profile Response:');
-      print('Status Code: ${response.statusCode}');
-      print('Response Data: ${response.data}');
-
       if (response.statusCode == 200) {
         // Extract data from the nested structure
         final responseData = response.data;
@@ -56,7 +47,6 @@ class EditProfileImplement extends EditProfileRepo {
         );
       }
     } catch (e) {
-      print('Update Profile Error: $e');
       return left(returnDioException(e));
     }
   }

@@ -18,6 +18,9 @@ import '../../features/auth/data/repository/profile_implement.dart';
 import '../../features/auth/presentation/manager/profile_picture_cubit/profile_picture_cubit.dart';
 import '../../features/cart/data/repository/cart_repo.dart';
 import '../../features/cart/data/repository/cart_implement.dart';
+import '../../features/cart/data/repository/coupon_repo.dart';
+import '../../features/cart/data/repository/coupon_implement.dart';
+import '../../features/cart/presentation/manager/cart_cubit/cart_cubit.dart';
 
 class SetupLocator {
   static GetIt locator = GetIt.instance;
@@ -50,5 +53,11 @@ class SetupLocator {
 
     // Cart
     locator.registerLazySingleton<CartRepo>(() => CartImplement());
+    
+    // Coupon
+    locator.registerLazySingleton<CouponRepo>(() => CouponImplement());
+    
+    // Cart Cubit
+    locator.registerFactory(() => CartCubit(locator(), locator()));
   }
 }

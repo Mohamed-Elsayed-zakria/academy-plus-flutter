@@ -43,17 +43,11 @@ class ProfileCubit extends Cubit<ProfileState> {
     emit(ProfileLoading());
     
     try {
-      print('🔄 ProfileCubit.logout() - Starting logout process...');
-      
       // Clear local session only (no API call needed)
       await _clearLocalSession();
-      
       // Emit success state
       emit(ProfileLogoutSuccess());
-      
-      print('✅ ProfileCubit.logout() - Logout completed successfully');
     } catch (e) {
-      print('❌ ProfileCubit.logout() - Error: $e');
       emit(ProfileError(error: 'خطأ في تسجيل الخروج'));
     }
   }
@@ -61,16 +55,10 @@ class ProfileCubit extends Cubit<ProfileState> {
   // Helper method to clear local session
   Future<void> _clearLocalSession() async {
     try {
-      print('🔄 Starting to clear local session...');
-      
       // Clear data from SharedPreferences
       await AuthService.logout();
-      print('✅ SharedPreferences cleared');
-      
       // Clear data from AuthManager
       AuthManager.clearUserData();
-      print('✅ AuthManager cleared');
-      
       // Verify that logout was successful
       final isStillLoggedIn = await AuthService.isLoggedIn();
       print('🔍 Verification - isLoggedIn: $isStillLoggedIn');

@@ -27,7 +27,6 @@ class ProfileImplement extends ProfileRepo {
         return left(ServerFailures(errMessage: 'Failed to fetch user profile'));
       }
     } catch (e) {
-      print('Get Profile Error: $e');
       return left(returnDioException(e));
     }
   }
@@ -38,10 +37,6 @@ class ProfileImplement extends ProfileRepo {
   ) async {
     try {
       const url = "${APIEndPoint.url}${APIEndPoint.userProfile}";
-      
-      print('Update Profile Request:');
-      print('URL: $url');
-      print('Profile Name: ${profile.name}');
 
       // Create FormData for the request
       final formData = FormData.fromMap({
@@ -50,10 +45,6 @@ class ProfileImplement extends ProfileRepo {
       });
 
       final response = await dio.put(url, data: formData);
-
-      print('Update Profile Response:');
-      print('Status Code: ${response.statusCode}');
-      print('Response Data: ${response.data}');
 
       if (response.statusCode == 200) {
         // Extract data from the nested structure
@@ -70,7 +61,6 @@ class ProfileImplement extends ProfileRepo {
         );
       }
     } catch (e) {
-      print('Update Profile Error: $e');
       return left(returnDioException(e));
     }
   }
@@ -82,11 +72,6 @@ class ProfileImplement extends ProfileRepo {
   ) async {
     try {
       const url = "${APIEndPoint.url}${APIEndPoint.userProfile}";
-      
-      print('Update Profile with Image Request:');
-      print('URL: $url');
-      print('Profile Name: $name');
-      print('Has Image: ${profileImage != null}');
 
       // Create FormData for the request
       final Map<String, dynamic> formDataMap = {
@@ -105,10 +90,6 @@ class ProfileImplement extends ProfileRepo {
 
       final response = await dio.put(url, data: formData);
 
-      print('Update Profile with Image Response:');
-      print('Status Code: ${response.statusCode}');
-      print('Response Data: ${response.data}');
-
       if (response.statusCode == 200) {
         // Extract data from the nested structure
         final responseData = response.data;
@@ -124,7 +105,6 @@ class ProfileImplement extends ProfileRepo {
         );
       }
     } catch (e) {
-      print('Update Profile with Image Error: $e');
       return left(returnDioException(e));
     }
   }
@@ -133,15 +113,8 @@ class ProfileImplement extends ProfileRepo {
   Future<Either<Failures, bool>> logout() async {
     try {
       const url = "${APIEndPoint.url}${APIEndPoint.logout}";
-      
-      print('Logout Request:');
-      print('URL: $url');
 
       final response = await dio.post(url);
-
-      print('Logout Response:');
-      print('Status Code: ${response.statusCode}');
-      print('Response Data: ${response.data}');
 
       if (response.statusCode == 200) {
         // Check if logout was successful
@@ -155,7 +128,6 @@ class ProfileImplement extends ProfileRepo {
         return left(ServerFailures(errMessage: 'Failed to logout'));
       }
     } catch (e) {
-      print('Logout Error: $e');
       return left(returnDioException(e));
     }
   }

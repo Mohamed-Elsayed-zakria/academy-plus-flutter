@@ -22,14 +22,7 @@ class ProfilePictureDisplayWidget extends StatelessWidget {
             : state is ProfilePictureError
             ? state.profileImage
             : null;
-
-        print(
-          'ProfilePictureDisplayWidget: Current state: ${state.runtimeType}, profileImage: ${profileImage?.path}',
-        );
-        print(
-          'ProfilePictureDisplayWidget: Will show image: ${profileImage != null}',
-        );
-
+            
         return GestureDetector(
           onTap: () => _showImageSourceDialog(context),
           child: Container(
